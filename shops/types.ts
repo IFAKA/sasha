@@ -1,8 +1,11 @@
 // Everything that changes from one shop to the next lives in shops/<slug>/shop.ts,
 // typed by ShopConfig. The app code reads it through lib/shop.ts.
 
-/** Opening and closing hour (24 h, whole hours), or null when closed all day. */
-export type DayHours = readonly [opens: number, closes: number] | null;
+/** Opening and closing hour (24 h, whole hours). */
+export type Shift = readonly [opens: number, closes: number];
+
+/** One shift, several for split hours (e.g. [[8, 13], [16, 21]]), or null when closed all day. */
+export type DayHours = Shift | readonly Shift[] | null;
 
 export type Week = Record<
   "lunes" | "martes" | "miercoles" | "jueves" | "viernes" | "sabado" | "domingo",
@@ -58,6 +61,12 @@ export type ShopConfig = {
     blush: string;
     /** Page background. */
     cream?: string;
+    /** Text and dark surfaces (footer, active tab). Defaults to a warm near-black. */
+    ink?: string;
+    /** Secondary text. */
+    muted?: string;
+    /** Borders and dividers. */
+    line?: string;
   };
 
   hours: Week;

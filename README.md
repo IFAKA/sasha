@@ -12,11 +12,12 @@ shops/
     shop.ts           name, contact, hours, colors, texts, features
     menu.json         categories and products (generated, don't edit by hand)
     stock-photos.json openly licensed photos for products without one (credited at /creditos)
+    fonts.ts          optional: the shop's own display and body fonts (default: shops/fonts.ts)
 public/shops/<slug>/  that shop's logo, cover and photos
 ```
 
 The `SHOP` environment variable picks the shop (default: `sasha`). `npm run dev` and
-`npm run build` write `shops/current.ts` from it, and the app imports the shop from there.
+`npm run build` write `shops/current.ts` (and `shops/current-fonts.ts`) from it, and the app imports the shop from there.
 
 ## Add a shop
 

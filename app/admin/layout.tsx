@@ -11,7 +11,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   // Shops on the basic plan have no panel.
   if (!shop.admin) notFound();
   return (
-    <div className="flex min-h-dvh flex-col bg-[#f6f1ec]">
+    <div className="flex min-h-dvh flex-col bg-[color-mix(in_oklab,var(--cream),var(--line)_40%)]">
       <AdminHeader />
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 pt-5 pb-16 sm:px-6">{children}</main>
     </div>

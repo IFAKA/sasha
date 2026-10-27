@@ -137,3 +137,8 @@ html:has(dialog[open]) {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* Some shops' display fonts come in a single weight: never fake a bold version of them. */
+.font-display {
+  font-synthesis-weight: none;
+}

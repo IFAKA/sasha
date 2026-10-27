@@ -1,21 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Manrope } from "next/font/google";
 import { MotionProvider } from "@/components/motion-provider";
 import { CartProvider } from "@/components/cart/cart-provider";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { shop } from "@/lib/shop";
+import { body, display } from "@/shops/current-fonts";
 import "./globals.css";
-
-const display = Fraunces({
-  variable: "--font-display",
-  subsets: ["latin"],
-  axes: ["SOFT", "opsz"],
-});
-
-const body = Manrope({
-  variable: "--font-body",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: {
@@ -37,6 +26,9 @@ const theme = {
   "--brand-ink": shop.theme.brandInk,
   "--blush": shop.theme.blush,
   ...(shop.theme.cream ? { "--cream": shop.theme.cream } : {}),
+  ...(shop.theme.ink ? { "--ink": shop.theme.ink } : {}),
+  ...(shop.theme.muted ? { "--muted": shop.theme.muted } : {}),
+  ...(shop.theme.line ? { "--line": shop.theme.line } : {}),
 } as React.CSSProperties;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

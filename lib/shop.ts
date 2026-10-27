@@ -1,5 +1,5 @@
 import { shop } from "@/shops/current";
-import type { DayHours } from "@/shops/types";
+import type { Shift } from "@/shops/types";
 
 export { shop };
 
@@ -14,17 +14,22 @@ const DAYS = [
   { key: "sabado", label: "Sábado", plural: "sábados" },
 ] as const;
 
-/** Opening hours for a weekday (0 = domingo), or null when closed. */
-export const hoursOn = (weekday: number): DayHours => shop.hours[DAYS[weekday].key];
+/** Opening shifts for a weekday (0 = domingo): none when closed, two for split hours. */
+export function shiftsOn(weekday: number): readonly Shift[] {
+  const hours = shop.hours[DAYS[weekday].key];
+  if (!hours) return [];
+  return typeof hours[0] === "number" ? [hours as Shift] : (hours as readonly Shift[]);
+}
 
-export const isClosedDay = (weekday: number) => hoursOn(weekday) === null;
+export const isClosedDay = (weekday: number) => shiftsOn(weekday).length === 0;
 
-const formatHours = (h: NonNullable<DayHours>) => `${h[0]} a ${h[1]} hs`;
+// "8 a 20 hs", or "8 a 13 y 16 a 21 hs" for split hours.
+const formatHours = (shifts: readonly Shift[]) => `${shifts.map(([opens, closes]) => `${opens} a ${closes}`).join(" y ")} hs`;
 
 /** The week from Monday, as shown in schedules. */
 export const weekSchedule = [1, 2, 3, 4, 5, 6, 0].map((weekday) => {
-  const hours = hoursOn(weekday);
-  return { weekday, day: DAYS[weekday].label, short: DAYS[weekday].label.slice(0, 3), hours: hours && formatHours(hours) };
+  const shifts = shiftsOn(weekday);
+  return { weekday, day: DAYS[weekday].label, short: DAYS[weekday].label.slice(0, 3), hours: shifts.length ? formatHours(shifts) : null };
 });
 
 const closedDays = weekSchedule.filter((d) => d.hours === null);
@@ -43,10 +48,10 @@ export const closedSentence = closedDays.length
   : null;
 
 /**
- * Compact schedule: runs of consecutive days with the same hours.
- * "Martes a domingo, 9 a 20 hs" or "Lunes a viernes, 8 a 19 hs · Sábado, 9 a 13 hs".
+ * Compact schedule: runs of consecutive days with the same hours, e.g.
+ * [{ days: "Lunes a viernes", hours: "8 a 19 hs" }, { days: "Sábado", hours: "9 a 13 hs" }].
  */
-export const scheduleSummary = (() => {
+export const scheduleRuns = (() => {
   const runs: { from: string; to: string; hours: string }[] = [];
   for (const d of weekSchedule) {
     if (!d.hours) continue;
@@ -55,11 +60,18 @@ export const scheduleSummary = (() => {
     if (last && previous?.hours === d.hours) last.to = d.day;
     else runs.push({ from: d.day, to: d.day, hours: d.hours });
   }
-  if (runs.length === 1 && runs[0].from === "Lunes" && runs[0].to === "Domingo") return `Todos los días, ${runs[0].hours}`;
-  return runs
-    .map((r) => `${r.from === r.to ? r.from : `${r.from} a ${r.to.toLowerCase()}`}, ${r.hours}`)
-    .join(" · ");
+  if (runs.length === 1 && runs[0].from === "Lunes" && runs[0].to === "Domingo") return [{ days: "Todos los días", hours: runs[0].hours }];
+  return runs.map((r) => ({
+    days: r.from === r.to ? r.from : `${r.from} ${nextDay(r.from) === r.to ? "y" : "a"} ${r.to.toLowerCase()}`,
+    hours: r.hours,
+  }));
 })();
+
+// "Sábado y domingo" rather than "Sábado a domingo" for two days in a row.
+function nextDay(day: string) {
+  const i = weekSchedule.findIndex((d) => d.day === day);
+  return weekSchedule[i + 1]?.day;
+}
 
 function joinList(items: string[], conjunction = "y") {
   return items.length < 2 ? items.join("") : `${items.slice(0, -1).join(", ")} ${conjunction} ${items.at(-1)}`;

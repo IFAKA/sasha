@@ -5,7 +5,8 @@ import { CategoryNav } from "@/components/category-nav";
 import { MenuItem } from "@/components/menu-item";
 import { Reveal } from "@/components/reveal";
 import { ArrowIcon, ClockIcon } from "@/components/icons";
-import { closedLabel, leadTimeLabel, noun, salonLabels, scheduleSummary, shop } from "@/lib/shop";
+import { leadTimeLabel, noun, salonLabels, shop } from "@/lib/shop";
+import { ScheduleLines } from "@/components/schedule-lines";
 import { categorySlug, salonMenu } from "@/lib/menu";
 
 export const metadata: Metadata = {
@@ -24,12 +25,13 @@ export default function SalonPage() {
       <header className="mx-auto max-w-6xl px-4 pt-10 pb-6 sm:px-6">
         <p className="text-sm font-semibold tracking-wide text-brand uppercase">{salonLabels.eyebrow}</p>
         <h1 className="mt-1 font-display text-4xl font-semibold tracking-tight sm:text-5xl">{salonLabels.title}</h1>
-        <p className="mt-3 flex items-center gap-2 text-muted">
-          <ClockIcon className="shrink-0 text-brand" />
-          {[scheduleSummary, closedLabel, shop.salon.stayLimit && `Permanencia en el salón: ${shop.salon.stayLimit}`]
-            .filter(Boolean)
-            .join(" · ")}
-        </p>
+        <div className="mt-3 flex items-start gap-2 text-muted">
+          <ClockIcon className="mt-0.5 shrink-0 text-brand" />
+          <div>
+            <ScheduleLines />
+            {shop.salon.stayLimit ? <p>Permanencia en el salón: {shop.salon.stayLimit}</p> : null}
+          </div>
+        </div>
       </header>
 
       <CategoryNav categories={navItems} />

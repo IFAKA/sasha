@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { takeawayMenu } from "@/lib/menu";
-import { fromAr, slotRange, toAr } from "@/lib/pickup";
+import { fromAr, pickupHours, toAr } from "@/lib/pickup";
 import { hasBranches, lineLabel, locations, shop } from "@/lib/shop";
 import { slug } from "@/shops/current";
 
@@ -122,8 +122,8 @@ function sampleOrders(now: number): Order[] {
   for (let offset = -60; offset <= 6; offset++) {
     const dayStart = fromAr(today.year, today.month, today.date + offset, 0);
     const day = toAr(dayStart);
-    const range = slotRange(day.weekday);
-    if (!range) continue;
+    const hours = pickupHours(day.weekday);
+    if (!hours.length) continue;
 
     const weekend = day.weekday === 0 || day.weekday === 6;
     const future = offset > 0;
@@ -133,7 +133,7 @@ function sampleOrders(now: number): Order[] {
     const count = Math.max(0, Math.round(base + rand() * 2 - (future ? offset * 0.5 : 0)));
 
     for (let i = 0; i < count; i++) {
-      const hour = range.first + Math.floor(rand() * (range.last - range.first + 1));
+      const hour = hours[Math.floor(rand() * hours.length)];
       const pickup = fromAr(day.year, day.month, day.date, hour);
       // Ordered 2 to 6 days before pickup, never in the future.
       const createdAt = Math.min(now - 60 * 60 * 1000, pickup - (2 + rand() * 4) * DAY_MS);

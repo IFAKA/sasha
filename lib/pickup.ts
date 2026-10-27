@@ -1,4 +1,4 @@
-import { hoursOn, isClosedDay, shop } from "@/lib/shop";
+import { isClosedDay, shiftsOn, shop } from "@/lib/shop";
 
 // Argentina has no daylight saving time, so a fixed UTC-3 offset is exact.
 const AR_OFFSET_MS = -3 * 60 * 60 * 1000;
@@ -27,13 +27,13 @@ export function fromAr(year: number, month: number, date: number, hour: number) 
 export { isClosedDay };
 
 /**
- * Pickup slots on a weekday: whole hours from the first hour after opening to the
- * last one before closing, or null when the shop is closed that day.
+ * Pickup slots on a weekday: in each shift, whole hours from the first hour after opening to the
+ * last one before closing. Empty when the shop is closed that day.
  */
-export function slotRange(weekday: number): { first: number; last: number } | null {
-  const hours = hoursOn(weekday);
-  if (!hours || hours[1] - hours[0] < 2) return null;
-  return { first: hours[0] + 1, last: hours[1] - 1 };
+export function pickupHours(weekday: number): number[] {
+  return shiftsOn(weekday).flatMap(([opens, closes]) =>
+    Array.from({ length: Math.max(0, closes - opens - 1) }, (_, i) => opens + 1 + i),
+  );
 }
 
 /**
@@ -52,9 +52,9 @@ export function earliestPickup(now: number): number {
 
   for (let day = 0; day < 8; day++) {
     const p = toAr(cursor);
-    const range = slotRange(p.weekday);
-    if (range && p.hour >= range.first && p.hour <= range.last) return cursor;
-    if (range && p.hour < range.first) return fromAr(p.year, p.month, p.date, range.first);
+    const next = pickupHours(p.weekday).find((hour) => hour >= p.hour);
+    if (next === p.hour) return cursor;
+    if (next !== undefined) return fromAr(p.year, p.month, p.date, next);
     // After the last slot or on a closed day: start of the next day.
     cursor = fromAr(p.year, p.month, p.date + 1, 0);
   }
@@ -93,11 +93,8 @@ export function pickupDays(now: number): PickupDay[] {
   for (let offset = 0; offset < BOOKING_WINDOW_DAYS; offset++) {
     const dayStart = fromAr(start.year, start.month, start.date + offset, 0);
     const p = toAr(dayStart);
-    const range = slotRange(p.weekday);
-    if (!range) continue;
-
     const slots = [];
-    for (let hour = range.first; hour <= range.last; hour++) {
+    for (const hour of pickupHours(p.weekday)) {
       const t = fromAr(p.year, p.month, p.date, hour);
       if (t >= first) slots.push({ value: new Date(t).toISOString(), label: `${hour}:00` });
     }

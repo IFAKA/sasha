@@ -2,10 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { Reveal } from "@/components/reveal";
 import { HeroIntro } from "@/components/home/hero-intro";
+import { ScheduleLines } from "@/components/schedule-lines";
 import { WeekSchedule } from "@/components/week-schedule";
 import { ArrowIcon, BagIcon, ClockIcon, CupIcon, PinIcon, StarIcon, WhatsappIcon } from "@/components/icons";
 import {
-  closedLabel,
   greeting,
   hasBranches,
   leadTimeLabel,
@@ -14,7 +14,6 @@ import {
   noun,
   paysOnline,
   salonLabels,
-  scheduleSummary,
   shop,
   shortName,
   whatsappLink,
@@ -91,10 +90,12 @@ export default function HomePage() {
                   </dd>
                 </div>
               ) : null}
-              <div className="flex items-center gap-2">
+              <div className="flex items-start gap-2">
                 <dt className="sr-only">Días y horario</dt>
-                <ClockIcon className="text-brand" />
-                <dd>{closedLabel ? `${scheduleSummary} · ${closedLabel}` : scheduleSummary}</dd>
+                <ClockIcon className="mt-0.5 shrink-0 text-brand" />
+                <dd>
+                  <ScheduleLines />
+                </dd>
               </div>
               {locations.map((location) => (
                 <div key={location.mapsUrl} className="flex items-center gap-2">
@@ -187,7 +188,10 @@ export default function HomePage() {
                     />
                   </div>
                   <p className="mt-3 font-semibold">{shortName(cake.name)}</p>
-                  <p className="text-sm text-muted tabular-nums">Desde {formatPrice(cake.price)}</p>
+                  <p className="text-sm text-muted tabular-nums">
+                    {cake.sizes.length > 1 ? "Desde " : ""}
+                    {formatPrice(cake.price)}
+                  </p>
                 </Link>
               </Reveal>
             </li>

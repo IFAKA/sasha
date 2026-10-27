@@ -10,7 +10,7 @@ const productNames = new Map(
 
 // CC BY and CC BY-SA photos require crediting the author, the license and the source.
 const credits = Object.entries(stockPhotos)
-  .map(([id, photo]) => ({ ...photo, product: productNames.get(id) ?? photo.title }))
+  .map(([id, photo]) => ({ ...photo, id, product: productNames.get(id) ?? photo.title }))
   .sort((a, b) => a.product.localeCompare(b.product, "es"));
 
 export default function CreditsPage() {
@@ -24,7 +24,7 @@ export default function CreditsPage() {
       </p>
       <ul className="mt-8 divide-y divide-line rounded-3xl bg-paper px-5 ring-1 ring-line">
         {credits.map((c) => (
-          <li key={c.src} className="py-3 text-sm">
+          <li key={c.id} className="py-3 text-sm">
             <p className="font-semibold">{c.product}</p>
             <p className="text-muted">
               <a href={c.source} target="_blank" rel="noreferrer" className="underline-offset-2 hover:underline">
