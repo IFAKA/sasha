@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { salonMenu, stockPhotos, takeawayMenu } from "@/lib/menu";
 
 export const metadata: Metadata = { title: "Créditos de fotos" };
@@ -13,6 +14,7 @@ const credits = Object.entries(stockPhotos)
   .sort((a, b) => a.product.localeCompare(b.product, "es"));
 
 export default function CreditsPage() {
+  if (credits.length === 0) notFound();
   return (
     <div className="mx-auto max-w-3xl px-4 pt-10 sm:px-6">
       <h1 className="font-display text-4xl font-semibold tracking-tight">Créditos de fotos</h1>

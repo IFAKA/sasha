@@ -1,0 +1,47 @@
+{
+  "salon": [
+    {
+      "id": "cafe",
+      "name": "Café",
+      "products": [
+        {
+          "id": 1001,
+          "name": "Café con leche",
+          "description": "Con medialuna de manteca.",
+          "price": 4500,
+          "sizes": [{ "id": "unica", "label": "Tamaño único", "price": 4500 }],
+          "image": null
+        },
+        {
+          "id": 1002,
+          "name": "Chocolate caliente",
+          "description": "Con crema batida.",
+          "price": 5200,
+          "sizes": [{ "id": "unica", "label": "Tamaño único", "price": 5200 }],
+          "image": null
+        }
+      ]
+    }
+  ],
+  "takeaway": [
+    {
+      "id": "tortas",
+      "name": "Tortas",
+      "products": [
+        {
+          "id": 2001,
+          "name": "Torta de chocolate",
+          "description": "Bizcochuelo de chocolate, ganache y salsa de chocolate.",
+          "price": 28000,
+          "sizes": [
+            { "id": "18cm", "label": "18 cm", "price": 28000 },
+            { "id": "24cm", "label": "24 cm", "price": 39000 }
+          ],
+          "image": null
+        }
+      ]
+    }
+  ],
+  "rating": null,
+  "reviews": []
+}

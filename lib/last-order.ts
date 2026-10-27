@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useSyncExternalStore } from "react";
+import { slug } from "@/shops/current";
 
 // A summary of the order being paid, kept in sessionStorage so the result page
 // can show it (and prefill the WhatsApp message) after the Mercado Pago redirect.
@@ -12,9 +13,17 @@ export type LastOrderItem = {
   unitPrice: number;
 };
 
-export type LastOrder = { name: string; phone: string; notes: string; total: number; items: LastOrderItem[] };
+export type LastOrder = {
+  name: string;
+  phone: string;
+  notes: string;
+  /** Branch name, for shops with several pickup points. */
+  location?: string;
+  total: number;
+  items: LastOrderItem[];
+};
 
-const KEY = "sasha-last-order:v1";
+const KEY = `${slug}-last-order:v1`;
 
 export function saveLastOrder(order: LastOrder) {
   try {

@@ -7,7 +7,13 @@ import { m } from "motion/react";
 const ACTIVE_LINE = 150;
 
 /** Sticky category chips that follow the section currently in view. */
-export function CategoryNav({ categories }: { categories: { slug: string; name: string }[] }) {
+export function CategoryNav({
+  categories,
+  className = "",
+}: {
+  categories: { slug: string; name: string }[];
+  className?: string;
+}) {
   const [active, setActive] = useState(categories[0]?.slug);
   const listRef = useRef<HTMLUListElement>(null);
 
@@ -52,7 +58,10 @@ export function CategoryNav({ categories }: { categories: { slug: string; name: 
   }, [active]);
 
   return (
-    <nav aria-label="Categorías" className="sticky top-16 z-30 border-b border-line/70 bg-cream/90 backdrop-blur-md">
+    <nav
+      aria-label="Categorías"
+      className={`sticky top-16 z-30 border-b border-line/70 bg-cream/90 backdrop-blur-md ${className}`}
+    >
       <ul ref={listRef} className="no-scrollbar relative mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 py-2.5 sm:px-6">
         {categories.map((c) => {
           const isActive = c.slug === active;

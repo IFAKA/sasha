@@ -7,21 +7,16 @@ import { formatPrice } from "@/lib/menu";
 import { useOrders } from "@/lib/orders";
 import { toAr } from "@/lib/pickup";
 import { useNow } from "@/lib/use-now";
+import { closedLabel, noun, paysOnline, shortName, weekSchedule } from "@/lib/shop";
 
 const PERIODS = [
   { days: 7, label: "Últimos 7 días" },
   { days: 30, label: "Últimos 30 días" },
 ] as const;
 
-// Open days only (Monday is closed), in the order of the week.
-const WEEKDAYS = [
-  { day: 2, label: "Mar" },
-  { day: 3, label: "Mié" },
-  { day: 4, label: "Jue" },
-  { day: 5, label: "Vie" },
-  { day: 6, label: "Sáb" },
-  { day: 0, label: "Dom" },
-];
+// Open days only, in the order of the week.
+const WEEKDAYS = weekSchedule.filter((d) => d.hours).map((d) => ({ day: d.weekday, label: d.short }));
+const otherCapitalized = noun.other.charAt(0).toUpperCase() + noun.other.slice(1);
 
 const count = (v: number) => String(v);
 
@@ -36,8 +31,9 @@ export function SalesDashboard() {
     const from = today - (days - 1) * DAY_MS;
     const prevFrom = from - days * DAY_MS;
 
-    // Sales are counted on the day the order was paid (created); unpaid orders don't count.
-    const paid = orders.filter((o) => o.payment === "pagado");
+    // Sales are counted on the day the order was placed. Online payments only count once paid;
+    // shops paid on pickup count every order, or the last days (not picked up yet) would look empty.
+    const paid = paysOnline ? orders.filter((o) => o.payment === "pagado") : orders;
     const inPeriod = paid.filter((o) => o.createdAt >= from);
     const inPrev = paid.filter((o) => o.createdAt >= prevFrom && o.createdAt < from);
     const revenue = inPeriod.reduce((s, o) => s + o.total, 0);
@@ -56,7 +52,7 @@ export function SalesDashboard() {
     const units = new Map<string, number>();
     for (const o of inPeriod) {
       for (const i of o.items) {
-        const name = i.label.replace(/^Torta /, "").replace(/ \(.*\)$/, "");
+        const name = shortName(i.label.replace(/ \(.*\)$/, ""));
         units.set(name, (units.get(name) ?? 0) + i.quantity);
       }
     }
@@ -143,7 +139,7 @@ export function SalesDashboard() {
 
       <section aria-label="Resumen del período" className="mt-4 grid gap-3 sm:grid-cols-3">
         <div className="rounded-3xl bg-paper p-5 ring-1 ring-line sm:col-span-3">
-          <p className="text-sm text-muted">Ventas cobradas</p>
+          <p className="text-sm text-muted">{paysOnline ? "Ventas cobradas" : "Ventas"}</p>
           <p className="mt-1 text-5xl font-semibold tracking-tight">{data ? formatPrice(data.revenue) : "–"}</p>
           {data?.delta != null ? (
             <p className={`mt-2 text-sm font-medium ${data.delta >= 0 ? "text-emerald-700" : "text-brand-ink"}`}>
@@ -156,13 +152,13 @@ export function SalesDashboard() {
         </div>
         <Tile label="Pedidos" value={data ? String(data.orders) : "–"} />
         <Tile label="Ticket promedio" value={data ? formatPrice(data.avgTicket) : "–"} />
-        <Tile label="Tortas vendidas" value={data ? String(data.cakes) : "–"} />
+        <Tile label={`${otherCapitalized} ${noun.g("vendidas", "vendidos")}`} value={data ? String(data.cakes) : "–"} />
       </section>
 
       <div className={`mt-3 grid gap-3 lg:grid-cols-5 ${data ? "" : "opacity-50"}`}>
         <section aria-labelledby="by-day" className="rounded-3xl bg-paper p-5 ring-1 ring-line lg:col-span-3">
           <h2 id="by-day" className="font-semibold">Ventas por día</h2>
-          <p className="mb-5 text-xs text-muted">Pesos cobrados cada día</p>
+          <p className="mb-5 text-xs text-muted">{paysOnline ? "Pesos cobrados cada día" : "Pesos en pedidos cada día"}</p>
           {data ? (
             <>
               <ColumnChart data={data.byDay} format={formatPrice} labelEvery={days > 7 ? 5 : 1} />
@@ -172,14 +168,19 @@ export function SalesDashboard() {
         </section>
 
         <section aria-labelledby="top" className="rounded-3xl bg-paper p-5 ring-1 ring-line lg:col-span-2">
-          <h2 id="top" className="font-semibold">Tortas más vendidas</h2>
+          <h2 id="top" className="font-semibold">
+            {otherCapitalized} más {noun.g("vendidas", "vendidos")}
+          </h2>
           <p className="mb-5 text-xs text-muted">Unidades en el período</p>
           {data?.top.length ? <RankedBars data={data.top} format={count} /> : <p className="text-sm text-muted">Sin ventas en el período.</p>}
         </section>
 
         <section aria-labelledby="by-weekday" className="rounded-3xl bg-paper p-5 ring-1 ring-line lg:col-span-5">
           <h2 id="by-weekday" className="font-semibold">Retiros por día de la semana</h2>
-          <p className="mb-5 text-xs text-muted">Qué días se retiran más tortas (lunes cerrado)</p>
+          <p className="mb-5 text-xs text-muted">
+            Qué días se retiran más {noun.other}
+            {closedLabel ? ` (${closedLabel.toLowerCase()})` : ""}
+          </p>
           {data ? (
             <>
               <ColumnChart data={data.byWeekday} format={count} height={140} valueOnCap />

@@ -7,13 +7,16 @@ import { MAX_QUANTITY, useCart } from "@/components/cart/cart-provider";
 import { Sheet } from "@/components/sheet";
 import { BagIcon, CheckIcon, CloseIcon, MinusIcon, PlusIcon } from "@/components/icons";
 import { formatPrice, type Product } from "@/lib/menu";
+import { noun, shop, shortName } from "@/lib/shop";
 
-const PORTIONS: Record<string, string> = {
-  "22cm": "≈ 8 porciones",
-  "28cm": "≈ 12 porciones",
-};
+const sizeNotes = shop.orders.sizeNotes ?? {};
+const one = noun.g("una", "uno");
 
-export function CakeCatalog({ cakes }: { cakes: Product[] }) {
+type Section = { slug: string; name: string; products: Product[] };
+
+/** The order catalog: one grid, or a titled grid per category when there are several. */
+export function CakeCatalog({ sections }: { sections: Section[] }) {
+  const titled = sections.length > 1;
   // `detail` outlives `open` so the sheet keeps its content during the exit animation.
   const [detail, setDetail] = useState<Product | null>(null);
   const [open, setOpen] = useState(false);
@@ -34,40 +37,61 @@ export function CakeCatalog({ cakes }: { cakes: Product[] }) {
 
   return (
     <>
-      <ul className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-3 xl:grid-cols-4">
-        {cakes.map((cake, i) => (
-          <m.li
-            key={cake.id}
-            className="[overflow-anchor:none]"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "0px 0px -8% 0px" }}
-            transition={{ type: "spring", duration: 0.6, bounce: 0, delay: (i % 4) * 0.05 }}
-          >
-            <button type="button" onClick={() => select(cake)} className="group block w-full text-left">
-              <div className="relative aspect-square overflow-hidden rounded-3xl bg-blush">
-                {cake.image ? (
-                  <Image
-                    src={cake.image}
-                    alt={cake.name}
-                    fill
-                    sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, 50vw"
-                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                  />
-                ) : null}
-                <span className="absolute right-3 bottom-3 grid size-10 place-items-center rounded-full bg-paper/95 text-ink shadow-md transition-[transform,background-color] group-hover:scale-110 group-hover:bg-brand group-hover:text-white">
-                  <PlusIcon />
-                </span>
-              </div>
-              <h3 className="mt-3 font-semibold text-balance">{cake.name.replace(/^Torta /, "")}</h3>
-              <p className="text-sm text-muted tabular-nums">
-                {cake.sizes.length > 1 ? "Desde " : ""}
-                {formatPrice(cake.price)}
-              </p>
-            </button>
-          </m.li>
-        ))}
-      </ul>
+      {sections.map((section, sectionIndex) => (
+        <section
+          key={section.slug}
+          id={titled ? section.slug : undefined}
+          aria-labelledby={titled ? `${section.slug}-title` : undefined}
+          className={titled ? "pt-10" : undefined}
+        >
+          {titled ? (
+            <h2 id={`${section.slug}-title`} className="mb-5 font-display text-2xl font-semibold sm:text-3xl">
+              {section.name}
+            </h2>
+          ) : null}
+          <ul className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-3 xl:grid-cols-4">
+            {section.products.map((cake, i) => (
+              <m.li
+                key={cake.id}
+                className="[overflow-anchor:none]"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "0px 0px -8% 0px" }}
+                transition={{
+                  type: "spring",
+                  duration: 0.6,
+                  bounce: 0,
+                  delay: (i % 4) * 0.05,
+                }}
+              >
+                <button type="button" onClick={() => select(cake)} className="group block w-full text-left">
+                  <div className="relative aspect-square overflow-hidden rounded-3xl bg-blush">
+                    {cake.image ? (
+                      <Image
+                        src={cake.image}
+                        alt={cake.name}
+                        fill
+                        sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, 50vw"
+                        // The first row is on screen right away: don't wait for the lazy-load check.
+                        loading={sectionIndex === 0 && i < 4 ? "eager" : "lazy"}
+                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                      />
+                    ) : null}
+                    <span className="absolute right-3 bottom-3 grid size-10 place-items-center rounded-full bg-paper/95 text-ink shadow-md transition-[transform,background-color] group-hover:scale-110 group-hover:bg-brand group-hover:text-white">
+                      <PlusIcon />
+                    </span>
+                  </div>
+                  <h3 className="mt-3 font-semibold text-balance">{shortName(cake.name)}</h3>
+                  <p className="text-sm text-muted tabular-nums">
+                    {cake.sizes.length > 1 ? "Desde " : ""}
+                    {formatPrice(cake.price)}
+                  </p>
+                </button>
+              </m.li>
+            ))}
+          </ul>
+        </section>
+      ))}
 
       <Sheet open={open} onClose={() => setOpen(false)} labelledBy="cake-title" variant="center">
         {detail ? (
@@ -106,9 +130,13 @@ export function CakeCatalog({ cakes }: { cakes: Product[] }) {
                     exit={{ opacity: 0, y: -8 }}
                     className="flex min-w-0 items-center gap-2"
                   >
-                    {added ? <CheckIcon width={18} height={18} className="shrink-0 text-emerald-400" /> : <BagIcon width={18} height={18} />}
+                    {added ? (
+                      <CheckIcon width={18} height={18} className="shrink-0 text-emerald-400" />
+                    ) : (
+                      <BagIcon width={18} height={18} />
+                    )}
                     <span className="truncate">
-                      {added ? `${added} agregada` : `${meta.count} ${meta.count === 1 ? "torta" : "tortas"} en tu pedido`}
+                      {added ? `${added} ${noun.g("agregada", "agregado")}` : `${noun.count(meta.count)} en tu pedido`}
                     </span>
                   </m.span>
                 </AnimatePresence>
@@ -161,7 +189,7 @@ function CakeDetail({
 
         {cake.sizes.length > 1 ? (
           <fieldset className="mt-4">
-            <legend className="mb-2 text-sm font-semibold">Tamaño del molde</legend>
+            <legend className="mb-2 text-sm font-semibold">{shop.orders.sizeLegend ?? "Tamaño"}</legend>
             <div className="grid gap-2">
               {cake.sizes.map((s) => (
                 <label
@@ -180,7 +208,7 @@ function CakeDetail({
                   />
                   <span>
                     <span className="font-semibold">{s.label}</span>
-                    {PORTIONS[s.id] ? <span className="ml-2 text-sm text-muted">{PORTIONS[s.id]}</span> : null}
+                    {sizeNotes[s.id] ? <span className="ml-2 text-sm text-muted">{sizeNotes[s.id]}</span> : null}
                   </span>
                   <span className="font-semibold tabular-nums">{formatPrice(s.price)}</span>
                 </label>
@@ -196,7 +224,7 @@ function CakeDetail({
               onClick={() => setQuantity((q) => Math.max(1, q - 1))}
               disabled={quantity <= 1}
               className="grid size-11 place-items-center rounded-full hover:bg-blush disabled:opacity-40"
-              aria-label="Restar una"
+              aria-label={`Restar ${one}`}
             >
               <MinusIcon />
             </button>
@@ -208,14 +236,16 @@ function CakeDetail({
               onClick={() => setQuantity((q) => Math.min(MAX_QUANTITY, q + 1))}
               disabled={quantity >= MAX_QUANTITY}
               className="grid size-11 place-items-center rounded-full hover:bg-blush disabled:opacity-40"
-              aria-label="Sumar una"
+              aria-label={`Sumar ${one}`}
             >
               <PlusIcon />
             </button>
           </div>
           <p className="text-right">
             <span className="block text-xs text-muted">Total</span>
-            <span className="font-display text-2xl font-semibold tabular-nums">{formatPrice(size.price * quantity)}</span>
+            <span className="font-display text-2xl font-semibold tabular-nums">
+              {formatPrice(size.price * quantity)}
+            </span>
           </p>
         </div>
         <button

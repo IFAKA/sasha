@@ -1,6 +1,6 @@
 "use client";
 
-import { weekSchedule } from "@/lib/business";
+import { weekSchedule } from "@/lib/shop";
 import { useNow } from "@/lib/use-now";
 
 const AR_OFFSET_MS = -3 * 60 * 60 * 1000;
@@ -14,13 +14,11 @@ function arClock(now: number) {
 export function WeekSchedule() {
   const now = useNow();
   const today = now === null ? null : arClock(now).weekday;
-  // weekSchedule starts on Monday; getUTCDay() returns 0 for Sunday.
-  const todayIndex = today === null ? -1 : (today + 6) % 7;
 
   return (
     <ul className="divide-y divide-line">
-      {weekSchedule.map((d, i) => {
-        const isToday = i === todayIndex;
+      {weekSchedule.map((d) => {
+        const isToday = d.weekday === today;
         return (
           <li
             key={d.day}

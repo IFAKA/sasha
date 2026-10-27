@@ -6,12 +6,15 @@ import { useActionState, useMemo, useState } from "react";
 import { AnimatePresence, m } from "motion/react";
 import { MAX_QUANTITY, useCart, type ResolvedLine } from "@/components/cart/cart-provider";
 import { Sheet } from "@/components/sheet";
-import { BagIcon, CalendarIcon, CloseIcon, MinusIcon, PlusIcon } from "@/components/icons";
+import { BagIcon, CalendarIcon, CloseIcon, MinusIcon, PinIcon, PlusIcon, WhatsappIcon } from "@/components/icons";
 import { startCheckout } from "@/lib/checkout-actions";
 import { saveLastOrder } from "@/lib/last-order";
 import { formatPrice } from "@/lib/menu";
 import { pickupDays } from "@/lib/pickup";
 import { useNow } from "@/lib/use-now";
+import { closedLabel, hasBranches, leadTimeLabel, lineLabel, locations, noun, paysOnline, shop } from "@/lib/shop";
+
+const one = noun.g("una", "uno");
 
 export function CartDrawer() {
   const { state, actions, meta } = useCart();
@@ -43,14 +46,18 @@ function EmptyCart({ onBrowse }: { onBrowse: () => void }) {
       <span className="grid size-16 place-items-center rounded-full bg-blush text-brand">
         <BagIcon width={28} height={28} />
       </span>
-      <p className="font-display text-xl font-semibold">Todavía no elegiste ninguna torta</p>
-      <p className="text-sm text-muted">Encargá tu torta favorita y retirala en el local.</p>
+      <p className="font-display text-xl font-semibold">
+        Todavía no elegiste {noun.g("ninguna", "ningún")} {noun.one}
+      </p>
+      <p className="text-sm text-muted">
+        Encargá tu {noun.one} {noun.g("favorita", "favorito")} y {noun.g("retirala", "retiralo")} en el local.
+      </p>
       <Link
         href="/take-away"
         onClick={onBrowse}
         className="mt-2 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream hover:bg-brand-ink"
       >
-        Ver tortas por encargo
+        Ver {noun.other} por encargo
       </Link>
     </div>
   );
@@ -77,11 +84,12 @@ function CartContents() {
           name: field("name"),
           phone: field("phone"),
           notes: field("notes"),
+          location: field("location"),
           total: meta.total,
           items: state.lines.map((l) => ({
             productId: l.productId,
             sizeId: l.sizeId,
-            label: l.size.id === "unica" ? l.product.name : `${l.product.name} (${l.size.label})`,
+            label: lineLabel(l.product.name, l.size),
             quantity: l.quantity,
             unitPrice: l.size.price,
           })),
@@ -98,6 +106,7 @@ function CartContents() {
           </AnimatePresence>
         </ul>
 
+        {hasBranches ? <LocationPicker error={errors.location} /> : null}
         <PickupPicker error={errors.pickup} />
 
         <fieldset className="mt-6 min-w-0 space-y-3">
@@ -130,7 +139,7 @@ function CartContents() {
               rows={2}
               maxLength={300}
               defaultValue={formState?.values?.notes}
-              placeholder="Ej: escribir “Feliz cumple, Martu” en la torta…"
+              placeholder={shop.orders.notesPlaceholder ?? "Ej: retira mi hermana…"}
             />
           </Field>
         </fieldset>
@@ -147,16 +156,33 @@ function CartContents() {
           <span className="text-muted">Total</span>
           <span className="font-display text-2xl font-semibold tabular-nums">{formatPrice(meta.total)}</span>
         </div>
-        <button
-          type="submit"
-          disabled={pending}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-[#009ee3] px-5 py-3.5 font-semibold text-white transition-[background-color,transform] hover:bg-[#0089c7] active:scale-[0.98] disabled:opacity-70"
-        >
-          {pending ? "Conectando con Mercado Pago…" : "Pagar con Mercado Pago"}
-        </button>
-        <p className="mt-2 text-center text-xs text-muted">
-          Pago seguro en Mercado Pago. Tu pedido se confirma al acreditarse el pago.
-        </p>
+        {paysOnline ? (
+          <>
+            <button
+              type="submit"
+              disabled={pending}
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-[#009ee3] px-5 py-3.5 font-semibold text-white transition-[background-color,transform] hover:bg-[#0089c7] active:scale-[0.98] disabled:opacity-70"
+            >
+              {pending ? "Conectando con Mercado Pago…" : "Pagar con Mercado Pago"}
+            </button>
+            <p className="mt-2 text-center text-xs text-muted">
+              Pago seguro en Mercado Pago. Tu pedido se confirma al acreditarse el pago.
+            </p>
+          </>
+        ) : (
+          <>
+            <button
+              type="submit"
+              disabled={pending}
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-[#1a7f4b] px-5 py-3.5 font-semibold text-white transition-[background-color,transform] hover:bg-[#156b3f] active:scale-[0.98] disabled:opacity-70"
+            >
+              <WhatsappIcon /> {pending ? "Preparando tu pedido…" : "Pedir por WhatsApp"}
+            </button>
+            <p className="mt-2 text-center text-xs text-muted">
+              Te armamos el mensaje con todo el pedido. Pagás al retirar.
+            </p>
+          </>
+        )}
       </div>
     </form>
   );
@@ -181,14 +207,16 @@ function CartRow({ line }: { line: ResolvedLine }) {
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate font-semibold">{line.product.name}</p>
-          {sizeLabel ? <p className="text-sm text-muted">Molde de {sizeLabel}</p> : null}
+          {sizeLabel ? (
+            <p className="text-sm text-muted">{shop.orders.sizePrefix ? `${shop.orders.sizePrefix} ${sizeLabel}` : sizeLabel}</p>
+          ) : null}
           <div className="mt-2 flex items-center justify-between">
             <div className="flex items-center rounded-full ring-1 ring-line">
               <button
                 type="button"
                 onClick={() => actions.setQuantity(line.key, line.quantity - 1)}
                 className="grid size-8 place-items-center rounded-full hover:bg-blush"
-                aria-label={line.quantity === 1 ? `Quitar ${line.product.name}` : `Restar una ${line.product.name}`}
+                aria-label={line.quantity === 1 ? `Quitar ${line.product.name}` : `Restar ${one} ${line.product.name}`}
               >
                 <MinusIcon width={16} height={16} />
               </button>
@@ -200,7 +228,7 @@ function CartRow({ line }: { line: ResolvedLine }) {
                 onClick={() => actions.setQuantity(line.key, line.quantity + 1)}
                 disabled={line.quantity >= MAX_QUANTITY}
                 className="grid size-8 place-items-center rounded-full hover:bg-blush disabled:opacity-40"
-                aria-label={`Sumar una ${line.product.name}`}
+                aria-label={`Sumar ${one} ${line.product.name}`}
               >
                 <PlusIcon width={16} height={16} />
               </button>
@@ -212,6 +240,34 @@ function CartRow({ line }: { line: ResolvedLine }) {
     </m.li>
   );
 }
+
+/** Branch choice, only for shops with more than one pickup point. */
+function LocationPicker({ error }: { error?: string }) {
+  return (
+    <fieldset className="mt-6 min-w-0">
+      <legend className="mb-3 flex items-center gap-2 font-semibold">
+        <PinIcon /> ¿Dónde lo retirás?
+      </legend>
+      <div className="grid gap-2">
+        {locations.map((location, i) => (
+          <label
+            key={location.name}
+            className="flex cursor-pointer items-center gap-3 rounded-2xl bg-paper px-4 py-2.5 ring-1 ring-line transition-colors has-[:checked]:bg-blush has-[:checked]:ring-brand has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand"
+          >
+            <input type="radio" name="location" value={location.name} defaultChecked={i === 0} className="accent-brand" />
+            <span>
+              <span className="block font-semibold">{location.name}</span>
+              <span className="block text-sm text-muted">{location.address}</span>
+            </span>
+          </label>
+        ))}
+      </div>
+      {error ? <p className="mt-2 text-sm text-brand-ink">{error}</p> : null}
+    </fieldset>
+  );
+}
+
+const pickupHint = [leadTimeLabel && `Mínimo ${leadTimeLabel} de anticipación`, closedLabel].filter(Boolean).join(" · ");
 
 function PickupPicker({ error }: { error?: string }) {
   const now = useNow();
@@ -228,7 +284,7 @@ function PickupPicker({ error }: { error?: string }) {
       <legend className="mb-1 flex items-center gap-2 font-semibold">
         <CalendarIcon /> ¿Cuándo lo retirás?
       </legend>
-      <p className="mb-3 text-sm text-muted">Mínimo 48 hs hábiles de anticipación · Lunes cerrado.</p>
+      {pickupHint ? <p className="mb-3 text-sm text-muted">{pickupHint}.</p> : null}
 
       {day ? (
         <>

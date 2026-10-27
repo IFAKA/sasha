@@ -4,11 +4,11 @@ import { redirect } from "next/navigation";
 import { MercadoPagoConfig, Preference } from "mercadopago";
 import { findTakeawayProduct } from "@/lib/menu";
 import { isValidPickup } from "@/lib/pickup";
-import { business } from "@/lib/business";
+import { hasBranches, leadTimeLabel, lineLabel, locations, paysOnline, shop } from "@/lib/shop";
 
 export type CheckoutState = {
   error?: string;
-  fieldErrors?: Partial<Record<"name" | "phone" | "pickup" | "items", string>>;
+  fieldErrors?: Partial<Record<"name" | "phone" | "pickup" | "location" | "items", string>>;
   values?: { name: string; phone: string; notes: string };
 } | null;
 
@@ -53,13 +53,19 @@ export async function startCheckout(_prev: CheckoutState, formData: FormData): P
   const phone = text(formData.get("phone"), 20);
   const notes = text(formData.get("notes"), 300);
   const pickup = text(formData.get("pickup"), 40);
+  const location = text(formData.get("location"), 80);
   const items = parseItems(formData.get("items"));
   const values = { name, phone, notes };
 
   const fieldErrors: NonNullable<CheckoutState>["fieldErrors"] = {};
   if (name.length < 2) fieldErrors.name = "Contanos quién retira el pedido.";
   if (!PHONE.test(phone)) fieldErrors.phone = "Ingresá un teléfono válido, por ejemplo 11 2345-6789.";
-  if (!isValidPickup(pickup, Date.now())) fieldErrors.pickup = "Elegí un horario de retiro con al menos 48 hs hábiles de anticipación.";
+  if (!isValidPickup(pickup, Date.now())) {
+    fieldErrors.pickup = leadTimeLabel
+      ? `Elegí un horario de retiro con al menos ${leadTimeLabel} de anticipación.`
+      : "Elegí un horario de retiro disponible.";
+  }
+  if (hasBranches && !locations.some((l) => l.name === location)) fieldErrors.location = "Elegí en qué local lo retirás.";
   if (!items) fieldErrors.items = "Tu pedido está vacío.";
   if (Object.keys(fieldErrors).length) return { fieldErrors, values };
 
@@ -72,10 +78,15 @@ export async function startCheckout(_prev: CheckoutState, formData: FormData): P
     lines.push({ product, size, quantity: item.quantity });
   }
 
-  const reference = `SASHA-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+  const reference = `${shop.orders.referencePrefix}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const resultUrl = (status: string) =>
     `${siteUrl}/pedido?estado=${status}&ref=${reference}&retiro=${encodeURIComponent(pickup)}`;
+
+  if (!paysOnline) {
+    // WhatsApp orders: the result page builds the message for the customer to send.
+    redirect(`/pedido?estado=whatsapp&ref=${reference}&retiro=${encodeURIComponent(pickup)}`);
+  }
 
   const accessToken = process.env.MP_ACCESS_TOKEN;
   if (!accessToken) {
@@ -90,7 +101,7 @@ export async function startCheckout(_prev: CheckoutState, formData: FormData): P
       body: {
         items: lines.map(({ product, size, quantity }) => ({
           id: `${product.id}-${size.id}`,
-          title: size.id === "unica" ? product.name : `${product.name} (${size.label})`,
+          title: lineLabel(product.name, size),
           quantity,
           unit_price: size.price,
           currency_id: "ARS",
@@ -98,7 +109,7 @@ export async function startCheckout(_prev: CheckoutState, formData: FormData): P
         })),
         payer: { name },
         external_reference: reference,
-        statement_descriptor: "SASHA PASTELES",
+        statement_descriptor: shop.name.toUpperCase().slice(0, 22),
         back_urls: {
           success: resultUrl("aprobado"),
           pending: resultUrl("pendiente"),
@@ -108,7 +119,7 @@ export async function startCheckout(_prev: CheckoutState, formData: FormData): P
         auto_return: siteUrl.startsWith("https://") ? "approved" : undefined,
         expires: true,
         expiration_date_to: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-        metadata: { pickup, customer_name: name, customer_phone: phone, notes, store: business.name },
+        metadata: { pickup, location, customer_name: name, customer_phone: phone, notes, store: shop.name },
       },
     });
     checkoutUrl = preference.init_point;

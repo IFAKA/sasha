@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { SimulatedCheckout } from "@/components/simulated-checkout";
+import { REFERENCE } from "@/lib/shop";
 
 export const metadata: Metadata = { title: "Pago" };
 
-const REFERENCE = /^SASHA-[0-9A-F]{8}$/;
 
 export default function CheckoutPage({ searchParams }: PageProps<"/checkout">) {
   return (

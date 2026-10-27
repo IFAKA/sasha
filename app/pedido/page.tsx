@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { OrderResult, type OrderStatus } from "@/components/order-result";
+import { REFERENCE } from "@/lib/shop";
 
 export const metadata: Metadata = { title: "Tu pedido" };
 
@@ -9,9 +10,9 @@ const STATUS: Record<string, OrderStatus> = {
   demo: "demo",
   pendiente: "pending",
   rechazado: "rejected",
+  whatsapp: "whatsapp",
 };
 
-const REFERENCE = /^SASHA-[0-9A-F]{8}$/;
 
 export default function OrderPage({ searchParams }: PageProps<"/pedido">) {
   return (

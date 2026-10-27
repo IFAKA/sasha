@@ -1,13 +1,10 @@
-import { openingHours } from "@/lib/business";
+import { hoursOn, isClosedDay, shop } from "@/lib/shop";
 
 // Argentina has no daylight saving time, so a fixed UTC-3 offset is exact.
 const AR_OFFSET_MS = -3 * 60 * 60 * 1000;
 const HOUR_MS = 60 * 60 * 1000;
 
-export const LEAD_TIME_HOURS = 48;
-/** Pickup slots are whole hours from the first hour after opening to the last before closing. */
-export const FIRST_SLOT = openingHours.opensAt + 1;
-export const LAST_SLOT = openingHours.closesAt - 1;
+const LEAD_TIME_HOURS = shop.orders.leadTimeHours;
 const BOOKING_WINDOW_DAYS = 21;
 
 export type ArParts = { year: number; month: number; date: number; hour: number; weekday: number };
@@ -27,11 +24,20 @@ export function fromAr(year: number, month: number, date: number, hour: number) 
   return Date.UTC(year, month, date, hour) - AR_OFFSET_MS;
 }
 
-export const isClosedDay = (weekday: number) =>
-  (openingHours.closedDays as readonly number[]).includes(weekday);
+export { isClosedDay };
 
 /**
- * Earliest pickup time for an order placed at `now`: 48 business hours later,
+ * Pickup slots on a weekday: whole hours from the first hour after opening to the
+ * last one before closing, or null when the shop is closed that day.
+ */
+export function slotRange(weekday: number): { first: number; last: number } | null {
+  const hours = hoursOn(weekday);
+  if (!hours || hours[1] - hours[0] < 2) return null;
+  return { first: hours[0] + 1, last: hours[1] - 1 };
+}
+
+/**
+ * Earliest pickup time for an order placed at `now`: the lead time in business hours later,
  * where hours on closed days don't count, rounded up to the next open slot.
  */
 export function earliestPickup(now: number): number {
@@ -44,13 +50,15 @@ export function earliestPickup(now: number): number {
   // Round up to the next whole hour.
   cursor = Math.ceil(cursor / HOUR_MS) * HOUR_MS;
 
-  for (;;) {
+  for (let day = 0; day < 8; day++) {
     const p = toAr(cursor);
-    if (!isClosedDay(p.weekday) && p.hour >= FIRST_SLOT && p.hour <= LAST_SLOT) return cursor;
-    if (!isClosedDay(p.weekday) && p.hour < FIRST_SLOT) return fromAr(p.year, p.month, p.date, FIRST_SLOT);
-    // After the last slot or on a closed day: first slot of the next day.
-    cursor = fromAr(p.year, p.month, p.date + 1, FIRST_SLOT);
+    const range = slotRange(p.weekday);
+    if (range && p.hour >= range.first && p.hour <= range.last) return cursor;
+    if (range && p.hour < range.first) return fromAr(p.year, p.month, p.date, range.first);
+    // After the last slot or on a closed day: start of the next day.
+    cursor = fromAr(p.year, p.month, p.date + 1, 0);
   }
+  throw new Error("The shop has no pickup slots on any day of the week.");
 }
 
 export type PickupDay = { key: string; label: string; slots: { value: string; label: string }[] };
@@ -85,10 +93,11 @@ export function pickupDays(now: number): PickupDay[] {
   for (let offset = 0; offset < BOOKING_WINDOW_DAYS; offset++) {
     const dayStart = fromAr(start.year, start.month, start.date + offset, 0);
     const p = toAr(dayStart);
-    if (isClosedDay(p.weekday)) continue;
+    const range = slotRange(p.weekday);
+    if (!range) continue;
 
     const slots = [];
-    for (let hour = FIRST_SLOT; hour <= LAST_SLOT; hour++) {
+    for (let hour = range.first; hour <= range.last; hour++) {
       const t = fromAr(p.year, p.month, p.date, hour);
       if (t >= first) slots.push({ value: new Date(t).toISOString(), label: `${hour}:00` });
     }

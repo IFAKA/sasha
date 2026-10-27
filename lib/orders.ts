@@ -2,7 +2,9 @@
 
 import { useSyncExternalStore } from "react";
 import { takeawayMenu } from "@/lib/menu";
-import { FIRST_SLOT, LAST_SLOT, fromAr, isClosedDay, toAr } from "@/lib/pickup";
+import { fromAr, slotRange, toAr } from "@/lib/pickup";
+import { hasBranches, lineLabel, locations, shop } from "@/lib/shop";
+import { slug } from "@/shops/current";
 
 export type OrderItem = { productId: number; sizeId: string; label: string; quantity: number; unitPrice: number };
 
@@ -13,6 +15,8 @@ export type Order = {
   name: string;
   phone: string;
   notes: string;
+  /** Branch name, for shops with several pickup points. */
+  location?: string;
   items: OrderItem[];
   total: number;
   payment: "pagado" | "pendiente";
@@ -23,7 +27,7 @@ export type Order = {
 
 // Demo only: orders live in this browser's localStorage. A real deployment would
 // keep them in a database behind an authenticated admin.
-const KEY = "sasha-orders:v2";
+const KEY = `${slug}-orders:v2`;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 let cached: Order[] | null = null;
@@ -102,8 +106,6 @@ function random(seed: number) {
 const FIRST_NAMES = ["Lucía", "Martina", "Sofía", "Valentina", "Camila", "Julieta", "Paula", "Florencia", "Mateo", "Santiago", "Tomás", "Joaquín", "Facundo", "Nicolás", "Agustina", "Carolina", "Gonzalo", "Mariana"];
 const LAST_NAMES = ["González", "Rodríguez", "Fernández", "López", "Martínez", "Pérez", "Gómez", "Díaz", "Sánchez", "Romero", "Álvarez", "Torres", "Ruiz", "Benítez", "Acosta", "Medina"];
 const NOTES = ["", "", "", "", "Escribir “Feliz cumple, Sofi”", "Con velitas, por favor", "Retira su hermano", "Sin frutos secos si se puede", "Escribir “Felicidades”"];
-// The house favourites sell more often.
-const POPULAR = ["Torta Banana Split", "Torta Rogel", "Torta Red Velvet", "Torta Franui", "Torta Bombón", "Torta Lemon Pie"];
 
 function sampleOrders(now: number): Order[] {
   const today = toAr(now);
@@ -111,23 +113,27 @@ function sampleOrders(now: number): Order[] {
   const pick = <T,>(list: readonly T[]) => list[Math.floor(rand() * list.length)];
 
   const cakes = takeawayMenu.flatMap((c) => c.products);
-  const popular = cakes.filter((c) => POPULAR.includes(c.name));
+  // The house favourites sell more often.
+  const favourites = cakes.filter((c) => shop.home.featured?.includes(c.name));
+  const popular = favourites.length ? favourites : cakes.slice(0, 6);
   const orders: Order[] = [];
 
-  // Pickup days from 60 days ago (so 30-day comparisons have a full previous period) to 6 days ahead, Tuesday to Sunday only.
+  // Pickup days from 60 days ago (so 30-day comparisons have a full previous period) to 6 days ahead, open days only.
   for (let offset = -60; offset <= 6; offset++) {
     const dayStart = fromAr(today.year, today.month, today.date + offset, 0);
     const day = toAr(dayStart);
-    if (isClosedDay(day.weekday)) continue;
+    const range = slotRange(day.weekday);
+    if (!range) continue;
 
     const weekend = day.weekday === 0 || day.weekday === 6;
     const future = offset > 0;
     // Fewer orders exist yet for days further ahead.
-    const base = weekend ? 4 : 2;
+    // A gentle upward trend: the last 30 days sell a little more than the 30 before.
+    const base = (weekend ? 4 : 2) + (offset > -30 ? 0.6 : 0);
     const count = Math.max(0, Math.round(base + rand() * 2 - (future ? offset * 0.5 : 0)));
 
     for (let i = 0; i < count; i++) {
-      const hour = FIRST_SLOT + Math.floor(rand() * (LAST_SLOT - FIRST_SLOT + 1));
+      const hour = range.first + Math.floor(rand() * (range.last - range.first + 1));
       const pickup = fromAr(day.year, day.month, day.date, hour);
       // Ordered 2 to 6 days before pickup, never in the future.
       const createdAt = Math.min(now - 60 * 60 * 1000, pickup - (2 + rand() * 4) * DAY_MS);
@@ -141,7 +147,7 @@ function sampleOrders(now: number): Order[] {
         items.push({
           productId: cake.id,
           sizeId: size.id,
-          label: size.id === "unica" ? cake.name : `${cake.name} (${size.label})`,
+          label: lineLabel(cake.name, size),
           quantity: rand() < 0.15 ? 2 : 1,
           unitPrice: size.price,
         });
@@ -149,15 +155,17 @@ function sampleOrders(now: number): Order[] {
 
       const isPast = pickup < now;
       orders.push({
-        ref: `SASHA-${Math.floor(rand() * 0xffffffff).toString(16).toUpperCase().padStart(8, "0")}`,
+        ref: `${shop.orders.referencePrefix}-${Math.floor(rand() * 0xffffffff).toString(16).toUpperCase().padStart(8, "0")}`,
         createdAt,
         pickup,
         name: `${pick(FIRST_NAMES)} ${pick(LAST_NAMES)}`,
         phone: `11 ${String(2000 + Math.floor(rand() * 7999))}-${String(1000 + Math.floor(rand() * 8999))}`,
         notes: pick(NOTES),
+        location: hasBranches ? pick(locations).name : undefined,
         items,
         total: items.reduce((sum, it) => sum + it.unitPrice * it.quantity, 0),
-        payment: !isPast && rand() < 0.12 ? "pendiente" : "pagado",
+        // WhatsApp orders are paid on pickup, so only past ones count as paid.
+        payment: shop.orders.payment === "whatsapp" ? (isPast ? "pagado" : "pendiente") : !isPast && rand() < 0.12 ? "pendiente" : "pagado",
         status: isPast ? "completado" : "pendiente",
         sample: true,
       });

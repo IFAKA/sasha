@@ -1,9 +1,21 @@
-// Pulls Sasha Pasteles' public menu and writes a cleaned copy to data/menu.json.
-// Run with: npm run import-menu
-import { writeFile, mkdir } from "node:fs/promises";
+// Pulls a shop's public menu from Parra Marketplace (menu.parramarketplace.com/<parra-slug>)
+// and writes a cleaned copy to shops/<shop>/menu.json.
+//   npm run import-parra -- sashapasteles sasha
+import { existsSync } from "node:fs";
+import { writeFile } from "node:fs/promises";
+
+const [CLIENT, SHOP] = process.argv.slice(2);
+if (!/^[a-z0-9-]+$/i.test(CLIENT ?? "") || !/^[a-z0-9][a-z0-9-]*$/.test(SHOP ?? "")) {
+  console.error("Uso: npm run import-parra -- <slug-en-parra> <tienda>");
+  process.exit(1);
+}
+const target = new URL(`../shops/${SHOP}/menu.json`, import.meta.url);
+if (!existsSync(new URL(".", target))) {
+  console.error(`No existe shops/${SHOP}. Creala primero con: npm run new-shop ${SHOP}`);
+  process.exit(1);
+}
 
 const API = "https://menuapi.parramarketplace.com/api";
-const CLIENT = "sashapasteles";
 const IMAGES = "https://storage.googleapis.com/prod-parra-argentina-assets/clients";
 
 const ENGLISH =
@@ -94,8 +106,8 @@ const data = {
     .map((r) => ({ author: r.author_name, rating: r.rating, text: r.text, when: r.relative_time_description })),
 };
 
-await mkdir(new URL("../data/", import.meta.url), { recursive: true });
-await writeFile(new URL("../data/menu.json", import.meta.url), JSON.stringify(data, null, 2) + "\n");
+await writeFile(target, JSON.stringify(data, null, 2) + "\n");
+console.log(`Fotos en ${IMAGES}/${home.client.id}: agregá ese host a remoteImages en shops/${SHOP}/shop.ts.`);
 console.log(
   `salón: ${data.salon.reduce((n, c) => n + c.products.length, 0)} items, ` +
     `take away: ${data.takeaway.reduce((n, c) => n + c.products.length, 0)} items`,

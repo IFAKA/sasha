@@ -2,6 +2,7 @@
 
 import { createContext, use, useCallback, useMemo, useState, useSyncExternalStore } from "react";
 import { findTakeawayProduct, type Product, type Size } from "@/lib/menu";
+import { slug } from "@/shops/current";
 
 export type CartLine = { productId: number; sizeId: string; quantity: number };
 export type ResolvedLine = CartLine & { key: string; product: Product; size: Size; subtotal: number };
@@ -21,7 +22,7 @@ type CartContextValue = {
 const CartContext = createContext<CartContextValue | null>(null);
 
 export const MAX_QUANTITY = 10;
-const STORAGE_KEY = "sasha-cart:v1";
+const STORAGE_KEY = `${slug}-cart:v1`;
 const EMPTY: CartLine[] = [];
 
 const lineKey = (l: Pick<CartLine, "productId" | "sizeId">) => `${l.productId}:${l.sizeId}`;

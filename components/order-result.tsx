@@ -1,22 +1,28 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
 import { m } from "motion/react";
 import { useCart } from "@/components/cart/cart-provider";
 import { AlertIcon, CheckIcon, ClockIcon, PinIcon, WhatsappIcon } from "@/components/icons";
-import { business, whatsappLink } from "@/lib/business";
+import { ShopBrand } from "@/components/shop-logo";
+import { greeting, locationLabel, locations, noun, shop, whatsappLink } from "@/lib/shop";
 import { useLastOrder } from "@/lib/last-order";
 import { orderActions } from "@/lib/orders";
 import { formatPrice } from "@/lib/menu";
 import { formatPickup } from "@/lib/pickup";
 
-export type OrderStatus = "approved" | "demo" | "pending" | "rejected";
+export type OrderStatus = "approved" | "demo" | "pending" | "rejected" | "whatsapp";
+
+const scheduled = `Recibimos tu pago. Ya estamos agendando tu ${noun.one}.`;
 
 const COPY = {
-  approved: { title: "¡Pedido confirmado!", text: "Recibimos tu pago. Ya estamos agendando tu torta." },
-  demo: { title: "¡Pedido confirmado!", text: "Recibimos tu pago. Ya estamos agendando tu torta." },
+  approved: { title: "¡Pedido confirmado!", text: scheduled },
+  demo: { title: "¡Pedido confirmado!", text: scheduled },
+  whatsapp: {
+    title: "¡Ya casi está!",
+    text: `Enviá el pedido por WhatsApp para que ${shop.shortName} lo confirme. Pagás al retirar.`,
+  },
   pending: {
     title: "Pago en proceso",
     text: "Te avisamos por mail apenas se acredite. Guardamos tu horario de retiro.",
@@ -47,14 +53,16 @@ export function OrderResult({
   const { actions } = useCart();
   const order = useLastOrder();
   const confirmed = status === "approved" || status === "demo";
+  const viaWhatsapp = status === "whatsapp";
   const showSummary = status !== "rejected";
   const copy = COPY[status];
 
   // The drawer may still be open after the in-app redirect; once paid, the cart has done its job.
   useEffect(() => {
     actions.close();
-    if (confirmed) actions.clear();
-  }, [confirmed, actions]);
+    // A WhatsApp order is complete too: everything the message needs was saved with the order.
+    if (confirmed || viaWhatsapp) actions.clear();
+  }, [confirmed, viaWhatsapp, actions]);
 
   // Hand the order to the shop's admin list (demo: same browser). add() ignores repeats.
   useEffect(() => {
@@ -66,6 +74,7 @@ export function OrderResult({
       name: order.name,
       phone: order.phone ?? "",
       notes: order.notes ?? "",
+      location: order.location || undefined,
       items: order.items,
       total: order.total,
       payment: confirmed ? "pagado" : "pendiente",
@@ -75,21 +84,36 @@ export function OrderResult({
   }, [showSummary, order, reference, pickup, confirmed]);
 
   const items = order?.items ?? [];
+  // The branch chosen in the cart; a single-place shop always has just the one.
+  const place = locations.find((l) => l.name === order?.location) ?? locations[0];
   const extraItems = items.length - MAX_LISTED_ITEMS;
-  const message = [
-    `¡Hola Sasha! Hice un pedido online${reference ? ` (${reference})` : ""}.`,
-    ...items.map((i) => `• ${i.quantity} × ${i.label}`),
-    pickup ? `Retiro: ${formatPickup(pickup)}` : "",
-    order?.name ? `Retira: ${order.name}` : "",
-  ]
+  // WhatsApp orders send the whole order; paid ones only a note with the receipt.
+  const message = (
+    viaWhatsapp
+      ? [
+          `${greeting} Quiero hacer este pedido${reference ? ` (${reference})` : ""}:`,
+          ...items.map((i) => `• ${i.quantity} × ${i.label}: ${formatPrice(i.unitPrice * i.quantity)}`),
+          order ? `Total: ${formatPrice(order.total)}` : "",
+          pickup ? `Retiro: ${formatPickup(pickup)}` : "",
+          place.name ? `Retiro en: ${locationLabel(place)}` : "",
+          order?.name ? `A nombre de: ${order.name}${order.phone ? ` (${order.phone})` : ""}` : "",
+          order?.notes ? `Comentarios: ${order.notes}` : "",
+        ]
+      : [
+          `${greeting} Hice un pedido online${reference ? ` (${reference})` : ""}.`,
+          ...items.map((i) => `• ${i.quantity} × ${i.label}`),
+          pickup ? `Retiro: ${formatPickup(pickup)}` : "",
+          place.name ? `Retiro en: ${locationLabel(place)}` : "",
+          order?.name ? `Retira: ${order.name}` : "",
+        ]
+  )
     .filter(Boolean)
     .join("\n");
 
   return (
     <main className="flex min-h-dvh flex-col bg-cream px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-      <Link href="/" className="mx-auto flex items-center gap-2" aria-label={`${business.name}, inicio`}>
-        <Image src={business.logo} alt="" width={32} height={32} className="size-8 rounded-full" />
-        <span className="font-display font-semibold">{business.name}</span>
+      <Link href="/" className="mx-auto flex items-center gap-2" aria-label={`${shop.name}, inicio`}>
+        <ShopBrand size={32} name={<span className="font-display font-semibold">{shop.name}</span>} />
       </Link>
 
       <m.section
@@ -103,10 +127,16 @@ export function OrderResult({
           variants={{ initial: { scale: 0.4, opacity: 0 }, animate: { scale: 1, opacity: 1 } }}
           transition={{ type: "spring", duration: 0.6, bounce: 0.45 }}
           className={`mx-auto grid size-20 place-items-center rounded-full [@media(max-height:700px)]:size-16 ${
-            confirmed ? "bg-emerald-100 text-emerald-700" : "bg-warn-bg text-warn-ink"
+            confirmed || viaWhatsapp ? "bg-emerald-100 text-emerald-700" : "bg-warn-bg text-warn-ink"
           }`}
         >
-          {confirmed ? <CheckIcon width={40} height={40} /> : <AlertIcon width={36} height={36} />}
+          {confirmed ? (
+            <CheckIcon width={40} height={40} />
+          ) : viaWhatsapp ? (
+            <WhatsappIcon width={36} height={36} />
+          ) : (
+            <AlertIcon width={36} height={36} />
+          )}
         </m.span>
 
         <m.div variants={rise}>
@@ -157,7 +187,7 @@ export function OrderResult({
             <div className="flex items-start gap-2">
               <dt className="sr-only">Lugar de retiro</dt>
               <PinIcon width={18} height={18} className="mt-px shrink-0 text-brand" />
-              <dd>{business.address}</dd>
+              <dd>{place.name ? locationLabel(place) : shop.address}</dd>
             </div>
           </m.dl>
         ) : null}
@@ -169,7 +199,16 @@ export function OrderResult({
         transition={{ type: "spring", duration: 0.6, bounce: 0, delay: 0.35 }}
         className="mx-auto flex w-full max-w-md flex-col gap-2"
       >
-        {confirmed ? (
+        {viaWhatsapp ? (
+          <a
+            href={whatsappLink(message)}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1a7f4b] px-5 py-3.5 font-semibold text-white hover:bg-[#156b3f]"
+          >
+            <WhatsappIcon /> Enviar pedido por WhatsApp
+          </a>
+        ) : confirmed ? (
           <a
             href={whatsappLink(message)}
             target="_blank"

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AnimatePresence, m } from "motion/react";
-import { business } from "@/lib/business";
+import { shop } from "@/lib/shop";
 import { useLastOrder } from "@/lib/last-order";
 import { formatPrice } from "@/lib/menu";
 import { formatPickup } from "@/lib/pickup";
@@ -68,7 +68,7 @@ export function SimulatedCheckout({
 
       <div className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-3 px-4 py-4">
         <section className="rounded-lg bg-white p-4 shadow-sm">
-          <p className="text-sm text-[#666]">Pagás a {business.name}</p>
+          <p className="text-sm text-[#666]">Pagás a {shop.name}</p>
           <p className="mt-1 text-3xl font-light tabular-nums">{formatPrice(amount)}</p>
           {order?.items.length ? (
             <p className="mt-1 truncate text-sm text-[#666]">

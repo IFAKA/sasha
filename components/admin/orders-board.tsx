@@ -3,11 +3,12 @@
 import { useDeferredValue, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { AnimatePresence, m } from "motion/react";
-import { AlertIcon, CheckIcon, WhatsappIcon } from "@/components/icons";
+import { AlertIcon, CheckIcon, PinIcon, WhatsappIcon } from "@/components/icons";
 import { capitalize, dayLabel, formatTime, startOfArDay } from "@/lib/admin-dates";
 import { formatPrice } from "@/lib/menu";
 import { orderActions, useOrders, type Order } from "@/lib/orders";
 import { useNow } from "@/lib/use-now";
+import { REFERENCE, noun, paysOnline, shop } from "@/lib/shop";
 
 const FILTERS = [
   { id: "pendiente", label: "Por entregar" },
@@ -17,7 +18,6 @@ const FILTERS = [
 type Filter = (typeof FILTERS)[number]["id"];
 
 const MAX_DELIVERED = 40;
-const REFERENCE = /^SASHA-[0-9A-F]{8}$/;
 
 /** Reads ?nuevo=REF (the order just placed in the store) and pins it at the top. */
 export function OrdersBoardFromUrl() {
@@ -41,6 +41,7 @@ export function OrdersBoard({ highlight }: { highlight: string | null }) {
       !search ||
       o.name.toLowerCase().includes(search) ||
       o.ref.toLowerCase().includes(search) ||
+      o.location?.toLowerCase().includes(search) ||
       o.items.some((i) => i.label.toLowerCase().includes(search));
 
     const list = orders
@@ -71,12 +72,13 @@ export function OrdersBoard({ highlight }: { highlight: string | null }) {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl font-semibold tracking-tight">Pedidos</h1>
-          <p className="text-sm text-muted">Tortas por encargo para retirar en el local.</p>
+          <p className="text-sm text-muted">{shop.orders.title} para retirar en el local.</p>
         </div>
         <dl className="flex gap-2 text-sm">
           <Stat label="Para hoy" value={view?.stats.today} />
           <Stat label="Por entregar" value={view?.stats.pending} />
-          <Stat label="Pago pendiente" value={view?.stats.unpaid} warn />
+          {/* Online payments that haven't cleared need attention; paying on pickup is the norm. */}
+          <Stat label={paysOnline ? "Pago pendiente" : "A cobrar"} value={view?.stats.unpaid} warn={paysOnline} />
         </dl>
       </div>
 
@@ -118,7 +120,7 @@ export function OrdersBoard({ highlight }: { highlight: string | null }) {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar por nombre, torta o número…"
+            placeholder={`Buscar por nombre, ${noun.one} o número…`}
             className="w-full rounded-full bg-paper px-4 py-2 text-base ring-1 ring-line outline-none focus:ring-2 focus:ring-brand sm:text-sm"
           />
         </label>
@@ -178,7 +180,7 @@ function OrderCard({ order, now }: { order: Order; now: number }) {
   const isNew = !order.sample || now - order.createdAt < 24 * 60 * 60 * 1000;
   const firstName = order.name.split(" ")[0];
   const whatsapp = `https://wa.me/549${order.phone.replace(/\D/g, "").replace(/^0/, "")}?text=${encodeURIComponent(
-    `¡Hola ${firstName}! Te escribimos de Sasha Pasteles por tu pedido ${order.ref}.`,
+    `¡Hola ${firstName}! Te escribimos de ${shop.name} por tu pedido ${order.ref}.`,
   )}`;
 
   return (
@@ -207,6 +209,11 @@ function OrderCard({ order, now }: { order: Order; now: number }) {
               </li>
             ))}
           </ul>
+          {order.location ? (
+            <p className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-brand-ink">
+              <PinIcon width={14} height={14} /> Retira en {order.location}
+            </p>
+          ) : null}
           {order.notes ? <p className="mt-1 text-sm text-muted italic">“{order.notes}”</p> : null}
         </div>
 
@@ -216,10 +223,12 @@ function OrderCard({ order, now }: { order: Order; now: number }) {
             <p className="mt-1 inline-flex items-center gap-1 text-xs text-emerald-700">
               <CheckIcon width={14} height={14} /> Pagado
             </p>
-          ) : (
+          ) : paysOnline ? (
             <p className="mt-1 inline-flex items-center gap-1 text-xs text-warn-ink">
               <AlertIcon width={14} height={14} /> Pago pendiente
             </p>
+          ) : (
+            <p className="mt-1 text-xs text-muted">Paga al retirar</p>
           )}
         </div>
       </div>

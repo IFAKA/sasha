@@ -4,15 +4,44 @@ import { Reveal } from "@/components/reveal";
 import { HeroIntro } from "@/components/home/hero-intro";
 import { WeekSchedule } from "@/components/week-schedule";
 import { ArrowIcon, BagIcon, ClockIcon, CupIcon, PinIcon, StarIcon, WhatsappIcon } from "@/components/icons";
-import { business, whatsappLink } from "@/lib/business";
+import {
+  closedLabel,
+  greeting,
+  hasBranches,
+  leadTimeLabel,
+  locationLabel,
+  locations,
+  noun,
+  paysOnline,
+  salonLabels,
+  scheduleSummary,
+  shop,
+  shortName,
+  whatsappLink,
+} from "@/lib/shop";
 import { formatPrice, rating, reviews, salonMenu, takeawayMenu } from "@/lib/menu";
 
 const cakes = takeawayMenu.flatMap((c) => c.products).filter((p) => p.image);
-const featuredCakes = ["Torta Banana Split", "Torta Rogel", "Torta Red Velvet", "Torta Franui"]
-  .map((name) => cakes.find((p) => p.name === name))
-  .filter((p) => p !== undefined);
+const FEATURED_COUNT = 4;
+// The shop's favourites first, topped up with other products that have a photo.
+const featuredCakes = [
+  ...(shop.home.featured ?? []).map((name) => cakes.find((p) => p.name === name)).filter((p) => p !== undefined),
+  ...cakes,
+]
+  .filter((p, i, list) => list.indexOf(p) === i)
+  .slice(0, FEATURED_COUNT);
 const salonPhoto = salonMenu.flatMap((c) => c.products).find((p) => p.image)?.image;
 const takeawayPhoto = featuredCakes[0]?.image;
+
+const orderCta = shop.orders.cta ?? `Encargar ${noun.g("una", "un")} ${noun.one}`;
+const takeawayText = [
+  `${capitalizeFirst(noun.other)} por encargo${leadTimeLabel ? `, con ${leadTimeLabel} de anticipación` : ""}.`,
+  paysOnline ? "Pagás online y retirás en el local." : "Nos llega por WhatsApp y retirás en el local.",
+].join(" ");
+
+function capitalizeFirst(text: string) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
 
 export default function HomePage() {
   return (
@@ -22,25 +51,27 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 pt-6 pb-16 sm:px-6 md:min-h-[calc(100dvh-4rem-1px)] md:grid-cols-[1.05fr_1fr] md:py-8">
           <HeroIntro>
             <h1 className="font-display text-5xl leading-[1.02] font-semibold tracking-tight text-balance sm:text-6xl lg:text-7xl">
-              Tortas por las que vale la pena hacer <em className="font-normal text-brand italic">fila</em>.
+              {shop.home.title[0]}
+              <em className="font-normal text-brand italic">{shop.home.title[1]}</em>
+              {shop.home.title[2]}
             </h1>
-            <p className="mt-5 max-w-md text-lg text-muted text-pretty">
-              Desayunos, almuerzos y meriendas en el salón, y tortas por encargo para llevar a casa.
-            </p>
+            <p className="mt-5 max-w-md text-lg text-muted text-pretty">{shop.home.intro}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href="/take-away"
                 className="group inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3.5 font-semibold text-white shadow-lg shadow-brand/25 transition-[background-color,transform] hover:bg-brand-ink active:scale-[0.97]"
               >
-                Encargar una torta
+                {orderCta}
                 <ArrowIcon className="transition-transform group-hover:translate-x-0.5" />
               </Link>
-              <Link
-                href="/salon"
-                className="inline-flex items-center gap-2 rounded-full bg-paper px-6 py-3.5 font-semibold ring-1 ring-line transition-[background-color,transform] hover:bg-blush active:scale-[0.97]"
-              >
-                Ver menú del salón
-              </Link>
+              {shop.salon ? (
+                <Link
+                  href="/salon"
+                  className="inline-flex items-center gap-2 rounded-full bg-paper px-6 py-3.5 font-semibold ring-1 ring-line transition-[background-color,transform] hover:bg-blush active:scale-[0.97]"
+                >
+                  {salonLabels.cta}
+                </Link>
+              ) : null}
             </div>
             <dl className="mt-8 grid gap-3 text-sm sm:flex sm:flex-wrap sm:gap-x-8">
               {rating ? (
@@ -48,7 +79,12 @@ export default function HomePage() {
                   <dt className="sr-only">Reseñas</dt>
                   <StarIcon className="text-amber-500" />
                   <dd>
-                    <a href="#opiniones" className="hover:underline">
+                    <a
+                      href={reviews.length ? "#opiniones" : shop.mapsUrl}
+                      target={reviews.length ? undefined : "_blank"}
+                      rel={reviews.length ? undefined : "noreferrer"}
+                      className="hover:underline"
+                    >
                       <strong className="font-semibold tabular-nums">{rating.toLocaleString("es-AR")}</strong> en Google ·{" "}
                       {reviews.length ? "ver reseñas" : "reseñas"}
                     </a>
@@ -58,17 +94,19 @@ export default function HomePage() {
               <div className="flex items-center gap-2">
                 <dt className="sr-only">Días y horario</dt>
                 <ClockIcon className="text-brand" />
-                <dd>Martes a domingo, 9 a 20 hs · Lunes cerrado</dd>
+                <dd>{closedLabel ? `${scheduleSummary} · ${closedLabel}` : scheduleSummary}</dd>
               </div>
-              <div className="flex items-center gap-2">
-                <dt className="sr-only">Dirección</dt>
-                <PinIcon className="text-brand" />
-                <dd>
-                  <a href={business.mapsUrl} target="_blank" rel="noreferrer" className="hover:underline">
-                    {business.address}, Recoleta
-                  </a>
-                </dd>
-              </div>
+              {locations.map((location) => (
+                <div key={location.mapsUrl} className="flex items-center gap-2">
+                  <dt className="sr-only">{hasBranches ? `Local ${location.name}` : "Dirección"}</dt>
+                  <PinIcon className="shrink-0 text-brand" />
+                  <dd>
+                    <a href={location.mapsUrl} target="_blank" rel="noreferrer" className="hover:underline">
+                      {locationLabel(location)}
+                    </a>
+                  </dd>
+                </div>
+              ))}
             </dl>
           </HeroIntro>
 
@@ -77,8 +115,8 @@ export default function HomePage() {
               with the 1px mobile size they only get the smallest variant. */}
           <div className="relative hidden h-[min(calc(100dvh-8rem-1px),46rem)] overflow-hidden rounded-[2.5rem] rounded-tr-[8rem] bg-blush shadow-2xl shadow-ink/15 md:block">
             <Image
-              src={business.cover}
-              alt="Brownies de Sasha Pasteles apilados junto a una tetera"
+              src={shop.cover}
+              alt={shop.coverAlt}
               fill
               loading="eager"
               fetchPriority="high"
@@ -89,37 +127,40 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section aria-labelledby="como" className="mx-auto max-w-6xl px-4 sm:px-6">
-        <Reveal>
-          <h2 id="como" className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">
-            ¿Cómo querés disfrutar Sasha?
-          </h2>
-        </Reveal>
-        <div className="mt-8 grid gap-5 md:grid-cols-2">
+      {/* Only shops with a salón need the choice; otherwise ordering is the whole point. */}
+      {shop.salon ? (
+        <section aria-labelledby="como" className="mx-auto mb-24 max-w-6xl px-4 sm:px-6">
           <Reveal>
-            <ChoiceCard
-              href="/salon"
-              image={salonPhoto}
-              icon={<CupIcon />}
-              title="En el salón"
-              text={`Desayunos, almuerzos, café y mesa dulce. Tiempo de permanencia: ${business.salonStayLimit}.`}
-              cta="Ver menú del salón"
-            />
+            <h2 id="como" className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+              ¿Cómo querés disfrutar {shop.shortName}?
+            </h2>
           </Reveal>
-          <Reveal delay={0.08}>
-            <ChoiceCard
-              href="/take-away"
-              image={takeawayPhoto}
-              icon={<BagIcon />}
-              title="Take away"
-              text="Tortas enteras por encargo, con 48 hs hábiles de anticipación. Pagás online y retirás en el local."
-              cta="Encargar una torta"
-            />
-          </Reveal>
-        </div>
-      </section>
+          <div className="mt-8 grid gap-5 md:grid-cols-2">
+            <Reveal>
+              <ChoiceCard
+                href="/salon"
+                image={salonPhoto}
+                icon={<CupIcon />}
+                title={salonLabels.card}
+                text={`${shop.salon.summary}.${shop.salon.stayLimit ? ` Tiempo de permanencia: ${shop.salon.stayLimit}.` : ""}`}
+                cta={salonLabels.cta}
+              />
+            </Reveal>
+            <Reveal delay={0.08}>
+              <ChoiceCard
+                href="/take-away"
+                image={takeawayPhoto}
+                icon={<BagIcon />}
+                title="Take away"
+                text={takeawayText}
+                cta={orderCta}
+              />
+            </Reveal>
+          </div>
+        </section>
+      ) : null}
 
-      <section aria-labelledby="favoritas" className="mx-auto mt-24 max-w-6xl px-4 sm:px-6">
+      <section aria-labelledby="favoritas" className="mx-auto max-w-6xl px-4 sm:px-6">
         <Reveal className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-sm font-semibold tracking-wide text-brand uppercase">Por encargo</p>
@@ -128,7 +169,7 @@ export default function HomePage() {
             </h2>
           </div>
           <Link href="/take-away" className="inline-flex items-center gap-1.5 font-semibold text-brand-ink hover:underline">
-            Ver las {cakes.length} tortas <ArrowIcon />
+            Ver {noun.g("las", "los")} {noun.count(cakes.length)} <ArrowIcon />
           </Link>
         </Reveal>
         <ul className="no-scrollbar -mx-4 mt-8 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-2 after:w-px after:shrink-0 sm:mx-0 sm:after:hidden sm:scroll-px-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-4">
@@ -145,7 +186,7 @@ export default function HomePage() {
                       className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                     />
                   </div>
-                  <p className="mt-3 font-semibold">{cake.name.replace(/^Torta /, "")}</p>
+                  <p className="mt-3 font-semibold">{shortName(cake.name)}</p>
                   <p className="text-sm text-muted tabular-nums">Desde {formatPrice(cake.price)}</p>
                 </Link>
               </Reveal>
@@ -190,19 +231,23 @@ export default function HomePage() {
               Visitanos
             </h2>
             <p className="mt-3 text-muted">
-              {business.address}, Recoleta. Tiempo de permanencia en el salón: {business.salonStayLimit}.
+              {locations.map(locationLabel).join(" · ")}.
+              {shop.salon?.stayLimit ? ` Tiempo de permanencia en el salón: ${shop.salon.stayLimit}.` : null}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
+              {locations.map((location) => (
+                <a
+                  key={location.mapsUrl}
+                  href={location.mapsUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 font-semibold text-cream hover:bg-brand-ink"
+                >
+                  <PinIcon /> {hasBranches ? location.name : "Cómo llegar"}
+                </a>
+              ))}
               <a
-                href={business.mapsUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 font-semibold text-cream hover:bg-brand-ink"
-              >
-                <PinIcon /> Cómo llegar
-              </a>
-              <a
-                href={whatsappLink("¡Hola Sasha! Tengo una consulta.")}
+                href={whatsappLink(`${greeting} Tengo una consulta.`)}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 rounded-full bg-paper px-5 py-3 font-semibold ring-1 ring-line hover:bg-cream"

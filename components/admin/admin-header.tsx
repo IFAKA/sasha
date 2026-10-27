@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { m } from "motion/react";
-import { business } from "@/lib/business";
+import { ShopBrand } from "@/components/shop-logo";
+import { shop } from "@/lib/shop";
 
 const tabs = [
   { href: "/admin", label: "Pedidos" },
@@ -19,8 +19,8 @@ export function AdminHeader() {
     // Named so it stays fixed while page content slides (see globals.css).
     <header style={{ viewTransitionName: "admin-header" }} className="sticky top-0 z-40 border-b border-line bg-paper/90 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-5xl items-center gap-3 px-4 sm:px-6">
-        <Link href="/admin" className="flex items-center gap-2" aria-label="Panel de Sasha, pedidos">
-          <Image src={business.logo} alt="" width={30} height={30} className="size-7.5 rounded-full" />
+        <Link href="/admin" className="flex items-center gap-2" aria-label={`Panel de ${shop.shortName}, pedidos`}>
+          <ShopBrand size={30} name={null} />
           <span className="hidden font-display font-semibold sm:inline">Panel</span>
         </Link>
 

@@ -1,5 +1,4 @@
-import data from "@/data/menu.json";
-import stock from "@/data/stock-photos.json";
+import { menu as data, shop, stockPhotos as stock } from "@/shops/current";
 
 export type Size = { id: string; label: string; price: number };
 
@@ -10,7 +9,7 @@ export type Product = {
   price: number;
   sizes: Size[];
   image: string | null;
-  /** True when `image` is an illustrative stock photo, not Sasha's own. */
+  /** True when `image` is an illustrative stock photo, not the shop's own. */
   isStockImage: boolean;
 };
 
@@ -20,8 +19,8 @@ export type Review = { author: string; rating: number; text: string; when: strin
 
 export type StockPhoto = { src: string; title: string; author: string; license: string; source: string };
 
-// Openly licensed photos (Wikimedia Commons) for products Sasha has no photo of.
-// Kept apart from menu.json so `npm run import-menu` doesn't wipe them.
+// Openly licensed photos (Wikimedia Commons) for products the shop has no photo of.
+// Kept apart from menu.json so re-importing the menu doesn't wipe them.
 export const stockPhotos: Record<string, StockPhoto> = stock;
 
 type RawCategory = Omit<Category, "products"> & { products: Omit<Product, "isStockImage">[] };
@@ -36,10 +35,13 @@ function withStockImages(categories: RawCategory[]): Category[] {
   }));
 }
 
-export const salonMenu: Category[] = withStockImages(data.salon);
-export const takeawayMenu: Category[] = withStockImages(data.takeaway);
-export const rating: number | null = data.rating;
-export const reviews: Review[] = data.reviews;
+type MenuFile = { salon: RawCategory[]; takeaway: RawCategory[]; rating: number | null; reviews: Review[] };
+const file = data as MenuFile;
+
+export const salonMenu: Category[] = withStockImages(file.salon);
+export const takeawayMenu: Category[] = withStockImages(file.takeaway);
+export const rating: number | null = shop.googleRating ?? file.rating;
+export const reviews: Review[] = file.reviews;
 
 const takeawayById = new Map(takeawayMenu.flatMap((c) => c.products).map((p) => [p.id, p]));
 

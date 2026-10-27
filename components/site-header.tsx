@@ -1,18 +1,18 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, m } from "motion/react";
 import { useCart } from "@/components/cart/cart-provider";
 import { BagIcon } from "@/components/icons";
-import { business } from "@/lib/business";
+import { ShopBrand } from "@/components/shop-logo";
+import { salonLabels, shop } from "@/lib/shop";
 
 const links = [
   { href: "/", label: "Inicio" },
-  { href: "/salon", label: "Salón" },
-  { href: "/take-away", label: "Take away" },
-] as const;
+  ...(shop.salon ? [{ href: "/salon", label: salonLabels.nav }] : []),
+  { href: "/take-away", label: shop.salon ? "Take away" : "Pedidos" },
+];
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -21,9 +21,11 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-line/70 bg-cream/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2.5 rounded-full pr-2" aria-label={`${business.name}, inicio`}>
-          <Image src={business.logo} alt="" width={36} height={36} className="size-9 rounded-full" />
-          <span className="hidden font-display text-lg font-semibold tracking-tight sm:inline">{business.name}</span>
+        <Link href="/" className="flex items-center gap-2.5 rounded-full pr-2" aria-label={`${shop.name}, inicio`}>
+          <ShopBrand
+            size={36}
+            name={<span className="hidden font-display text-lg font-semibold tracking-tight sm:inline">{shop.name}</span>}
+          />
         </Link>
 
         <nav aria-label="Principal" className="ml-auto">
@@ -35,7 +37,7 @@ export function SiteHeader() {
                   <Link
                     href={link.href}
                     aria-current={active ? "page" : undefined}
-                    className={`relative block rounded-full px-3 py-1.5 text-sm font-medium transition-colors sm:px-4 ${
+                    className={`relative block rounded-full px-2.5 py-1.5 text-sm font-medium whitespace-nowrap transition-colors sm:px-4 ${
                       active ? "text-cream" : "text-muted hover:text-ink"
                     }`}
                   >

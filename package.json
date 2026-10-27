@@ -1,5 +1,5 @@
 {
-  "name": "first",
+  "name": "tienda",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "import-menu": "node scripts/import-menu.mjs"
+    "postinstall": "node scripts/select-shop.mjs",
+    "predev": "node scripts/select-shop.mjs",
+    "prebuild": "node scripts/select-shop.mjs",
+    "import-parra": "node scripts/import-parra.mjs",
+    "menu-from-csv": "node scripts/menu-from-csv.mjs",
+    "new-shop": "node scripts/new-shop.mjs",
+    "import-nucleocheck": "node scripts/import-nucleocheck.mjs"
   },
   "dependencies": {
     "mercadopago": "^3.6.1",
@@ -23,6 +29,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
+    "sharp": "^0.35.5",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

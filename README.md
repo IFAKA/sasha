@@ -1,37 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Shop template
 
-## Getting Started
+An ordering site for cafés and bakeries: home page, dine-in menu, made-to-order products with
+pickup times, and an orders and sales panel. One codebase serves every shop; each shop is just
+configuration in `shops/<slug>/`.
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+shops/
+  types.ts            what a shop can configure (every field is documented)
+  _template/          copied by `npm run new-shop`
+  sasha/
+    shop.ts           name, contact, hours, colors, texts, features
+    menu.json         categories and products (generated, don't edit by hand)
+    stock-photos.json openly licensed photos for products without one (credited at /creditos)
+public/shops/<slug>/  that shop's logo, cover and photos
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The `SHOP` environment variable picks the shop (default: `sasha`). `npm run dev` and
+`npm run build` write `shops/current.ts` from it, and the app imports the shop from there.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Add a shop
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run new-shop -- cafe-roma "Café Roma"
+```
 
-## Learn More
+1. Fill in `shops/cafe-roma/shop.ts`: address, WhatsApp, hours, colors and texts.
+2. Put the logo and cover in `public/shops/cafe-roma/` and point to them in `shop.ts`.
+3. Load the menu from a spreadsheet. Import `shops/_template/menu-ejemplo.csv` into Google Sheets,
+   fill it in, share it as "anyone with the link", then:
+   ```bash
+   npm run menu-from-csv -- cafe-roma "https://docs.google.com/spreadsheets/d/<id>/edit"
+   ```
+   For a shop on Parra Marketplace: `npm run import-parra -- <parra-slug> cafe-roma`.
+   For a shop on Núcleo Check (`prod.nucleocheck.com/menu/<id>/1`): `npm run import-nucleocheck -- <id> cafe-roma`.
+4. Try it locally:
+   ```bash
+   SHOP=cafe-roma npm run dev               # bash
+   $env:SHOP="cafe-roma"; npm run dev       # PowerShell
+   ```
+5. Deploy: in Vercel, create a new project from this same repo and set the environment
+   variable `SHOP=cafe-roma`. Each shop is its own project, so it gets its own domain.
 
-To learn more about Next.js, take a look at the following resources:
+## Plans
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Two settings in `shop.ts` decide what the shop gets:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| | Basic | Pro |
+|---|---|---|
+| `orders.payment` | `"whatsapp"`: the order arrives in the shop's WhatsApp, paid on pickup | `"mercadopago"`: paid online before pickup |
+| `admin` | `false` | `true`: orders panel and sales dashboard at `/admin` |
 
-## Deploy on Vercel
+With `"mercadopago"`, payments are simulated until `MP_ACCESS_TOKEN` is set (see `.env.example`).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Other options: leave out `salon` for shops without tables (the Salón page disappears), and set
+`orders.leadTimeHours` to `0` for same-day orders (the notice disappears).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# sasha
+## Notes
+
+- Orders and the panel live in the browser's localStorage. That's fine for a demo; a real
+  deployment needs a database and a login for `/admin`.
+- The site is marked `noindex`, so demos don't show up in Google.
