@@ -21,7 +21,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-line/70 bg-cream/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2.5 rounded-full pr-2" aria-label={`${shop.name}, inicio`}>
+        <Link href="/" className="flex shrink-0 items-center gap-2.5 rounded-full pr-2" aria-label={`${shop.name}, inicio`}>
           <ShopBrand
             size={36}
             name={<span className="hidden font-display text-lg font-semibold tracking-tight sm:inline">{shop.name}</span>}
@@ -32,8 +32,10 @@ export function SiteHeader() {
           <ul className="flex items-center gap-1 rounded-full bg-paper/70 p-1 ring-1 ring-line">
             {links.map((link) => {
               const active = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+              // A wide wordmark needs the room on phones; tapping it already goes home.
+              const hideOnPhones = link.href === "/" && shop.wordmark;
               return (
-                <li key={link.href}>
+                <li key={link.href} className={hideOnPhones ? "hidden sm:block" : undefined}>
                   <Link
                     href={link.href}
                     aria-current={active ? "page" : undefined}

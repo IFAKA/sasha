@@ -26,13 +26,17 @@ export const stockPhotos: Record<string, StockPhoto> = stock;
 type RawCategory = Omit<Category, "products"> & { products: Omit<Product, "isStockImage">[] };
 
 function withStockImages(categories: RawCategory[]): Category[] {
-  return categories.map((c) => ({
-    ...c,
-    products: c.products.map((p) => {
-      const fallback = p.image ? undefined : stockPhotos[p.id];
-      return { ...p, image: p.image ?? fallback?.src ?? null, isStockImage: Boolean(fallback) };
-    }),
-  }));
+  return categories
+    .map((c) => ({
+      ...c,
+      products: c.products
+        .map((p) => {
+          const fallback = p.image ? undefined : stockPhotos[p.id];
+          return { ...p, image: p.image ?? fallback?.src ?? null, isStockImage: Boolean(fallback) };
+        })
+        .filter((p) => p.image || !shop.hideProductsWithoutPhoto),
+    }))
+    .filter((c) => c.products.length > 0);
 }
 
 type MenuFile = { salon: RawCategory[]; takeaway: RawCategory[]; rating: number | null; reviews: Review[] };

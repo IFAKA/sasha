@@ -24,9 +24,19 @@ export function ShopLogo({ size, className = "" }: { size: number; className?: s
 export function ShopBrand({ size, name }: { size: number; name: React.ReactNode }) {
   if (shop.wordmark) {
     const { src, width, height } = shop.wordmark;
-    // A wordmark is wide: a bit shorter than the round logo keeps the header's links on one line.
-    const h = Math.round(size * 0.8);
-    return <Image src={src} alt="" width={Math.round((h * width) / height)} height={h} style={{ height: h, width: "auto" }} preload />;
+    // A bit taller than the round logo so its lettering reads; never squeezed by its neighbours.
+    const h = Math.round(size * 1.1);
+    return (
+      <Image
+        src={src}
+        alt=""
+        width={Math.round((h * width) / height)}
+        height={h}
+        style={{ height: h, width: "auto" }}
+        className="shrink-0 object-contain"
+        preload
+      />
+    );
   }
   return (
     <>

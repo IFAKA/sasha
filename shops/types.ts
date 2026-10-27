@@ -115,6 +115,9 @@ export type ShopConfig = {
     salonUpsell?: string;
   };
 
+  /** Hide products that have no photo (they stay in menu.json). Handy for demos. */
+  hideProductsWithoutPhoto?: boolean;
+
   /** The orders and sales panel at /admin. */
   admin: boolean;
 };

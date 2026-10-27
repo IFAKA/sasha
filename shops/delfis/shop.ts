@@ -69,5 +69,8 @@ export default defineShop({
     notesPlaceholder: "Ej: escribir “Feliz cumple, Juli” en la torta…",
   },
 
+  // A few catalog items have no photo yet; the demo shows only the ones that do.
+  hideProductsWithoutPhoto: true,
+
   admin: true,
 });
