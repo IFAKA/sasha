@@ -1,0 +1,1807 @@
+{
+  "salon": [
+    {
+      "id": "DoUSiKQONfMoD2zXdgCD",
+      "name": "Desayunos y meriendas",
+      "products": [
+        {
+          "id": 47088,
+          "name": "Clásico",
+          "description": "2 medialunas, jugo exprimido y café a elección. Disponible hasta el mediodía.",
+          "price": 8000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 8000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/47088/product.webp"
+        },
+        {
+          "id": 46377,
+          "name": "Campestre",
+          "description": "Tostado en pan árabe de jamón y queso, jugo exprimido y café a elección.",
+          "price": 14000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 14000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/46377/product.webp"
+        },
+        {
+          "id": 8878,
+          "name": "Liviano",
+          "description": "Tazón de yogurt con frutos rojos y frutillas, granola, jugo exprimido y café a elección.",
+          "price": 14000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 14000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8878/product.webp"
+        },
+        {
+          "id": 8881,
+          "name": "Proteico",
+          "description": "Tostón de pan de campo o pan de semillas con palta, queso crema, jugo exprimido y café a elección. Adicional: huevo revuelto o salmón",
+          "price": 16000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 16000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8881/product.webp"
+        },
+        {
+          "id": 64725,
+          "name": "Americano",
+          "description": "Croissant, huevo revuelto, panceta crispy, palta, jugo exprimido y café a elección.",
+          "price": 19000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 19000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/64725/product.webp"
+        },
+        {
+          "id": 65524,
+          "name": "Francés",
+          "description": "Croissant con jamón y queso, jugo exprimido y café a elección.",
+          "price": 15000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 15000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/65524/product.webp"
+        },
+        {
+          "id": 50654,
+          "name": "Brunch para dos",
+          "description": "🔲 Salado: - Sándwich tostado de pan árabe con jamón y queso *Opción vegetariana: tostado de caprese.* - Yogurt con frutos rojos y granola - Tostón con palta y huevo poché - Tostón de salmón, queso crema y rúcula *Opción vegetariana: tostón de pan de campo artesanal con vegetales asados y queso fundido.* - Scon de queso 🔲 Dulce: - 1 porción de torta a elección - 1 pastelito belen 🔲 Incluye: 2 bebidas a elección 🔲 Salty: Vegetarian capresse option Vegetarian option: Vegetarian Croque Monsieur 🔲Includes:",
+          "price": 65000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 65000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/50654/product.webp"
+        },
+        {
+          "id": 58859,
+          "name": "Adicional XL",
+          "description": "Adicional tazón XL (flat white o lágrima).",
+          "price": 2000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 2000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/58859/product.webp"
+        }
+      ]
+    },
+    {
+      "id": "CKRFPkxx1F6gdvqitFXb",
+      "name": "Sandwiches",
+      "products": [
+        {
+          "id": 8893,
+          "name": "Croissant con jamón y queso",
+          "description": "",
+          "price": 11000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 11000
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": 47090,
+          "name": "Croque Monsieur",
+          "description": "Sándwich en pan de campo artesanal de jamón, queso y salsa bechamel.",
+          "price": 12000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 12000
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": 8928,
+          "name": "Sándwich jamón crudo",
+          "description": "Baguetín artesanal de parmesano con rúcula, jamón crudo ibérico y queso.",
+          "price": 17000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 17000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8928/product.webp"
+        },
+        {
+          "id": 8926,
+          "name": "Sándwich Veggie",
+          "description": "Baguetín artesanal de parmesano con vegetales asados y queso.",
+          "price": 16000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 16000
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": 8923,
+          "name": "Sándwich de atún",
+          "description": "Baguetín artesanal de parmesano con atún, mayonesa, olivas, lechuga, tomate y cebolla caramelizada.",
+          "price": 18000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 18000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8923/product.webp"
+        },
+        {
+          "id": 8929,
+          "name": "Sándwich de salmón",
+          "description": "Baguetín artesanal de parmesano con salmón ahumado, queso crema, adherezo de eneldo y rúcula.",
+          "price": 20000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 20000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8929/product.webp"
+        },
+        {
+          "id": 8924,
+          "name": "Sándwich Chicken",
+          "description": "Baguetín artesanal de parmesano con pechuga de pollo grillada, mostaza de Dijón, tomate y queso.",
+          "price": 19000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 19000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8924/product.webp"
+        },
+        {
+          "id": 47091,
+          "name": "Sándwich de bondiola",
+          "description": "Baguetín artesanal de parmesano con bondiola desmechada, salsa barbacoa casera, cebolla caramelizada y queso.",
+          "price": 19000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 19000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/47091/product.webp"
+        },
+        {
+          "id": 47092,
+          "name": "Sándwich de ternerita",
+          "description": "Baguetín artesanal de parmesano con ternerita braseada, mostaza de Dijón, tomate, cebolla caramelizada y queso.",
+          "price": 19000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 19000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/47092/product.webp"
+        },
+        {
+          "id": 8925,
+          "name": "Hamburguesa Sasha",
+          "description": "Pan artesanal de parmesano, 200 grs. de carne vacuna, huevo a la plancha, lechuga, tomate, queso y cebolla caramelizada.",
+          "price": 24000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 24000
+            }
+          ],
+          "image": null
+        }
+      ]
+    },
+    {
+      "id": "MxeyiagtZ53nT75DgGbK",
+      "name": "Almuerzos",
+      "products": [
+        {
+          "id": 8931,
+          "name": "Ensalada Caesar",
+          "description": "Mix de verdes, pollo grillado, queso parmesano, croutons y adherezo Caesar.",
+          "price": 24000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 24000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8931/product.webp"
+        },
+        {
+          "id": 8932,
+          "name": "Ensalada Tibia",
+          "description": "Mix de verdes, tomates, cebolla caramelizada, roast beef desmechado, almendras picadas y aderezo de mostaza y miel.",
+          "price": 24000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 24000
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": 45558,
+          "name": "Ensalada de Atún",
+          "description": "Mix de verdes, tomates asados, olivas, atun y cebolla caramelizada.",
+          "price": 24000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 24000
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": 65328,
+          "name": "Brótola al horno",
+          "description": "Brotola al horno con salsa de espinaca gratinada. Acompañamiento: Mix de verdes, zanahorias y tomates / Papas rusticas al horno",
+          "price": 24000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 24000
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": 65327,
+          "name": "Pechuga de pollo crispy",
+          "description": "Pechuga de pollo crispy apanada en panko y copos de maiz Acompañamiento: Mix de verdes, zanahorias y tomates / Papas rusticas al horno",
+          "price": 24000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 24000
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": 65323,
+          "name": "Roast Beef",
+          "description": "Roast Beef braseado con salsa de mostaza de Dijon. Acompañamiento: Mix de verdes, zanahorias y tomates asados / Papas rusticas al horno",
+          "price": 24000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 24000
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": 65324,
+          "name": "Wrap Artesanal de pollo",
+          "description": "Wrap artesanal de pollo con salsa de mostaza de Dijon. Acompañamiento: Mix de verdes, zanahorias y tomates asados / Papas rusticas al horno",
+          "price": 24000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 24000
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": 65325,
+          "name": "Bondiola de cerdo desmechada",
+          "description": "Bondiola de cerdo desmechada con salsa barbacoa casera. Acompañamiento: Mix de verdes, zanahorias y tomates asados / Papas rusticas al horno",
+          "price": 24000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 24000
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": 8925,
+          "name": "Hamburguesa Sasha",
+          "description": "Pan artesanal de parmesano, 200 grs. de carne vacuna, huevo a la plancha, lechuga, tomate, queso y cebolla caramelizada.",
+          "price": 24000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 24000
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": 67030,
+          "name": "Milanesa de ternera o pollo a la napolitana",
+          "description": "Milanesa de ternera o pollo a la napolitana Veal or chicken milanesa, Neapolitan style",
+          "price": 24000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 24000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/67030/product.webp"
+        },
+        {
+          "id": 67031,
+          "name": "Milanesa de ternera o pollo a la fugazzeta",
+          "description": "Milanesa de ternera o pollo a la fugazzeta Veal or chicken milanesa a la fugazzeta",
+          "price": 24000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 24000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/67031/product.webp"
+        }
+      ]
+    },
+    {
+      "id": "vsnMF9tkqUDWryEQWcYk",
+      "name": "Café",
+      "products": [
+        {
+          "id": 39240,
+          "name": "Magic",
+          "description": "Espresso y leche. Intermedio.",
+          "price": 5500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 5500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/39240/product.webp"
+        },
+        {
+          "id": 39241,
+          "name": "Americano",
+          "description": "Doble espresso y agua. Intenso.",
+          "price": 5500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 5500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/39241/product.webp"
+        },
+        {
+          "id": 39243,
+          "name": "Latte",
+          "description": "Espresso y leche. Suave.",
+          "price": 6000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 6000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/39243/product.webp"
+        },
+        {
+          "id": 39244,
+          "name": "Flat White",
+          "description": "Doble espresso y leche. Intermedio.",
+          "price": 7000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 7000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/39244/product.webp"
+        },
+        {
+          "id": 39246,
+          "name": "Long Black",
+          "description": "Doble espresso y agua. Intenso.",
+          "price": 7000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 7000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/39246/product.webp"
+        },
+        {
+          "id": 39247,
+          "name": "Lagrima",
+          "description": "Leche y un detalle de café. Suave.",
+          "price": 5500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 5500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/39247/product.webp"
+        },
+        {
+          "id": 39248,
+          "name": "Caramel Latte",
+          "description": "Espresso, leche y saborizado. Suave.",
+          "price": 7000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 7000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/39248/product.webp"
+        },
+        {
+          "id": 44191,
+          "name": "Mocha Latte",
+          "description": "Espresso, leche y saborizado. Suave.",
+          "price": 7000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 7000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/44191/product.webp"
+        },
+        {
+          "id": 39253,
+          "name": "Flat White XL",
+          "description": "Doble espresso y leche. Suave.",
+          "price": 8000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 8000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/39253/product.webp"
+        },
+        {
+          "id": 39251,
+          "name": "Lagrima XL",
+          "description": "Leche y un detalle de café. Suave.",
+          "price": 8000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 8000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/39251/product.webp"
+        },
+        {
+          "id": 50693,
+          "name": "Iced Flat White",
+          "description": "Doble espresso y leche. Frío. Intermedio.",
+          "price": 8000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 8000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/50693/product.webp"
+        },
+        {
+          "id": 58858,
+          "name": "Iced Long Black",
+          "description": "Doble espresso y agua. Frío. Intenso.",
+          "price": 8000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 8000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/58858/product.webp"
+        },
+        {
+          "id": 39254,
+          "name": "Capuccino",
+          "description": "Leche, cacao y espresso.",
+          "price": 6500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 6500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/39254/product.webp"
+        },
+        {
+          "id": 39255,
+          "name": "Capuccino Italiano",
+          "description": "Leche, cacao, espresso y crema.",
+          "price": 7000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 7000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/39255/product.webp"
+        },
+        {
+          "id": 39258,
+          "name": "Te en Hebras",
+          "description": "Sabores a elección: Vainilla / Mumbai / Earl grey / Verde / Menta piperita / Negro.",
+          "price": 5500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 5500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/39258/product.webp"
+        },
+        {
+          "id": 39259,
+          "name": "Te en Hebras con leche",
+          "description": "Selecciona entre: Mumbai, vainilla, earl grey, verde, menta piperita, negro.",
+          "price": 6000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 6000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/39259/product.webp"
+        },
+        {
+          "id": 39260,
+          "name": "Te en Hebras Doble",
+          "description": "Selecciona entre: Vainilla, mumbai, earl grey, verde, menta piperita, negro.",
+          "price": 6500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 6500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/39260/product.webp"
+        },
+        {
+          "id": 39262,
+          "name": "Adicional Crema",
+          "description": "",
+          "price": 2000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 2000
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": 39263,
+          "name": "Adicional Espresso",
+          "description": "",
+          "price": 2000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 2000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/39263/product.webp"
+        },
+        {
+          "id": 59067,
+          "name": "Affogato",
+          "description": "Espresso más una bocha de helado de crema americana hecha en la casa.",
+          "price": 6500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 6500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/59067/product.webp"
+        },
+        {
+          "id": 65365,
+          "name": "Chocolate caliente Chico",
+          "description": "",
+          "price": 8000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 8000
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": 65366,
+          "name": "Chocolate caliente Grande",
+          "description": "",
+          "price": 8500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 8500
+            }
+          ],
+          "image": null
+        }
+      ]
+    },
+    {
+      "id": "9SU8048yvncUEF76vq7Q",
+      "name": "Bebidas frías",
+      "products": [
+        {
+          "id": 8959,
+          "name": "Exprimido de naranja",
+          "description": "Naranjas exprimidas.",
+          "price": 10000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 10000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8959/product.webp"
+        },
+        {
+          "id": 67029,
+          "name": "Limonada de Menta y Jengibre",
+          "description": "Limonada de Menta y Jengibre. Hielo, azucar, limon, menta y jengibre.",
+          "price": 10000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 10000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/67029/product.webp"
+        },
+        {
+          "id": 67028,
+          "name": "Limonada Frutilla",
+          "description": "Limonada de Frutilla. Hielo, azucar, limon y frutilla.",
+          "price": 10000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 10000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/67028/product.webp"
+        },
+        {
+          "id": 67026,
+          "name": "Licuado de Banana",
+          "description": "Licuado de banana. Se puede hacer al agua, con leche o jugo de naranja. Y agregar durazno y/o frutilla.",
+          "price": 9500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 9500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/67026/product.webp"
+        },
+        {
+          "id": 67027,
+          "name": "Licuado de Frutilla",
+          "description": "Licuado de frutilla. Se puede hacer al agua, con leche o jugo de naranja. Y agregar banana y/o durazno.",
+          "price": 9500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 9500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/67027/product.webp"
+        },
+        {
+          "id": 66997,
+          "name": "Milkshake de Oreo",
+          "description": "Hielo, Leche, Azucar, Galletitas Oreo, Coronado con crema.",
+          "price": 10000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 10000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/66997/product.webp"
+        },
+        {
+          "id": 66998,
+          "name": "Milkshake de Nutella",
+          "description": "Hielo, Leche, Azucar, Nutella, Coronado con Crema",
+          "price": 10000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 10000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/66998/product.webp"
+        },
+        {
+          "id": 66999,
+          "name": "Milkshake de Dulce De Leche",
+          "description": "Hielo, Leche, Azucar, Dulce de Leche, Coronado con crema",
+          "price": 10000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 10000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/66999/product.webp"
+        },
+        {
+          "id": 67000,
+          "name": "Milkshake de Frutilla",
+          "description": "Hielo, Leche, Azucar, Frutilla, Coronado con Crema",
+          "price": 10000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 10000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/67000/product.webp"
+        },
+        {
+          "id": 67001,
+          "name": "Milkshake de Frutos Rojos",
+          "description": "Hielo, Leche, Azucar, Frutos Rojos, Coronado con Crema",
+          "price": 10000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 10000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/67001/product.webp"
+        }
+      ]
+    },
+    {
+      "id": "SmJvffb92Y29rFnF2rxM",
+      "name": "Mesa dulce",
+      "products": [
+        {
+          "id": 8967,
+          "name": "Porción Torta",
+          "description": "",
+          "price": 18000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 18000
+            }
+          ],
+          "image": null
+        },
+        {
+          "id": 49753,
+          "name": "Porción Tortas Especiales",
+          "description": "Porción especial: -Pistacho -Franui -Franui",
+          "price": 19000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 19000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/49753/product.webp"
+        },
+        {
+          "id": 16436,
+          "name": "Porción Rogel",
+          "description": "",
+          "price": 22000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 22000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/16436/product.webp"
+        },
+        {
+          "id": 8962,
+          "name": "Alfajor de Coco",
+          "description": "",
+          "price": 10500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 10500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8962/product.webp"
+        },
+        {
+          "id": 8963,
+          "name": "Alfajor Sablé de Nuez",
+          "description": "Walnut Alfajor Sablé.",
+          "price": 10500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 10500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8963/product.webp"
+        },
+        {
+          "id": 8964,
+          "name": "Alfajor Sablé de Almendras",
+          "description": "Almond Alfajor Sablé.",
+          "price": 10500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 10500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8964/product.webp"
+        },
+        {
+          "id": 50290,
+          "name": "Alfajor Sablé Pistacho",
+          "description": "Alfajor Pistachio Sablé.",
+          "price": 12500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 12500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/50290/product.webp"
+        },
+        {
+          "id": 50300,
+          "name": "Alfajor Marplatense",
+          "description": "Relleno de dulce de leche bañado en chocolate semi-amargo.",
+          "price": 10500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 10500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/50300/product.webp"
+        },
+        {
+          "id": 8971,
+          "name": "Brownie Clásico",
+          "description": "",
+          "price": 7000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 7000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8971/product.webp"
+        },
+        {
+          "id": 8972,
+          "name": "Brownie con Merengue",
+          "description": "Brownie con dulce de leche, merengue y chocolate.",
+          "price": 15000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 15000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8972/product.webp"
+        },
+        {
+          "id": 35719,
+          "name": "Carrot Cake",
+          "description": "Húmeda, dulce en su medida y con el crocante de las nueces, la carrot cake es una gran opción para cualquier momento del día.",
+          "price": 15000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 15000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/35719/product.webp"
+        },
+        {
+          "id": 8975,
+          "name": "Cuadrado de Manzana",
+          "description": "",
+          "price": 15000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 15000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8975/product.webp"
+        },
+        {
+          "id": 8981,
+          "name": "Scon de Queso",
+          "description": "",
+          "price": 7500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 7500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8981/product.webp"
+        },
+        {
+          "id": 8977,
+          "name": "Cookies rellenas",
+          "description": "Dulce de leche, nutella, marroc, red velvet, pistacho y dos chocolates. ¡Consultar disponibilidad! Check availability!",
+          "price": 10000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 10000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8977/product.webp"
+        },
+        {
+          "id": 8979,
+          "name": "Pañuelitos con pastelera",
+          "description": "Pañuelitos de hojaldre, rellenos de pastelera y frutas. - Duraznos - Frutilla - Arándanos",
+          "price": 8500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 8500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8979/product.webp"
+        },
+        {
+          "id": 8978,
+          "name": "Croissant de Almendras",
+          "description": "Croissant clásica, rellena de pasta del almendras y pastelera.",
+          "price": 12500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 12500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8978/product.webp"
+        },
+        {
+          "id": 8980,
+          "name": "Pastelito de Belén",
+          "description": "Pastelera con base de canela y azúcar negra.",
+          "price": 4000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 4000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8980/product.webp"
+        },
+        {
+          "id": 9128,
+          "name": "Tapita de Hojaldre",
+          "description": "Con pastelera o dulce de leche.",
+          "price": 8000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 8000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/9128/product.webp"
+        },
+        {
+          "id": 8976,
+          "name": "Pastafrola",
+          "description": "Membrillo.",
+          "price": 7000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 7000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/8976/product.webp"
+        },
+        {
+          "id": 49742,
+          "name": "Bomba de pastelera",
+          "description": "Dos tapas de hojaldre con pastelera en su interior y variedad de frutas de estación.",
+          "price": 9500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 9500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/49742/product.webp"
+        },
+        {
+          "id": 49745,
+          "name": "Roll de Canela",
+          "description": "Roll de canela con azucar negra y nuez. Disponible viernes, sábado, domingo y feriados.",
+          "price": 10500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 10500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/49745/product.webp"
+        },
+        {
+          "id": 49810,
+          "name": "Muffin Red Velvet",
+          "description": "Muffin de red velvet con queso crema.",
+          "price": 9500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 9500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/49810/product.webp"
+        },
+        {
+          "id": 65364,
+          "name": "Alfajor de Maicena",
+          "description": "",
+          "price": 10500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 10500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/65364/product.webp"
+        },
+        {
+          "id": 57331,
+          "name": "Persianita de Manzana Mixta",
+          "description": "Dos tapas de hojaldre con pastelera y dulce de leche en su interior y rodajas manzanas en su superficie.",
+          "price": 12500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 12500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/57331/product.webp"
+        },
+        {
+          "id": 49741,
+          "name": "Persianita de Manzana con Pastelera",
+          "description": "Dos tapas de hojaldre con pastelera en su interior y rodajas manzanas en su superficie.",
+          "price": 10500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 10500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/49741/product.webp"
+        },
+        {
+          "id": 59071,
+          "name": "Croissant Pistacho",
+          "description": "Croissant clásica, rellena de crema de pistachos y ganache de chocolate blanco.",
+          "price": 14500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 14500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/59071/product.webp"
+        },
+        {
+          "id": 65363,
+          "name": "Croissant de Nutella",
+          "description": "Croissant clasica, rellena de crema de nutella y avellanas.",
+          "price": 14500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 14500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/65363/product.webp"
+        },
+        {
+          "id": 59096,
+          "name": "Media lunas",
+          "description": "Probá nuestras media lunas que son únicas!",
+          "price": 3000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 3000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/59096/product.webp"
+        },
+        {
+          "id": 59267,
+          "name": "Scon de jamón y queso",
+          "description": "",
+          "price": 11000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 11000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/59267/product.webp"
+        },
+        {
+          "id": 66922,
+          "name": "Roll de Pistacho",
+          "description": "Roll de Canela con crema de Pistacho",
+          "price": 10500,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 10500
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/66922/product.webp"
+        }
+      ]
+    }
+  ],
+  "takeaway": [
+    {
+      "id": "PJRoApdDs96GppLXeZi1",
+      "name": "Tortas por pedidos",
+      "products": [
+        {
+          "id": 35713,
+          "name": "Torta Banana Split",
+          "description": "Nuestra famosa torta de crema de banana con dulce de leche y ganache de chocolate.",
+          "price": 100000,
+          "sizes": [
+            {
+              "id": "22cm",
+              "label": "22 cm",
+              "price": 100000
+            },
+            {
+              "id": "28cm",
+              "label": "28 cm",
+              "price": 110000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/35713/product.webp"
+        },
+        {
+          "id": 35714,
+          "name": "Torta Bombón",
+          "description": "Base afinada de almendras, dulce de leche, crema chantilly, baño de chocolate, hilos de chocolate.",
+          "price": 100000,
+          "sizes": [
+            {
+              "id": "22cm",
+              "label": "22 cm",
+              "price": 100000
+            },
+            {
+              "id": "28cm",
+              "label": "28 cm",
+              "price": 110000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/35714/product.webp"
+        },
+        {
+          "id": 35697,
+          "name": "Torta Rogel",
+          "description": "Masa rogel, dulce de leche, merengue italiano y golosinas.",
+          "price": 130000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 130000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/35697/product.webp"
+        },
+        {
+          "id": 35710,
+          "name": "Torta Soufflé de Nuez",
+          "description": "Base de soufflé de nuez con dulce de leche, crema y frutillas.",
+          "price": 100000,
+          "sizes": [
+            {
+              "id": "22cm",
+              "label": "22 cm",
+              "price": 100000
+            },
+            {
+              "id": "28cm",
+              "label": "28 cm",
+              "price": 110000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/35710/product.webp"
+        },
+        {
+          "id": 35356,
+          "name": "Torta Matilda",
+          "description": "Biscuit húmedo de chocolate, dulce de leche, crema de chocolate, licor Bailys.",
+          "price": 32000,
+          "sizes": [
+            {
+              "id": "14cm",
+              "label": "14 cm",
+              "price": 32000
+            },
+            {
+              "id": "22cm",
+              "label": "22 cm",
+              "price": 100000
+            },
+            {
+              "id": "28cm",
+              "label": "28 cm",
+              "price": 110000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/35356/product.webp"
+        },
+        {
+          "id": 35711,
+          "name": "Torta Lemon Pie",
+          "description": "Base masa Sablé, crema de limón y merengue Italiano.",
+          "price": 100000,
+          "sizes": [
+            {
+              "id": "22cm",
+              "label": "22 cm",
+              "price": 100000
+            },
+            {
+              "id": "28cm",
+              "label": "28 cm",
+              "price": 110000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/35711/product.webp"
+        },
+        {
+          "id": 35688,
+          "name": "Torta Mousse Dos Chocolates",
+          "description": "Mousse de chocolate semiamargo y chocolate con leche.",
+          "price": 100000,
+          "sizes": [
+            {
+              "id": "22cm",
+              "label": "22 cm",
+              "price": 100000
+            },
+            {
+              "id": "28cm",
+              "label": "28 cm",
+              "price": 110000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/35688/product.webp"
+        },
+        {
+          "id": 35690,
+          "name": "Torta Red Velvet",
+          "description": "Bizcochuelo de remolocha con queso crema.",
+          "price": 100000,
+          "sizes": [
+            {
+              "id": "22cm",
+              "label": "22 cm",
+              "price": 100000
+            },
+            {
+              "id": "28cm",
+              "label": "28 cm",
+              "price": 110000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/35690/product.webp"
+        },
+        {
+          "id": 35308,
+          "name": "Torta Cheesecake de frutos rojos",
+          "description": "Base de galletitas molidas, mezcla de queso y coulis de frutos rojos. Cheesecake en molde de diámetro 22 cm rinde aproximadamente 8 porciones y la de diámetro 28 cm aproximadamente 12 porciones.",
+          "price": 32000,
+          "sizes": [
+            {
+              "id": "14cm",
+              "label": "14 cm",
+              "price": 32000
+            },
+            {
+              "id": "22cm",
+              "label": "22 cm",
+              "price": 100000
+            },
+            {
+              "id": "28cm",
+              "label": "28 cm",
+              "price": 110000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/35308/product.webp"
+        },
+        {
+          "id": 50485,
+          "name": "Torta Sablé de Almendras y Frutillas",
+          "description": "Torta con base sablé de almendras, una capa de dulce de leche y otra de crema, con frutillas en la parte superior.",
+          "price": 100000,
+          "sizes": [
+            {
+              "id": "22cm",
+              "label": "22 cm",
+              "price": 100000
+            },
+            {
+              "id": "28cm",
+              "label": "28 cm",
+              "price": 110000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/50485/product.webp"
+        },
+        {
+          "id": 49800,
+          "name": "Torta Doble Brownie",
+          "description": "Base doble brownie con dulce de leche, crema y frutos rojos.",
+          "price": 100000,
+          "sizes": [
+            {
+              "id": "22cm",
+              "label": "22 cm",
+              "price": 100000
+            },
+            {
+              "id": "28cm",
+              "label": "28 cm",
+              "price": 110000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/49800/product.webp"
+        },
+        {
+          "id": 49801,
+          "name": "Torta Marquise con Frutos Rojos",
+          "description": "Base marquise con dulce de leche, crema y frutos rojos.",
+          "price": 32000,
+          "sizes": [
+            {
+              "id": "14cm",
+              "label": "14 cm",
+              "price": 32000
+            },
+            {
+              "id": "22cm",
+              "label": "22 cm",
+              "price": 100000
+            },
+            {
+              "id": "28cm",
+              "label": "28 cm",
+              "price": 110000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/49801/product.webp"
+        },
+        {
+          "id": 50472,
+          "name": "Torta Celia",
+          "description": "Tres discos de merengue seco, dulce de leche, crema, chocolate semiamargo en rulos y coronada con frutos rojos.",
+          "price": 110000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 110000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/50472/product.webp"
+        },
+        {
+          "id": 50482,
+          "name": "Torta Cumpleaños",
+          "description": "",
+          "price": 120000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 120000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/50482/product.webp"
+        },
+        {
+          "id": 50483,
+          "name": "Torta Húmeda de Chocolate",
+          "description": "Dos discos de bizcochuelo de chocolate con una capa en el medio de dulce de leche, crema chantilli en su superficie, chocolate blanco en rulos y frutos rojos pra culminar.",
+          "price": 100000,
+          "sizes": [
+            {
+              "id": "22cm",
+              "label": "22 cm",
+              "price": 100000
+            },
+            {
+              "id": "28cm",
+              "label": "28 cm",
+              "price": 110000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/50483/product.webp"
+        },
+        {
+          "id": 50484,
+          "name": "Torta Bomba Blanca",
+          "description": "Base de marquise, dulce de leche y merengue italiano.",
+          "price": 32000,
+          "sizes": [
+            {
+              "id": "14cm",
+              "label": "14 cm",
+              "price": 32000
+            },
+            {
+              "id": "22cm",
+              "label": "22 cm",
+              "price": 100000
+            },
+            {
+              "id": "28cm",
+              "label": "28 cm",
+              "price": 110000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/50484/product.webp"
+        },
+        {
+          "id": 57133,
+          "name": "Torta Mousse de Chocolate Blanco y Pistacho",
+          "description": "Mousse de chocolate blanco y pistacho.",
+          "price": 120000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 120000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/57133/product.webp"
+        },
+        {
+          "id": 57339,
+          "name": "Torta Crema Oreo",
+          "description": "Base de galletitas Oreo, una capa de queso crema y dulce de leche, capa de crema chantilly y oreos trituradas, terminando con una cobertura de chocolate.",
+          "price": 100000,
+          "sizes": [
+            {
+              "id": "22cm",
+              "label": "22 cm",
+              "price": 100000
+            },
+            {
+              "id": "28cm",
+              "label": "28 cm",
+              "price": 120000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/57339/product.webp"
+        },
+        {
+          "id": 59376,
+          "name": "Torta Franui",
+          "description": "Frambuesas con una capa de chocolate blanco y otra de chocolate semiamargo. La torta es de diámetro 28 cm y rinde aproximadamente 12 porciones.",
+          "price": 120000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 120000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/59376/product.webp"
+        },
+        {
+          "id": 60867,
+          "name": "Torta Chajá",
+          "description": "Tres capas de bizcochuelo de vainilla, crema chantilly, dulce de leche, trozos de duraznos naturales y merengüe seco triturado en su superficie.",
+          "price": 110000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 110000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/60867/product.webp"
+        },
+        {
+          "id": 64134,
+          "name": "Torta Pirineo",
+          "description": "Base de marquis fina, dulce de leche. crema chantilly, merengue, rulos de chocolate.",
+          "price": 32000,
+          "sizes": [
+            {
+              "id": "14cm",
+              "label": "14 cm",
+              "price": 32000
+            },
+            {
+              "id": "22cm",
+              "label": "22 cm",
+              "price": 100000
+            },
+            {
+              "id": "28cm",
+              "label": "28 cm",
+              "price": 110000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/64134/product.webp"
+        },
+        {
+          "id": 66906,
+          "name": "Torta Chessecake Frio De Pistacho",
+          "description": "Chessecake frío de limón con base de pistacho decorado por encima con pistacho y frutillas.",
+          "price": 120000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 120000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/66906/product.webp"
+        },
+        {
+          "id": 66907,
+          "name": "Torta Chessecake Frio De Frutos Rojos",
+          "description": "Chessecake frío de vainilla con frutos rojos.",
+          "price": 110000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 110000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/66907/product.webp"
+        },
+        {
+          "id": 66908,
+          "name": "Torta Chessecake Frio De Maracuya",
+          "description": "Chessecake frío de maracuya.",
+          "price": 110000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 110000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/66908/product.webp"
+        },
+        {
+          "id": 68554,
+          "name": "Torta Argentina",
+          "description": "Finas capas de panqueque con dulce de leche, cubierta con merengue italiano. En diámetro 28 cm rinde aproximadamente 16 y 18 porciones.",
+          "price": 110000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 110000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/68554/product.webp"
+        },
+        {
+          "id": 68558,
+          "name": "Torta Cheesecake de Pistacho",
+          "description": "Chessecake de pistacho decorado por encima con frutillas.",
+          "price": 120000,
+          "sizes": [
+            {
+              "id": "unica",
+              "label": "Tamaño único",
+              "price": 120000
+            }
+          ],
+          "image": "https://storage.googleapis.com/prod-parra-argentina-assets/clients/133/products/68558/product.webp"
+        }
+      ]
+    }
+  ],
+  "rating": 4.2,
+  "reviews": [
+    {
+      "author": "Iván Agustín D'Ippolito",
+      "rating": 5,
+      "text": "Un lugar para vivir una experiencia distinta. Desde que haces la fila para ingresar al local, ya te recibe el dueño con una porción de torta para que se haga más llevadero la espera. Una vez adentro te das cuenta porque le va tan bien. El espacio es pequeño pero muy limpio. La atención impecable. Muchas opciones para merendar y almorzar.\nLos precios muy accesibles, para el tamaño de las porciones que ofrecen.\nEl café muy rico, aunque no es su mayor fuerte.\nMuy recomendado para pasar una linda tarde en familia o con amigos",
+      "when": "Hace 7 meses"
+    },
+    {
+      "author": "Karina Gutierrez",
+      "rating": 5,
+      "text": "Me encantó!! Me parece un lugar muy lindo para tomar merienda. Compré algunas cosas para llevar a casa y todoooo excelente. Muy buena calidad de alimentos y excelentes precios!! Volveré a probar algunas cositas más 😀",
+      "when": "Hace 5 meses"
+    },
+    {
+      "author": "Damian ROS",
+      "rating": 5,
+      "text": "Muy rico la comida, todo los productos frescos y abundantes. Es un lugar chico, pero agradable y hermoso. Justo estaba el viejito y fue muy amable. Un lugar que se disfruta un montón, recomendable.",
+      "when": "Hace 4 meses"
+    }
+  ]
+}

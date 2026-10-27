@@ -1,26 +1,139 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --cream: #fbf6f0;
+  --paper: #ffffff;
+  --blush: #fbe4ef;
+  --brand: #d01d80;
+  --brand-ink: #a3135f;
+  --ink: #2b1a17;
+  --muted: #6f5a54;
+  --line: #ecdfd6;
+  --warn-bg: #fff4dc;
+  --warn-ink: #7a4b00;
+  color-scheme: light;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-cream: var(--cream);
+  --color-paper: var(--paper);
+  --color-blush: var(--blush);
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-warn-bg: var(--warn-bg);
+  --color-warn-ink: var(--warn-ink);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 8rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--blush);
+  color: var(--brand-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+dialog::backdrop {
+  background: transparent;
+}
+
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
+/* View transitions (see components/page-transition.tsx) ------------------ */
+
+/* Clicks pass through to the live page while a transition runs. */
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-old(.nav-forward) {
+  --slide-offset: -60px;
+  animation:
+    150ms ease-in both vt-fade reverse,
+    400ms ease-in-out both vt-slide reverse;
+}
+::view-transition-new(.nav-forward) {
+  --slide-offset: 60px;
+  animation:
+    210ms ease-out 150ms both vt-fade,
+    400ms ease-in-out both vt-slide;
+}
+::view-transition-old(.nav-back) {
+  --slide-offset: 60px;
+  animation:
+    150ms ease-in both vt-fade reverse,
+    400ms ease-in-out both vt-slide reverse;
+}
+::view-transition-new(.nav-back) {
+  --slide-offset: -60px;
+  animation:
+    210ms ease-out 150ms both vt-fade,
+    400ms ease-in-out both vt-slide;
+}
+
+/* The admin header stays put while the content below it slides. */
+::view-transition-group(admin-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(admin-header) {
+  display: none;
+}
+::view-transition-new(admin-header) {
+  animation: none;
+}
+
+@keyframes vt-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes vt-slide {
+  from {
+    translate: var(--slide-offset);
+  }
+  to {
+    translate: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
