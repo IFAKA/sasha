@@ -17,8 +17,9 @@ export default defineShop({
   instagram: "https://www.instagram.com/cardamomo.pasteleria/",
 
   logo: "/shops/cardamomo/logo.webp",
-  cover: "/shops/cardamomo/cover.webp",
-  coverAlt: "La esquina de Cardamomo, con sus toldos azules y bancos en la vereda",
+  cover: "/shops/cardamomo/hero.webp",
+  // Their Instagram illustration, padded with white so the tall hero frame never crops its lettering.
+  coverAlt: "Ilustración de Cardamomo: una chica caminando dentro de una medialuna gigante, con el lema “Fábrica de drogas dulces y saladas”",
 
   // The navy of the logo and the awnings, on a warm white.
   theme: {
