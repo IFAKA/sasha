@@ -9,6 +9,7 @@ import { useCart } from "@/components/cart/cart-provider";
 import { BottomSheet, Drawer } from "@/components/ui/drawer";
 import { QuantityField } from "@/components/ui/quantity-field";
 import { BagIcon, CheckIcon, CloseIcon, PlusIcon } from "@/components/icons";
+import { flyToCart } from "@/lib/fly-to-cart";
 import { formatPrice, type Product } from "@/lib/menu";
 import { noun, shop, shortName } from "@/lib/shop";
 
@@ -33,7 +34,9 @@ export function CakeCatalog({ sections }: { sections: Section[] }) {
   };
 
   // The card's + skips the detail: the most popular size (the largest), one unit.
-  const quickAdd = (cake: Product) => {
+  // The photo flies to the cart first, so the badge counts it as it lands.
+  const quickAdd = async (cake: Product, photo: Element | null | undefined) => {
+    await flyToCart(photo);
     actions.add(cake.id, cake.sizes.at(-1)!.id, 1);
     confirmAdded(cake.name);
   };
@@ -76,7 +79,7 @@ export function CakeCatalog({ sections }: { sections: Section[] }) {
                 {/* Two sibling buttons, as buttons can't nest: the card opens the detail, the + adds right away. */}
                 <div className="group relative">
                   <button type="button" onClick={() => select(cake)} className="block w-full text-left">
-                    <div className="relative aspect-square overflow-hidden rounded-3xl bg-blush">
+                    <div data-fly-photo className="relative aspect-square overflow-hidden rounded-3xl bg-blush">
                       {cake.image ? (
                         <Image
                           src={cake.image}
@@ -98,7 +101,7 @@ export function CakeCatalog({ sections }: { sections: Section[] }) {
                   <div className="pointer-events-none absolute inset-x-0 top-0 aspect-square">
                     <button
                       type="button"
-                      onClick={() => quickAdd(cake)}
+                      onClick={(e) => quickAdd(cake, e.currentTarget.closest("li")?.querySelector("[data-fly-photo]"))}
                       aria-label={`Agregar ${cake.name} al pedido`}
                       className="pointer-events-auto absolute right-3 bottom-3 grid size-10 place-items-center rounded-full bg-paper/95 text-ink shadow-md transition-[transform,background-color,color] hover:scale-110 hover:bg-brand hover:text-white active:scale-95"
                     >
@@ -155,7 +158,11 @@ export function CakeCatalog({ sections }: { sections: Section[] }) {
                     ) : (
                       <BagIcon width={18} height={18} />
                     )}
-                    <span className="truncate">
+                    {/* Phones only have room for the essentials: "¡Agregada!" or "2 tortas". */}
+                    <span className="truncate sm:hidden">
+                      {added ? `¡${noun.g("Agregada", "Agregado")}!` : noun.count(meta.count)}
+                    </span>
+                    <span className="hidden truncate sm:inline">
                       {added ? `${added} ${noun.g("agregada", "agregado")}` : `${noun.count(meta.count)} en tu pedido`}
                     </span>
                   </m.span>

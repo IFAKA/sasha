@@ -14,6 +14,11 @@ export default defineShop({
   mapsUrl: "https://www.google.com/maps/search/?api=1&query=Av.+Siempreviva+742+CABA",
   whatsapp: "5491100000000",
   instagram: "https://www.instagram.com/",
+  // Optional links: each one shows up only when it's set, so leave out what the shop doesn't have.
+  // PedidosYa: a "Pedí delivery por PedidosYa" button under "Visitanos" and a footer link.
+  // pedidosYa: "https://www.pedidosya.com.ar/restaurantes/<ciudad>/<local>-menu",
+  // Job application form: a "Trabajá con nosotros" link in the footer.
+  // jobsForm: "https://docs.google.com/forms/d/e/<id>/viewform",
 
   // Put the logo and the cover in public/shops/<slug>/ and point to them here,
   // e.g. "/shops/<slug>/logo.jpg". Without a logo, the first letter of the name is shown.

@@ -38,6 +38,10 @@ export type ShopConfig = {
   email?: string;
   instagram?: string;
   facebook?: string;
+  /** Store page on PedidosYa, for delivery: shown next to "Cómo llegar" and in the footer. */
+  pedidosYa?: string;
+  /** Job application form ("Trabajá con nosotros"), linked in the footer. */
+  jobsForm?: string;
 
   /** Google Maps rating (e.g. 4.7), shown on the home page. Overrides the one imported with the menu. */
   googleRating?: number;

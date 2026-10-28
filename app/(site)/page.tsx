@@ -4,7 +4,7 @@ import { Reveal } from "@/components/reveal";
 import { HeroIntro } from "@/components/home/hero-intro";
 import { ScheduleLines } from "@/components/schedule-lines";
 import { WeekSchedule } from "@/components/week-schedule";
-import { ArrowIcon, BagIcon, ClockIcon, CupIcon, PinIcon, StarIcon, WhatsappIcon } from "@/components/icons";
+import { ArrowIcon, BagIcon, ClockIcon, CupIcon, DeliveryIcon, PinIcon, StarIcon, WhatsappIcon } from "@/components/icons";
 import {
   greeting,
   hasBranches,
@@ -238,26 +238,37 @@ export default function HomePage() {
               {locations.map(locationLabel).join(" · ")}.
               {shop.salon?.stayLimit ? ` Tiempo de permanencia en el salón: ${shop.salon.stayLimit}.` : null}
             </p>
-            <div className="mt-6 flex flex-wrap gap-3">
+            {/* Two columns, so "Cómo llegar" and WhatsApp sit side by side even on phones; PedidosYa gets its own row. */}
+            <div className="mt-6 grid max-w-md grid-cols-2 gap-3">
               {locations.map((location) => (
                 <a
                   key={location.mapsUrl}
                   href={location.mapsUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 font-semibold text-cream hover:bg-brand-ink"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-4 py-3 font-semibold whitespace-nowrap text-cream hover:bg-brand-ink"
                 >
-                  <PinIcon /> {hasBranches ? location.name : "Cómo llegar"}
+                  <PinIcon className="shrink-0" /> {hasBranches ? location.name : "Cómo llegar"}
                 </a>
               ))}
               <a
                 href={whatsappLink(`${greeting} Tengo una consulta.`)}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-paper px-5 py-3 font-semibold ring-1 ring-line hover:bg-cream"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-paper px-4 py-3 font-semibold ring-1 ring-line hover:bg-cream"
               >
-                <WhatsappIcon /> WhatsApp
+                <WhatsappIcon className="shrink-0" /> WhatsApp
               </a>
+              {shop.pedidosYa ? (
+                <a
+                  href={shop.pedidosYa}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="col-span-2 inline-flex items-center justify-center gap-2 rounded-full bg-brand px-4 py-3 font-semibold text-white hover:bg-brand-ink"
+                >
+                  <DeliveryIcon className="shrink-0" /> Pedí delivery por PedidosYa
+                </a>
+              ) : null}
             </div>
           </div>
           <div className="rounded-3xl bg-paper p-5 ring-1 ring-line">

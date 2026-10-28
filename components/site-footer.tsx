@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { InstagramIcon, PhoneIcon, PinIcon, WhatsappIcon } from "@/components/icons";
+import { BriefcaseIcon, DeliveryIcon, InstagramIcon, PhoneIcon, PinIcon, WhatsappIcon } from "@/components/icons";
 import { stockPhotos } from "@/lib/menu";
 import { greeting, locationLabel, locations, shop, weekSchedule, whatsappLink } from "@/lib/shop";
 
@@ -69,6 +69,26 @@ export function SiteFooter() {
           {shop.email ? (
             <a href={`mailto:${shop.email}`} className="block break-all text-cream/80 hover:text-cream">
               {shop.email}
+            </a>
+          ) : null}
+          {shop.pedidosYa ? (
+            <a
+              href={shop.pedidosYa}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 text-cream/80 hover:text-cream"
+            >
+              <DeliveryIcon className="shrink-0" /> Delivery por PedidosYa
+            </a>
+          ) : null}
+          {shop.jobsForm ? (
+            <a
+              href={shop.jobsForm}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 text-cream/80 hover:text-cream"
+            >
+              <BriefcaseIcon className="shrink-0" /> Trabajá con nosotros
             </a>
           ) : null}
         </div>

@@ -61,6 +61,8 @@ export function SiteHeader() {
         <button
           type="button"
           onClick={actions.open}
+          // Where quick-added products fly to (lib/fly-to-cart.ts).
+          data-cart-target
           className="relative grid size-10 shrink-0 place-items-center rounded-full bg-paper ring-1 ring-line transition-colors hover:bg-blush"
           aria-label={`Ver pedido (${meta.count} ${meta.count === 1 ? "producto" : "productos"})`}
         >

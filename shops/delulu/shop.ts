@@ -7,7 +7,7 @@ export default defineShop({
   name: "DeLulú Pastelería",
   shortName: "DeLulú",
   kind: "Pastelería con amor",
-  tagline: "Hecho con amor. Pensado para disfrutar.",
+  tagline: "Hecho con amor. Pensado para disfrutar",
   description: "Desayunos, meriendas, almuerzos y tortas enteras de DeLulú Pastelería en Rosario. Encargá tu torta online y retirala en el local.",
 
   // TODO: confirm the address (from a third-party listing).
@@ -16,6 +16,8 @@ export default defineShop({
   mapsUrl: "https://www.google.com/maps/search/?api=1&query=DeLul%C3%BA+Pasteler%C3%ADa+San+Juan+3615+Rosario",
   whatsapp: "5493415040010",
   instagram: "https://www.instagram.com/delulupasteleria/",
+  pedidosYa: "https://www.pedidosya.com.ar/restaurantes/rosario/delulu-pasteleria-menu",
+  jobsForm: "https://docs.google.com/forms/d/e/1FAIpQLSfErIpE45ClASjim4Xh2pyfFDUaPB2PvqKniOiRvFe2ApvrkQ/viewform",
 
   logo: "/shops/delulu/logo.webp",
   cover: "/shops/delulu/hero.webp",

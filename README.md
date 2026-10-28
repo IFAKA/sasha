@@ -56,6 +56,9 @@ With `"mercadopago"`, payments are simulated until `MP_ACCESS_TOKEN` is set (see
 Other options: leave out `salon` for shops without tables (the Salón page disappears), and set
 `orders.leadTimeHours` to `0` for same-day orders (the notice disappears).
 
+Optional links appear only when set; leave them out and nothing shows. `pedidosYa` adds a delivery
+button under "Visitanos" and a footer link; `jobsForm` adds "Trabajá con nosotros" to the footer.
+
 ## Notes
 
 - Orders and the panel live in the browser's localStorage. That's fine for a demo; a real
