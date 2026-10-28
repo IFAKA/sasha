@@ -16,6 +16,7 @@
     "import-nucleocheck": "node scripts/import-nucleocheck.mjs"
   },
   "dependencies": {
+    "@base-ui/react": "^1.9.0",
     "mercadopago": "^3.6.1",
     "motion": "^14.6.0",
     "next": "16.4.3",

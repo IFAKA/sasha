@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Sheet } from "@/components/sheet";
+import { Dialog } from "@base-ui/react/dialog";
 import { CheckIcon } from "@/components/icons";
 import { closedSentence, leadTimeLabel, noun, paysOnline, pickupPlaces, shop } from "@/lib/shop";
 import { earliestPickup, formatPickup } from "@/lib/pickup";
@@ -24,35 +24,34 @@ const rules = [
 /** Shown every time someone enters the take-away section (only when orders need notice). */
 export function TakeawayNotice() {
   const [open, setOpen] = useState(true);
-  const close = () => setOpen(false);
 
   return (
-    <Sheet open={open} onClose={close} labelledBy="notice-title" variant="center">
-      <div className="p-6">
-        <p className="text-xs font-semibold tracking-wide text-brand uppercase">Antes de encargar</p>
-        <h2 id="notice-title" className="mt-1 font-display text-2xl leading-tight font-semibold text-balance">
-          Pedidos con {leadTimeLabel} de anticipación
-        </h2>
-        <p className="mt-3 rounded-2xl bg-warn-bg px-4 py-3 text-sm text-warn-ink">
-          Si encargás ahora, retirás desde el <strong className="font-semibold"><EarliestPickup /></strong>.
-        </p>
-        <ul className="mt-4 space-y-1.5 text-sm">
-          {rules.map((item) => (
-            <li key={item} className="flex gap-2">
-              <CheckIcon width={18} height={18} className="mt-px shrink-0 text-brand" />
-              {item}
-            </li>
-          ))}
-        </ul>
-        <button
-          type="button"
-          onClick={close}
-          autoFocus
-          className="mt-5 w-full rounded-full bg-ink px-5 py-3.5 font-semibold text-cream transition-[background-color,transform] hover:bg-brand-ink active:scale-[0.98]"
-        >
-          Entendido, ver {noun.other}
-        </button>
-      </div>
-    </Sheet>
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      <Dialog.Portal>
+        <Dialog.Backdrop className="fixed inset-0 z-50 bg-ink/40 backdrop-blur-[2px] transition-opacity duration-300 data-starting-style:opacity-0 data-ending-style:opacity-0" />
+        <Dialog.Viewport className="fixed inset-0 z-50 grid place-items-center p-4">
+          <Dialog.Popup className="w-full max-w-md rounded-3xl bg-cream p-6 text-ink shadow-2xl outline-none transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] data-starting-style:translate-y-3 data-starting-style:scale-95 data-starting-style:opacity-0 data-ending-style:scale-95 data-ending-style:opacity-0">
+            <p className="text-xs font-semibold tracking-wide text-brand uppercase">Antes de encargar</p>
+            <Dialog.Title className="mt-1 font-display text-2xl leading-tight font-semibold text-balance">
+              Pedidos con {leadTimeLabel} de anticipación
+            </Dialog.Title>
+            <Dialog.Description className="mt-3 rounded-2xl bg-warn-bg px-4 py-3 text-sm text-warn-ink">
+              Si encargás ahora, retirás desde el <strong className="font-semibold"><EarliestPickup /></strong>.
+            </Dialog.Description>
+            <ul className="mt-4 space-y-1.5 text-sm">
+              {rules.map((item) => (
+                <li key={item} className="flex gap-2">
+                  <CheckIcon width={18} height={18} className="mt-px shrink-0 text-brand" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <Dialog.Close className="mt-5 w-full rounded-full bg-ink px-5 py-3.5 font-semibold text-cream transition-[background-color,transform] hover:bg-brand-ink active:scale-[0.98]">
+              Entendido, ver {noun.other}
+            </Dialog.Close>
+          </Dialog.Popup>
+        </Dialog.Viewport>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }

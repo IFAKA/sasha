@@ -4,6 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AnimatePresence, m } from "motion/react";
+import { Fieldset } from "@base-ui/react/fieldset";
+import { Radio } from "@base-ui/react/radio";
+import { RadioGroup } from "@base-ui/react/radio-group";
 import { shop } from "@/lib/shop";
 import { useLastOrder } from "@/lib/last-order";
 import { formatPrice } from "@/lib/menu";
@@ -78,29 +81,26 @@ export function SimulatedCheckout({
           {pickup ? <p className="mt-2 text-xs text-[#666]">Retiro: {formatPickup(Date.parse(pickup))}</p> : null}
         </section>
 
-        <fieldset className="rounded-lg bg-white shadow-sm">
-          <legend className="sr-only">Medio de pago</legend>
-          <p className="px-4 pt-4 pb-2 font-semibold">¿Cómo querés pagar?</p>
-          {METHODS.map((option) => (
-            <label
-              key={option.id}
-              className="flex cursor-pointer items-center gap-3 border-t border-[#eee] px-4 py-3 has-[:focus-visible]:bg-[#f5f9ff]"
-            >
-              <input
-                type="radio"
-                name="method"
+        <Fieldset.Root className="rounded-lg bg-white shadow-sm">
+          <Fieldset.Legend className="px-4 pt-4 pb-2 font-semibold">¿Cómo querés pagar?</Fieldset.Legend>
+          <RadioGroup value={method} onValueChange={(value: MethodId) => setMethod(value)}>
+            {METHODS.map((option) => (
+              <Radio.Root
+                key={option.id}
                 value={option.id}
-                checked={method === option.id}
-                onChange={() => setMethod(option.id)}
-                className="size-4 accent-[#009ee3]"
-              />
-              <span>
-                <span className="block text-sm font-semibold">{option.title}</span>
-                <span className="block text-xs text-[#666]">{option.detail}</span>
-              </span>
-            </label>
-          ))}
-        </fieldset>
+                className="flex w-full cursor-pointer items-center gap-3 border-t border-[#eee] px-4 py-3 text-left outline-none focus-visible:bg-[#f5f9ff]"
+              >
+                <span className="grid size-4 shrink-0 place-items-center rounded-full ring-1 ring-[#999] in-data-checked:bg-[#009ee3] in-data-checked:ring-[#009ee3]">
+                  <Radio.Indicator className="size-1.5 rounded-full bg-white" />
+                </span>
+                <span>
+                  <span className="block text-sm font-semibold">{option.title}</span>
+                  <span className="block text-xs text-[#666]">{option.detail}</span>
+                </span>
+              </Radio.Root>
+            ))}
+          </RadioGroup>
+        </Fieldset.Root>
 
         <div className="mt-auto space-y-2 pb-[env(safe-area-inset-bottom)]">
           <button

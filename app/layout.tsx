@@ -36,7 +36,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     // data-scroll-behavior="smooth": Next turns off our CSS smooth scrolling during route
     // changes, so each new page starts at the top instantly instead of animating.
     <html lang="es-AR" data-scroll-behavior="smooth" style={theme} className={`${display.variable} ${body.variable} antialiased`}>
-      <body className="flex min-h-dvh flex-col font-sans">
+      {/* `relative`: Base UI's drawer and dialog backdrops cover the whole page on iOS Safari. */}
+      <body className="relative flex min-h-dvh flex-col font-sans">
         <MotionProvider>
           <CartProvider>
             {children}

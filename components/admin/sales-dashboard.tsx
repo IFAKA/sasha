@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ColumnChart, DataTable, RankedBars, type Datum } from "@/components/admin/charts";
+import { Segmented } from "@/components/ui/segmented";
 import { DAY_MS, dayLabel, formatTime, shortDay, startOfArDay } from "@/lib/admin-dates";
 import { formatPrice } from "@/lib/menu";
 import { useOrders } from "@/lib/orders";
@@ -10,8 +11,8 @@ import { useNow } from "@/lib/use-now";
 import { closedLabel, noun, paysOnline, shortName, weekSchedule } from "@/lib/shop";
 
 const PERIODS = [
-  { days: 7, label: "Últimos 7 días" },
-  { days: 30, label: "Últimos 30 días" },
+  { value: 7, label: "Últimos 7 días" },
+  { value: 30, label: "Últimos 30 días" },
 ] as const;
 
 // Open days only, in the order of the week.
@@ -120,22 +121,7 @@ export function SalesDashboard() {
       </section>
 
       {/* One filter row; it scopes everything below it. */}
-      <div role="radiogroup" aria-label="Período" className="mt-8 flex w-fit gap-1 rounded-full bg-paper p-1 ring-1 ring-line">
-        {PERIODS.map((p) => (
-          <button
-            key={p.days}
-            type="button"
-            role="radio"
-            aria-checked={days === p.days}
-            onClick={() => setDays(p.days)}
-            className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
-              days === p.days ? "bg-ink text-cream" : "text-muted hover:text-ink"
-            }`}
-          >
-            {p.label}
-          </button>
-        ))}
-      </div>
+      <Segmented label="Período" value={days} onChange={setDays} options={PERIODS} className="mt-8" />
 
       <section aria-label="Resumen del período" className="mt-4 grid gap-3 sm:grid-cols-3">
         <div className="rounded-3xl bg-paper p-5 ring-1 ring-line sm:col-span-3">

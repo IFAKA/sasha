@@ -4,9 +4,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { useActionState, useMemo, useState } from "react";
 import { AnimatePresence, m } from "motion/react";
-import { MAX_QUANTITY, useCart, type ResolvedLine } from "@/components/cart/cart-provider";
-import { Sheet } from "@/components/sheet";
-import { BagIcon, CalendarIcon, CloseIcon, MinusIcon, PinIcon, PlusIcon, WhatsappIcon } from "@/components/icons";
+import { Field } from "@base-ui/react/field";
+import { Fieldset } from "@base-ui/react/fieldset";
+import { Input } from "@base-ui/react/input";
+import { Radio } from "@base-ui/react/radio";
+import { RadioGroup } from "@base-ui/react/radio-group";
+import { useCart, type ResolvedLine } from "@/components/cart/cart-provider";
+import { Drawer, SidePanel } from "@/components/ui/drawer";
+import { QuantityField } from "@/components/ui/quantity-field";
+import { BagIcon, CalendarIcon, CloseIcon, PinIcon, WhatsappIcon } from "@/components/icons";
 import { startCheckout } from "@/lib/checkout-actions";
 import { saveLastOrder } from "@/lib/last-order";
 import { formatPrice } from "@/lib/menu";
@@ -20,23 +26,22 @@ export function CartDrawer() {
   const { state, actions, meta } = useCart();
 
   return (
-    <Sheet open={state.isOpen} onClose={actions.close} labelledBy="cart-title">
-      <div className="flex items-center justify-between border-b border-line px-5 py-4">
-        <h2 id="cart-title" className="font-display text-2xl font-semibold">
-          Tu pedido
-        </h2>
-        <button
-          type="button"
-          onClick={actions.close}
-          className="grid size-10 place-items-center rounded-full hover:bg-blush"
-          aria-label="Cerrar pedido"
-        >
-          <CloseIcon />
-        </button>
-      </div>
+    <Drawer.Root
+      open={state.isOpen}
+      onOpenChange={(open) => (open ? actions.open() : actions.close())}
+      swipeDirection="right"
+    >
+      <SidePanel>
+        <div className="flex items-center justify-between border-b border-line px-5 py-4">
+          <Drawer.Title className="font-display text-2xl font-semibold">Tu pedido</Drawer.Title>
+          <Drawer.Close className="grid size-10 place-items-center rounded-full hover:bg-blush" aria-label="Cerrar pedido">
+            <CloseIcon />
+          </Drawer.Close>
+        </div>
 
-      {meta.count === 0 ? <EmptyCart onBrowse={actions.close} /> : <CartContents />}
-    </Sheet>
+        {meta.count === 0 ? <EmptyCart onBrowse={actions.close} /> : <CartContents />}
+      </SidePanel>
+    </Drawer.Root>
   );
 }
 
@@ -109,20 +114,21 @@ function CartContents() {
         {hasBranches ? <LocationPicker error={errors.location} /> : null}
         <PickupPicker error={errors.pickup} />
 
-        <fieldset className="mt-6 min-w-0 space-y-3">
-          <legend className="mb-2 font-semibold">¿Quién retira?</legend>
-          <Field label="Nombre y apellido" error={errors.name}>
-            <input
+        <Fieldset.Root className="mt-6 min-w-0 space-y-3">
+          <Fieldset.Legend className="mb-2 font-semibold">¿Quién retira?</Fieldset.Legend>
+          <TextField label="Nombre y apellido" error={errors.name}>
+            <Input
               name="name"
               autoComplete="name"
               required
               maxLength={80}
               defaultValue={formState?.values?.name}
               placeholder="Ej: Lucía Fernández…"
+              className={control}
             />
-          </Field>
-          <Field label="Teléfono / WhatsApp" error={errors.phone}>
-            <input
+          </TextField>
+          <TextField label="Teléfono / WhatsApp" error={errors.phone}>
+            <Input
               name="phone"
               type="tel"
               inputMode="tel"
@@ -131,18 +137,20 @@ function CartContents() {
               maxLength={20}
               defaultValue={formState?.values?.phone}
               placeholder="Ej: 11 2345-6789…"
+              className={control}
             />
-          </Field>
-          <Field label="Comentarios (opcional)">
-            <textarea
+          </TextField>
+          <TextField label="Comentarios (opcional)">
+            <Field.Control
+              render={<textarea rows={2} />}
               name="notes"
-              rows={2}
               maxLength={300}
               defaultValue={formState?.values?.notes}
               placeholder={shop.orders.notesPlaceholder ?? "Ej: retira mi hermana…"}
+              className={control}
             />
-          </Field>
-        </fieldset>
+          </TextField>
+        </Fieldset.Root>
       </div>
 
       <div className="border-t border-line bg-paper px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
@@ -211,28 +219,16 @@ function CartRow({ line }: { line: ResolvedLine }) {
             <p className="text-sm text-muted">{shop.orders.sizePrefix ? `${shop.orders.sizePrefix} ${sizeLabel}` : sizeLabel}</p>
           ) : null}
           <div className="mt-2 flex items-center justify-between">
-            <div className="flex items-center rounded-full ring-1 ring-line">
-              <button
-                type="button"
-                onClick={() => actions.setQuantity(line.key, line.quantity - 1)}
-                className="grid size-8 place-items-center rounded-full hover:bg-blush"
-                aria-label={line.quantity === 1 ? `Quitar ${line.product.name}` : `Restar ${one} ${line.product.name}`}
-              >
-                <MinusIcon width={16} height={16} />
-              </button>
-              <span className="w-6 text-center text-sm font-semibold tabular-nums" aria-live="polite">
-                {line.quantity}
-              </span>
-              <button
-                type="button"
-                onClick={() => actions.setQuantity(line.key, line.quantity + 1)}
-                disabled={line.quantity >= MAX_QUANTITY}
-                className="grid size-8 place-items-center rounded-full hover:bg-blush disabled:opacity-40"
-                aria-label={`Sumar ${one} ${line.product.name}`}
-              >
-                <PlusIcon width={16} height={16} />
-              </button>
-            </div>
+            {/* Going down to 0 removes the line. */}
+            <QuantityField
+              value={line.quantity}
+              onChange={(quantity) => actions.setQuantity(line.key, quantity)}
+              min={0}
+              size="sm"
+              label={`Cantidad de ${line.product.name}`}
+              decrementLabel={line.quantity === 1 ? `Quitar ${line.product.name}` : `Restar ${one} ${line.product.name}`}
+              incrementLabel={`Sumar ${one} ${line.product.name}`}
+            />
             <span className="font-semibold tabular-nums">{formatPrice(line.subtotal)}</span>
           </div>
         </div>
@@ -244,26 +240,29 @@ function CartRow({ line }: { line: ResolvedLine }) {
 /** Branch choice, only for shops with more than one pickup point. */
 function LocationPicker({ error }: { error?: string }) {
   return (
-    <fieldset className="mt-6 min-w-0">
-      <legend className="mb-3 flex items-center gap-2 font-semibold">
+    <Fieldset.Root className="mt-6 min-w-0">
+      <Fieldset.Legend className="mb-3 flex items-center gap-2 font-semibold">
         <PinIcon /> ¿Dónde lo retirás?
-      </legend>
-      <div className="grid gap-2">
-        {locations.map((location, i) => (
-          <label
+      </Fieldset.Legend>
+      <RadioGroup name="location" defaultValue={locations[0].name} className="grid gap-2">
+        {locations.map((location) => (
+          <Radio.Root
             key={location.name}
-            className="flex cursor-pointer items-center gap-3 rounded-2xl bg-paper px-4 py-2.5 ring-1 ring-line transition-colors has-[:checked]:bg-blush has-[:checked]:ring-brand has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand"
+            value={location.name}
+            className="flex cursor-pointer items-center gap-3 rounded-2xl bg-paper px-4 py-2.5 text-left ring-1 ring-line transition-colors outline-none focus-visible:ring-2 focus-visible:ring-brand data-checked:bg-blush data-checked:ring-brand"
           >
-            <input type="radio" name="location" value={location.name} defaultChecked={i === 0} className="accent-brand" />
+            <span className="grid size-4 shrink-0 place-items-center rounded-full ring-1 ring-ink/40 in-data-checked:bg-brand in-data-checked:ring-brand">
+              <Radio.Indicator className="size-1.5 rounded-full bg-white" />
+            </span>
             <span>
               <span className="block font-semibold">{location.name}</span>
               <span className="block text-sm text-muted">{location.address}</span>
             </span>
-          </label>
+          </Radio.Root>
         ))}
-      </div>
+      </RadioGroup>
       {error ? <p className="mt-2 text-sm text-brand-ink">{error}</p> : null}
-    </fieldset>
+    </Fieldset.Root>
   );
 }
 
@@ -280,73 +279,77 @@ function PickupPicker({ error }: { error?: string }) {
   const selected = day?.slots.find((s) => s.value === slot) ?? day?.slots[0];
 
   return (
-    <fieldset className="mt-6 min-w-0">
-      <legend className="mb-1 flex items-center gap-2 font-semibold">
+    <Fieldset.Root className="mt-6 min-w-0">
+      <Fieldset.Legend className="mb-1 flex items-center gap-2 font-semibold">
         <CalendarIcon /> ¿Cuándo lo retirás?
-      </legend>
+      </Fieldset.Legend>
       {pickupHint ? <p className="mb-3 text-sm text-muted">{pickupHint}.</p> : null}
 
       {day ? (
         <>
-          <div className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 pb-1" role="radiogroup" aria-label="Día de retiro">
-            {days.map((d) => {
-              const active = d.key === day.key;
-              return (
-                <button
-                  key={d.key}
-                  type="button"
-                  role="radio"
-                  aria-checked={active}
-                  onClick={() => {
-                    setDayKey(d.key);
-                    setSlot(null);
-                  }}
-                  className={`shrink-0 rounded-2xl px-3 py-2 text-left text-sm ring-1 transition-colors first-letter:uppercase ${
-                    active ? "bg-ink text-cream ring-ink" : "bg-paper ring-line hover:ring-ink/40"
-                  }`}
-                >
-                  {d.label}
-                </button>
-              );
-            })}
-          </div>
-          <div className="mt-3 grid grid-cols-4 gap-2" role="radiogroup" aria-label="Horario de retiro">
-            {day.slots.map((s) => {
-              const active = s.value === selected?.value;
-              return (
-                <button
-                  key={s.value}
-                  type="button"
-                  role="radio"
-                  aria-checked={active}
-                  onClick={() => setSlot(s.value)}
-                  className={`rounded-xl py-2 text-sm font-medium tabular-nums ring-1 transition-colors ${
-                    active ? "bg-brand text-white ring-brand" : "bg-paper ring-line hover:ring-brand/50"
-                  }`}
-                >
-                  {s.label}
-                </button>
-              );
-            })}
-          </div>
-          <input type="hidden" name="pickup" value={selected?.value ?? ""} />
+          {/* Scrolls sideways: horizontal drags here scroll the days instead of swiping the drawer closed.
+              `relative` makes it the offset parent, so Base UI scrolls the checked day into view correctly. */}
+          <RadioGroup
+            aria-label="Día de retiro"
+            value={day.key}
+            onValueChange={(key: string) => {
+              setDayKey(key);
+              setSlot(null);
+            }}
+            data-base-ui-swipe-ignore="x"
+            className="no-scrollbar relative -mx-5 flex gap-2 overflow-x-auto px-5 pb-1"
+          >
+            {days.map((d) => (
+              <Radio.Root
+                key={d.key}
+                value={d.key}
+                className="shrink-0 cursor-pointer rounded-2xl bg-paper px-3 py-2 text-left text-sm ring-1 ring-line transition-colors outline-none first-letter:uppercase hover:ring-ink/40 focus-visible:ring-2 focus-visible:ring-brand data-checked:bg-ink data-checked:text-cream data-checked:ring-ink"
+              >
+                {d.label}
+              </Radio.Root>
+            ))}
+          </RadioGroup>
+          {/* Submitted as "pickup" through the group's hidden input. */}
+          <RadioGroup
+            name="pickup"
+            aria-label="Horario de retiro"
+            value={selected?.value ?? ""}
+            onValueChange={(value: string) => setSlot(value)}
+            className="mt-3 grid grid-cols-4 gap-2"
+          >
+            {day.slots.map((s) => (
+              <Radio.Root
+                key={s.value}
+                value={s.value}
+                className="cursor-pointer rounded-xl bg-paper py-2 text-center text-sm font-medium tabular-nums ring-1 ring-line transition-colors outline-none hover:ring-brand/50 focus-visible:ring-2 focus-visible:ring-brand data-checked:bg-brand data-checked:text-white data-checked:ring-brand"
+              >
+                {s.label}
+              </Radio.Root>
+            ))}
+          </RadioGroup>
         </>
       ) : (
         <p className="text-sm text-muted">Calculando horarios disponibles…</p>
       )}
       {error ? <p className="mt-2 text-sm text-brand-ink">{error}</p> : null}
-    </fieldset>
+    </Fieldset.Root>
   );
 }
 
-function Field({ label, error, children }: { label: string; error?: string; children: React.ReactElement }) {
+const control =
+  "w-full rounded-xl bg-paper px-3.5 py-2.5 text-base ring-1 ring-line outline-none focus:ring-2 focus:ring-brand data-invalid:ring-brand-ink";
+
+/** Label, control and server-side error, wired together by Base UI's Field. */
+function TextField({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return (
-    <label className="block">
-      <span className="mb-1 block text-sm font-medium">{label}</span>
-      <span className="block [&>input]:w-full [&>input]:rounded-xl [&>input]:bg-paper [&>input]:px-3.5 [&>input]:py-2.5 [&>input]:text-base [&>input]:ring-1 [&>input]:ring-line [&>input]:outline-none [&>input:focus]:ring-2 [&>input:focus]:ring-brand [&>textarea]:w-full [&>textarea]:rounded-xl [&>textarea]:bg-paper [&>textarea]:px-3.5 [&>textarea]:py-2.5 [&>textarea]:text-base [&>textarea]:ring-1 [&>textarea]:ring-line [&>textarea]:outline-none [&>textarea:focus]:ring-2 [&>textarea:focus]:ring-brand">
-        {children}
-      </span>
-      {error ? <span className="mt-1 block text-sm text-brand-ink">{error}</span> : null}
-    </label>
+    <Field.Root invalid={Boolean(error)} className="block">
+      <Field.Label className="mb-1 block text-sm font-medium">{label}</Field.Label>
+      {children}
+      {error ? (
+        <Field.Error match className="mt-1 block text-sm text-brand-ink">
+          {error}
+        </Field.Error>
+      ) : null}
+    </Field.Root>
   );
 }

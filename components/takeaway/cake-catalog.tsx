@@ -3,9 +3,12 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { AnimatePresence, m } from "motion/react";
-import { MAX_QUANTITY, useCart } from "@/components/cart/cart-provider";
-import { Sheet } from "@/components/sheet";
-import { BagIcon, CheckIcon, CloseIcon, MinusIcon, PlusIcon } from "@/components/icons";
+import { Radio } from "@base-ui/react/radio";
+import { RadioGroup } from "@base-ui/react/radio-group";
+import { useCart } from "@/components/cart/cart-provider";
+import { BottomSheet, Drawer } from "@/components/ui/drawer";
+import { QuantityField } from "@/components/ui/quantity-field";
+import { BagIcon, CheckIcon, CloseIcon, PlusIcon } from "@/components/icons";
 import { formatPrice, type Product } from "@/lib/menu";
 import { noun, shop, shortName } from "@/lib/shop";
 
@@ -17,7 +20,7 @@ type Section = { slug: string; name: string; products: Product[] };
 /** The order catalog: one grid, or a titled grid per category when there are several. */
 export function CakeCatalog({ sections }: { sections: Section[] }) {
   const titled = sections.length > 1;
-  // `detail` outlives `open` so the sheet keeps its content during the exit animation.
+  // `detail` outlives `open` so the drawer keeps its content during the exit animation.
   const [detail, setDetail] = useState<Product | null>(null);
   const [open, setOpen] = useState(false);
   const [added, setAdded] = useState<string | null>(null);
@@ -27,6 +30,12 @@ export function CakeCatalog({ sections }: { sections: Section[] }) {
   const select = (cake: Product) => {
     setDetail(cake);
     setOpen(true);
+  };
+
+  // The card's + skips the detail: the most popular size (the largest), one unit.
+  const quickAdd = (cake: Product) => {
+    actions.add(cake.id, cake.sizes.at(-1)!.id, 1);
+    confirmAdded(cake.name);
   };
 
   const confirmAdded = (name: string) => {
@@ -64,49 +73,60 @@ export function CakeCatalog({ sections }: { sections: Section[] }) {
                   delay: (i % 4) * 0.05,
                 }}
               >
-                <button type="button" onClick={() => select(cake)} className="group block w-full text-left">
-                  <div className="relative aspect-square overflow-hidden rounded-3xl bg-blush">
-                    {cake.image ? (
-                      <Image
-                        src={cake.image}
-                        alt={cake.name}
-                        fill
-                        sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, 50vw"
-                        // The first row is on screen right away: don't wait for the lazy-load check.
-                        loading={sectionIndex === 0 && i < 4 ? "eager" : "lazy"}
-                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                      />
-                    ) : null}
-                    <span className="absolute right-3 bottom-3 grid size-10 place-items-center rounded-full bg-paper/95 text-ink shadow-md transition-[transform,background-color] group-hover:scale-110 group-hover:bg-brand group-hover:text-white">
+                {/* Two sibling buttons, as buttons can't nest: the card opens the detail, the + adds right away. */}
+                <div className="group relative">
+                  <button type="button" onClick={() => select(cake)} className="block w-full text-left">
+                    <div className="relative aspect-square overflow-hidden rounded-3xl bg-blush">
+                      {cake.image ? (
+                        <Image
+                          src={cake.image}
+                          alt={cake.name}
+                          fill
+                          sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, 50vw"
+                          // The first row is on screen right away: don't wait for the lazy-load check.
+                          loading={sectionIndex === 0 && i < 4 ? "eager" : "lazy"}
+                          className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                        />
+                      ) : null}
+                    </div>
+                    <h3 className="mt-3 font-semibold text-balance">{shortName(cake.name)}</h3>
+                    <p className="text-sm text-muted tabular-nums">
+                      {cake.sizes.length > 1 ? "Desde " : ""}
+                      {formatPrice(cake.price)}
+                    </p>
+                  </button>
+                  <div className="pointer-events-none absolute inset-x-0 top-0 aspect-square">
+                    <button
+                      type="button"
+                      onClick={() => quickAdd(cake)}
+                      aria-label={`Agregar ${cake.name} al pedido`}
+                      className="pointer-events-auto absolute right-3 bottom-3 grid size-10 place-items-center rounded-full bg-paper/95 text-ink shadow-md transition-[transform,background-color,color] hover:scale-110 hover:bg-brand hover:text-white active:scale-95"
+                    >
                       <PlusIcon />
-                    </span>
+                    </button>
                   </div>
-                  <h3 className="mt-3 font-semibold text-balance">{shortName(cake.name)}</h3>
-                  <p className="text-sm text-muted tabular-nums">
-                    {cake.sizes.length > 1 ? "Desde " : ""}
-                    {formatPrice(cake.price)}
-                  </p>
-                </button>
+                </div>
               </m.li>
             ))}
           </ul>
         </section>
       ))}
 
-      <Sheet open={open} onClose={() => setOpen(false)} labelledBy="cake-title" variant="center">
-        {detail ? (
-          <CakeDetail
-            key={detail.id}
-            cake={detail}
-            onClose={() => setOpen(false)}
-            onAdd={(sizeId, quantity) => {
-              actions.add(detail.id, sizeId, quantity);
-              setOpen(false);
-              confirmAdded(detail.name);
-            }}
-          />
-        ) : null}
-      </Sheet>
+      <Drawer.Root open={open} onOpenChange={setOpen}>
+        <BottomSheet>
+          {detail ? (
+            <CakeDetail
+              key={detail.id}
+              cake={detail}
+              onAdd={(sizeId, quantity) => {
+                actions.add(detail.id, sizeId, quantity);
+                setOpen(false);
+                confirmAdded(detail.name);
+              }}
+            />
+          ) : null}
+        </BottomSheet>
+      </Drawer.Root>
 
       <AnimatePresence>
         {meta.count > 0 ? (
@@ -152,15 +172,7 @@ export function CakeCatalog({ sections }: { sections: Section[] }) {
   );
 }
 
-function CakeDetail({
-  cake,
-  onClose,
-  onAdd,
-}: {
-  cake: Product;
-  onClose: () => void;
-  onAdd: (sizeId: string, quantity: number) => void;
-}) {
+function CakeDetail({ cake, onAdd }: { cake: Product; onAdd: (sizeId: string, quantity: number) => void }) {
   // Default to the most popular size (the largest) so one tap is enough.
   const [sizeId, setSizeId] = useState(cake.sizes.at(-1)!.id);
   const [quantity, setQuantity] = useState(1);
@@ -168,84 +180,60 @@ function CakeDetail({
 
   return (
     <>
-      <div className="relative h-40 shrink-0 bg-blush sm:h-48">
+      <div className="relative h-48 shrink-0 bg-blush sm:h-56">
         {cake.image ? <Image src={cake.image} alt={cake.name} fill sizes="448px" className="object-cover" /> : null}
-        <button
-          type="button"
-          onClick={onClose}
+        <Drawer.Close
           className="absolute top-3 right-3 grid size-10 place-items-center rounded-full bg-paper/95 shadow"
           aria-label="Cerrar"
         >
           <CloseIcon />
-        </button>
+        </Drawer.Close>
       </div>
-      <div className="px-5 pt-4 pb-5">
-        <h2 id="cake-title" className="font-display text-2xl leading-tight font-semibold">
-          {cake.name}
-        </h2>
+      <Drawer.Content className="px-5 pt-4 pb-5">
+        <Drawer.Title className="font-display text-2xl leading-tight font-semibold">{cake.name}</Drawer.Title>
         {cake.description ? (
-          <p className="mt-1 line-clamp-2 text-sm text-muted text-pretty">{cake.description}</p>
+          <Drawer.Description className="mt-1 text-sm text-muted text-pretty">{cake.description}</Drawer.Description>
         ) : null}
 
         {cake.sizes.length > 1 ? (
-          <fieldset className="mt-4">
-            <legend className="mb-2 text-sm font-semibold">{shop.orders.sizeLegend ?? "Tamaño"}</legend>
-            <div className="grid gap-2">
+          <div className="mt-4">
+            <p id="size-legend" className="mb-2 text-sm font-semibold">
+              {shop.orders.sizeLegend ?? "Tamaño"}
+            </p>
+            <RadioGroup
+              aria-labelledby="size-legend"
+              value={sizeId}
+              onValueChange={(value: string) => setSizeId(value)}
+              className="grid gap-2"
+            >
               {cake.sizes.map((s) => (
-                <label
+                <Radio.Root
                   key={s.id}
-                  className={`flex cursor-pointer items-center justify-between rounded-2xl px-4 py-2.5 ring-1 transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand ${
-                    s.id === sizeId ? "bg-blush ring-brand" : "bg-paper ring-line hover:ring-ink/30"
-                  }`}
+                  value={s.id}
+                  className="flex cursor-pointer items-center justify-between rounded-2xl bg-paper px-4 py-2.5 ring-1 ring-line transition-colors outline-none hover:ring-ink/30 focus-visible:ring-2 focus-visible:ring-brand data-checked:bg-blush data-checked:ring-brand"
                 >
-                  <input
-                    type="radio"
-                    name="size"
-                    value={s.id}
-                    checked={s.id === sizeId}
-                    onChange={() => setSizeId(s.id)}
-                    className="sr-only"
-                  />
                   <span>
                     <span className="font-semibold">{s.label}</span>
                     {sizeNotes[s.id] ? <span className="ml-2 text-sm text-muted">{sizeNotes[s.id]}</span> : null}
                   </span>
                   <span className="font-semibold tabular-nums">{formatPrice(s.price)}</span>
-                </label>
+                </Radio.Root>
               ))}
-            </div>
-          </fieldset>
+            </RadioGroup>
+          </div>
         ) : null}
 
         <div className="mt-4 flex items-center justify-between gap-3">
-          <div className="flex items-center rounded-full ring-1 ring-line">
-            <button
-              type="button"
-              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-              disabled={quantity <= 1}
-              className="grid size-11 place-items-center rounded-full hover:bg-blush disabled:opacity-40"
-              aria-label={`Restar ${one}`}
-            >
-              <MinusIcon />
-            </button>
-            <span className="w-7 text-center font-semibold tabular-nums" aria-live="polite">
-              {quantity}
-            </span>
-            <button
-              type="button"
-              onClick={() => setQuantity((q) => Math.min(MAX_QUANTITY, q + 1))}
-              disabled={quantity >= MAX_QUANTITY}
-              className="grid size-11 place-items-center rounded-full hover:bg-blush disabled:opacity-40"
-              aria-label={`Sumar ${one}`}
-            >
-              <PlusIcon />
-            </button>
-          </div>
+          <QuantityField
+            value={quantity}
+            onChange={setQuantity}
+            label="Cantidad"
+            decrementLabel={`Restar ${one}`}
+            incrementLabel={`Sumar ${one}`}
+          />
           <p className="text-right">
             <span className="block text-xs text-muted">Total</span>
-            <span className="font-display text-2xl font-semibold tabular-nums">
-              {formatPrice(size.price * quantity)}
-            </span>
+            <span className="font-display text-2xl font-semibold tabular-nums">{formatPrice(size.price * quantity)}</span>
           </p>
         </div>
         <button
@@ -255,7 +243,7 @@ function CakeDetail({
         >
           Agregar
         </button>
-      </div>
+      </Drawer.Content>
     </>
   );
 }

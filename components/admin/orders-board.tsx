@@ -3,7 +3,10 @@
 import { useDeferredValue, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { AnimatePresence, m } from "motion/react";
+import { Checkbox } from "@base-ui/react/checkbox";
+import { Input } from "@base-ui/react/input";
 import { AlertIcon, CheckIcon, PinIcon, WhatsappIcon } from "@/components/icons";
+import { Segmented } from "@/components/ui/segmented";
 import { capitalize, dayLabel, formatTime, startOfArDay } from "@/lib/admin-dates";
 import { formatPrice } from "@/lib/menu";
 import { orderActions, useOrders, type Order } from "@/lib/orders";
@@ -11,11 +14,11 @@ import { useNow } from "@/lib/use-now";
 import { REFERENCE, noun, paysOnline, shop } from "@/lib/shop";
 
 const FILTERS = [
-  { id: "pendiente", label: "Por entregar" },
-  { id: "completado", label: "Entregados" },
-  { id: "todos", label: "Todos" },
+  { value: "pendiente", label: "Por entregar" },
+  { value: "completado", label: "Entregados" },
+  { value: "todos", label: "Todos" },
 ] as const;
-type Filter = (typeof FILTERS)[number]["id"];
+type Filter = (typeof FILTERS)[number]["value"];
 
 const MAX_DELIVERED = 40;
 
@@ -98,25 +101,10 @@ export function OrdersBoard({ highlight }: { highlight: string | null }) {
       ) : null}
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
-        <div role="radiogroup" aria-label="Mostrar" className="flex gap-1 rounded-full bg-paper p-1 ring-1 ring-line">
-          {FILTERS.map((f) => (
-            <button
-              key={f.id}
-              type="button"
-              role="radio"
-              aria-checked={filter === f.id}
-              onClick={() => setFilter(f.id)}
-              className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
-                filter === f.id ? "bg-ink text-cream" : "text-muted hover:text-ink"
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
+        <Segmented label="Mostrar" value={filter} onChange={setFilter} options={FILTERS} />
         <label className="min-w-48 flex-1 sm:max-w-xs">
           <span className="sr-only">Buscar pedidos</span>
-          <input
+          <Input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -248,20 +236,15 @@ function OrderCard({ order, now }: { order: Order; now: number }) {
         )}
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-full py-1 pr-1 pl-3 text-sm font-semibold select-none">
           {done ? "Entregado" : "Marcar entregado"}
-          <input
-            type="checkbox"
+          <Checkbox.Root
             checked={done}
-            onChange={(e) => orderActions.setStatus(order.ref, e.target.checked ? "completado" : "pendiente")}
-            className="peer sr-only"
-          />
-          <span
-            aria-hidden="true"
-            className={`grid size-7 place-items-center rounded-full ring-2 transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand ${
-              done ? "bg-emerald-600 text-white ring-emerald-600" : "bg-paper text-transparent ring-line"
-            }`}
+            onCheckedChange={(checked) => orderActions.setStatus(order.ref, checked ? "completado" : "pendiente")}
+            className="grid size-7 place-items-center rounded-full bg-paper ring-2 ring-line transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand data-checked:bg-emerald-600 data-checked:text-white data-checked:ring-emerald-600"
           >
-            <CheckIcon width={16} height={16} />
-          </span>
+            <Checkbox.Indicator>
+              <CheckIcon width={16} height={16} />
+            </Checkbox.Indicator>
+          </Checkbox.Root>
         </label>
       </div>
       <p className="sr-only">{capitalize(dayLabel(order.pickup, now))}</p>
