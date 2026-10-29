@@ -15,11 +15,14 @@
 |---|---|---|---|---|---|
 | 1 Hook | 0–105 | 1–2 | Dark-ish warm scene. An owner's phone fills with WhatsApp bubbles ("¿Tenés torta para el sábado?", "¿A qué hora paso?", "¿Aceptan transferencia?", "¿Me pasás precios?"...), faster and faster, overlapping, phone shakes slightly. | "¿Todavía tomás pedidos por WhatsApp?" | Pings pile up and speed up; riser under them |
 | 2 Turn | 105–120 | end of bar 2 | All bubbles get pulled into one point at screen centre (scale down + blur), flash to cream. | — | Reverse whoosh into silence (1 beat) |
-| 3 Reveal | 120–240 | 3–4 | The music drops. A clean phone with the SENS home page rises into frame in 3D, settles. | "Tu tienda online." then "Con tu marca." | Drop: impact + music starts |
+| 3 Reveal | 120–240 | 3–4 | The music drops. A clean phone with the shop's home page rises into frame in 3D, settles. | "Tu tienda online." then "Con tu marca." | Drop: impact + music starts |
 | 4 Customer | 240–480 | 5–8 | Camera pushes into the phone. Menu scrolls; a cake card lifts off the screen (layer), finger tap, card flies into cart, badge bounces to 1. Next: pickup branch + day + time chips get chosen. Next: Mercado Pago pay button pressed, check mark. | "Tus clientes eligen…" → "…reservan día y hora…" → "…y pagan online." | Tap, pop, whoosh, ding on beats |
 | 5 Owner | 480–660 | 9–11 | Phone turns; we are on the owner side (`/admin`). A new order card slides in at the top (notification). Then the sales dashboard: bars grow, revenue counts up. | "Vos solo horneás." | Order chime; rising tones for bars |
-| 6 Many shops | 660–780 | 12–13 | Same phone, its screen swaps skin on every beat: SENS → Mais → Delfis → Cardamomo → Delulu (real shops). Background colour follows each shop's theme. | "Cada tienda, su propia cara." | One hit per swap |
+| 6 Your brand | 660–780 | 12–13 | Same phone, same shop; its colours change on each beat (default → teal → plum → navy). Background follows each colour. | "Con tus colores." | One hit per swap |
 | 7 CTA | 780–900 | 14–15 | Phone drifts back, title and contact settle; logo lockup. | "Tu tienda online en 1 día." + contact line | Final impact, music rings out |
+
+## Shop shown (legal rule)
+Only the fictional template shop "Café Ejemplo" (`shops/_template`, captured as `ejemplo`). **No real shop** (SENS, Mais, Delfis, Cardamomo, Delulu, Sasha) may appear: no name, logo, photo, address or colour named after it. Stock photos under CC BY-SA must be credited on the end card or in the post text.
 
 ## Look
 - Warm cream background (#F6F0E6-ish) with soft radial light, subtle film grain, soft long shadows.
