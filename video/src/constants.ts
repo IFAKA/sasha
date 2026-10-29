@@ -1,6 +1,6 @@
 // Everything the owner may want to change lives here.
 export const PRODUCT_NAME = 'Tu Tienda';
-export const CONTACT_LINE = 'Escribinos: +54 9 341 000-0000';
+export const CONTACT_LINE = 'Escribinos: +34 623 73 55 21';
 
 export const W = 1080;
 export const H = 1920;
