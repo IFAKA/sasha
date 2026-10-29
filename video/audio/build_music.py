@@ -26,18 +26,26 @@ VOICE = {'C': [64, 67, 71, 74], 'F': [65, 69, 72, 76], 'Am': [64, 67, 69, 72], '
 BASS = {'C': 36, 'F': 41, 'Am': 45, 'G': 43}
 CLASH = [66, 72, 71, 73, 78, 65, 70, 77, 67, 75]   # F#, C, B, C#, F#, F, Bb ... tritones and semitone clusters
 
+def ping_times():
+    """Ping times: the ping-NN cues of the picture (../out/cues.json) if present, else a built-in accelerating schedule."""
+    p = os.path.join(HERE, '..', 'out', 'cues.json')
+    if os.path.exists(p):
+        c = sorted(x['seconds'] for x in json.load(open(p)) if x['name'].startswith('ping-') and x['seconds'] < 3.45)
+        if c: return c
+    t, i, out = 0.12, 0, []
+    while t < 3.38: out.append(t); t += max(0.05, 0.62 * 0.83 ** i); i += 1
+    return out
+
 def build(kT=1.0, kL=1.0):
     drums, bass, harm, mot, fx = new(), new(), new(), new(), new()
     rng = np.random.default_rng(21)
     # ---------- bars 1-2: the chaos ----------
-    t = 0.12; i = 0
-    while t < 3.38:
-        prog = t / 3.4; gap = max(0.05, 0.62 * 0.83 ** i)
-        n_stack = 1 + (gap < 0.2) + (gap < 0.1)
-        for s in range(n_stack):
+    ping_t = ping_times()
+    for i, t in enumerate(ping_t):
+        prog = min(1.0, t / 3.4)
+        for s in range(1 + (i >= 5) + (i >= 8)):
             m = CLASH[(i * 3 + s * 4) % len(CLASH)]
             put(fx, ping(mtof(m), 0.35 + 0.65 * prog, rng.uniform(-28, 28), rng.uniform(-.7, .7)), t + s * 0.011, 1.0)
-        t += gap; i += 1
     drone = new(); tt = _t(N)[:int(3.5 * SR)]
     d = (np.sin(TAU * 65.41 * tt) + .8 * np.sin(TAU * 92.5 * tt) + .5 * np.sin(TAU * 98.0 * tt)) * np.minimum(tt / 1.5, 1) * 0.12
     drone[:len(tt)] += _st(d)

@@ -40,7 +40,7 @@ export const AdBody: React.FC = () => (
 export const Ad: React.FC = () => (
   <>
     <AdBody />
-    <Audio src={staticFile('audio/music_bed.wav')} />
+    <Audio src={staticFile('audio/mix.wav')} />
   </>
 );
 
