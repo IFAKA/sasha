@@ -7,10 +7,12 @@ import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
 import { useCart } from "@/components/cart/cart-provider";
 import { BottomSheet, Drawer } from "@/components/ui/drawer";
+import { ProductModel } from "@/components/takeaway/model-viewer";
 import { QuantityField } from "@/components/ui/quantity-field";
 import { BagIcon, CheckIcon, CloseIcon, PlusIcon } from "@/components/icons";
 import { flyToCart } from "@/lib/fly-to-cart";
 import { formatPrice, type Product } from "@/lib/menu";
+import { modelFor } from "@/lib/models3d";
 import { noun, shop, shortName } from "@/lib/shop";
 
 const sizeNotes = shop.orders.sizeNotes ?? {};
@@ -185,12 +187,15 @@ function CakeDetail({ cake, onAdd }: { cake: Product; onAdd: (sizeId: string, qu
   const [sizeId, setSizeId] = useState(cake.sizes.at(-1)!.id);
   const [quantity, setQuantity] = useState(1);
   const [sharp, setSharp] = useState(false);
+  const [view3d, setView3d] = useState(false);
+  const model = modelFor(cake.id);
   const size = cake.sizes.find((s) => s.id === sizeId)!;
 
   return (
     <>
       <div className="relative h-48 shrink-0 bg-blush sm:h-56">
-        {cake.image ? (
+        {view3d && model ? <ProductModel src={model} name={cake.name} poster={cake.image} /> : null}
+        {cake.image && !view3d ? (
           <>
             {/* Same URL as the card's photo (same `sizes`), so it comes from the browser cache and shows
                 instantly; the sharper one fades in over it once it has loaded. */}
@@ -207,6 +212,15 @@ function CakeDetail({ cake, onAdd }: { cake: Product; onAdd: (sizeId: string, qu
               className={`object-cover transition-opacity duration-300 ${sharp ? "opacity-100" : "opacity-0"}`}
             />
           </>
+        ) : null}
+        {model ? (
+          <button
+            type="button"
+            onClick={() => setView3d((v) => !v)}
+            className="absolute bottom-3 left-3 z-10 rounded-full bg-paper/95 px-3.5 py-1.5 text-sm font-semibold shadow"
+          >
+            {view3d ? "Ver foto" : "Ver en 3D"}
+          </button>
         ) : null}
         <Drawer.Close
           className="absolute top-3 right-3 grid size-10 place-items-center rounded-full bg-paper/95 shadow"
