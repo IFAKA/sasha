@@ -1,0 +1,408 @@
+{
+  "1001": {
+    "src": "/shops/cardamomo/products/cafe-con-leche.webp",
+    "title": "Cafe cortado y un medialuna.jpg",
+    "author": "Natalie HG",
+    "license": "CC BY 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Cafe_cortado_y_un_medialuna.jpg"
+  },
+  "1003": {
+    "src": "/shops/cardamomo/products/budin.webp",
+    "title": "Glazed lemon pound cake in basket.jpg",
+    "author": "www.WorthTheWhisk.com",
+    "license": "CC BY 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Glazed_lemon_pound_cake_in_basket.jpg"
+  },
+  "1005": {
+    "src": "/shops/sens/products/granola.webp",
+    "title": "Yogurt, fruit, granola bowl (34999358091).jpg",
+    "author": "T.Tseng",
+    "license": "CC BY 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Yogurt,_fruit,_granola_bowl_(34999358091).jpg"
+  },
+  "1006": {
+    "src": "/shops/sens/products/toast-palta.webp",
+    "title": "Avocado toast with sesame seeds.jpg",
+    "author": "Jami430",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Avocado_toast_with_sesame_seeds.jpg"
+  },
+  "1007": {
+    "src": "/shops/sens/products/toast-huevo.webp",
+    "title": "Scrambled eggs on toast - Joe's Cafe 2024-04-14.jpg",
+    "author": "Andy Li",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Scrambled_eggs_on_toast_-_Joe%27s_Cafe_2024-04-14.jpg"
+  },
+  "1008": {
+    "src": "/shops/sens/products/toast-completa.webp",
+    "title": "Avocado toast at the girl & the fig - Sarah Stierch.jpg",
+    "author": "Sarah Stierch",
+    "license": "CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Avocado_toast_at_the_girl_%26_the_fig_-_Sarah_Stierch.jpg"
+  },
+  "1010": {
+    "src": "/shops/sens/products/huevos-ram.webp",
+    "title": "Scrambed eggs.jpg",
+    "author": "Takeaway",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Scrambed_eggs.jpg"
+  },
+  "1011": {
+    "src": "/shops/sens/products/huevos-revueltos.webp",
+    "title": "Scrambled eggs with basil.jpg",
+    "author": "OmegaFallon",
+    "license": "CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Scrambled_eggs_with_basil.jpg"
+  },
+  "1012": {
+    "src": "/shops/sens/products/chia.webp",
+    "title": "Chia Seed Pudding in a cup.jpg",
+    "author": "Gogerr",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Chia_Seed_Pudding_in_a_cup.jpg"
+  },
+  "1013": {
+    "src": "/shops/sens/products/pancakes.webp",
+    "title": "Foodiesfeed.com pouring-honey-on-pancakes-with-walnuts.jpg",
+    "author": "Mae Mu",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Foodiesfeed.com_pouring-honey-on-pancakes-with-walnuts.jpg"
+  },
+  "1016": {
+    "src": "/shops/sens/products/french-toast.webp",
+    "title": "Bananas Foster French Toast (15288002250).jpg",
+    "author": "Navin75",
+    "license": "CC BY-SA 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Bananas_Foster_French_Toast_(15288002250).jpg"
+  },
+  "1017": {
+    "src": "/shops/sens/products/waffles.webp",
+    "title": "Fruit waffles and coffee (Unsplash).jpg",
+    "author": "Joseph Gonzalez miracletwentyone",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Fruit_waffles_and_coffee_(Unsplash).jpg"
+  },
+  "2001": {
+    "src": "/shops/cardamomo/products/medialuna.webp",
+    "title": "Croissants au beurre (18953292873).jpg",
+    "author": "Herry Wibisono (herryway)",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Croissants_au_beurre_(18953292873).jpg"
+  },
+  "2003": {
+    "src": "/shops/cardamomo/products/croissant.webp",
+    "title": "Croissant with jam and butter - Little Miss Piggies.jpg",
+    "author": "Andy Li",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Croissant_with_jam_and_butter_-_Little_Miss_Piggies.jpg"
+  },
+  "2004": {
+    "src": "/menu-stock/croissant-jamon-queso.jpg",
+    "title": "Ham & cheese croissant - Trading Post Coffee Roasters 2025-12-31.jpg",
+    "author": "Andy Li",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Ham_%26_cheese_croissant_-_Trading_Post_Coffee_Roasters_2025-12-31.jpg"
+  },
+  "2006": {
+    "src": "/shops/cardamomo/products/roll-canela.webp",
+    "title": "Rollo de canela (Cinnamon roll).jpg",
+    "author": "Horacio Cambeiro",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Rollo_de_canela_(Cinnamon_roll).jpg"
+  },
+  "2007": {
+    "src": "/shops/cardamomo/products/chipa.webp",
+    "title": "Chipa (cheese buns).jpg",
+    "author": "Fabio Téllez",
+    "license": "CC BY-SA 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Chipa_(cheese_buns).jpg"
+  },
+  "2010": {
+    "src": "/shops/sens/products/scon.webp",
+    "title": "Lemon Scones (6849625315).jpg",
+    "author": "Benson Kua from Toronto, Canada",
+    "license": "CC BY-SA 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Lemon_Scones_(6849625315).jpg"
+  },
+  "2011": {
+    "src": "/shops/sens/products/bowl-frutas.webp",
+    "title": "Fruit Salad Or Fruit Bowl.jpg",
+    "author": "Manjeshwari poet mysore",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Fruit_Salad_Or_Fruit_Bowl.jpg"
+  },
+  "2014": {
+    "src": "/shops/cardamomo/products/alfajor.webp",
+    "title": "Alfajores-de-maicena-biscuits-recipe.jpg",
+    "author": "Sara McCleary",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Alfajores-de-maicena-biscuits-recipe.jpg"
+  },
+  "2015": {
+    "src": "/shops/cardamomo/products/cookie.webp",
+    "title": "Choc-Chip-Cookie.jpg",
+    "author": "Evan-Amos",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Choc-Chip-Cookie.jpg"
+  },
+  "2016": {
+    "src": "/shops/cardamomo/products/budin.webp",
+    "title": "Glazed lemon pound cake in basket.jpg",
+    "author": "www.WorthTheWhisk.com",
+    "license": "CC BY 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Glazed_lemon_pound_cake_in_basket.jpg"
+  },
+  "2017": {
+    "src": "/menu-stock/porcion-torta.jpg",
+    "title": "Piece of chocolate cake on a white plate decorated with chocolate sauce.jpg",
+    "author": "Daria Yakovleva",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Piece_of_chocolate_cake_on_a_white_plate_decorated_with_chocolate_sauce.jpg"
+  },
+  "2018": {
+    "src": "/shops/sens/products/crumble.webp",
+    "title": "British apple crumble 05.jpg",
+    "author": "Jonathan Harker",
+    "license": "CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:British_apple_crumble_05.jpg"
+  },
+  "3001": {
+    "src": "/shops/cardamomo/products/quiche-porcion.webp",
+    "title": "Quiche slice, homemade - Massachusetts.jpg",
+    "author": "Daderot",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Quiche_slice,_homemade_-_Massachusetts.jpg"
+  },
+  "3002": {
+    "src": "/shops/sens/products/tiritas.webp",
+    "title": "Crispy Chicken Strips - FotoosVanRobin.jpg",
+    "author": "FotoosVanRobin from Netherlands",
+    "license": "CC BY-SA 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Crispy_Chicken_Strips_-_FotoosVanRobin.jpg"
+  },
+  "3003": {
+    "src": "/shops/sens/products/bruschettas.webp",
+    "title": "Bruschetta at The Bar at MacArthur Place - Sarah Stierch.jpg",
+    "author": "Missvain",
+    "license": "CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Bruschetta_at_The_Bar_at_MacArthur_Place_-_Sarah_Stierch.jpg"
+  },
+  "3004": {
+    "src": "/shops/sens/products/omelette.webp",
+    "title": "FoodOmelete.jpg",
+    "author": "Renee Comet (photographer)",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:FoodOmelete.jpg"
+  },
+  "3006": {
+    "src": "/shops/sens/products/suprema.webp",
+    "title": "Pan Roasted Chicken Breasts, Garlic Mashed Potatoes, Fiddlehead Ferns and Sauce Supreme.jpg",
+    "author": "John Herschell",
+    "license": "CC BY-SA 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Pan_Roasted_Chicken_Breasts,_Garlic_Mashed_Potatoes,_Fiddlehead_Ferns_and_Sauce_Supreme.jpg"
+  },
+  "3007": {
+    "src": "/shops/sens/products/ensalada.webp",
+    "title": "Chicken Caesar salad - Auckland, New Zealand.jpg",
+    "author": "Daderot",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Chicken_Caesar_salad_-_Auckland,_New_Zealand.jpg"
+  },
+  "4003": {
+    "src": "/shops/sens/products/ciabatta.webp",
+    "title": "CIABATTA - Vios 2025-08-08.jpg",
+    "author": "Andy Li",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:CIABATTA_-_Vios_2025-08-08.jpg"
+  },
+  "4005": {
+    "src": "/shops/sens/products/bagel.webp",
+    "title": "Montréal bagel with lox.jpg",
+    "author": "Newmila",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Montr%C3%A9al_bagel_with_lox.jpg"
+  },
+  "5001": {
+    "src": "/shops/cardamomo/products/espresso.webp",
+    "title": "Espresso cup.jpg",
+    "author": "Balise42",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Espresso_cup.jpg"
+  },
+  "5002": {
+    "src": "/shops/cardamomo/products/cortado.webp",
+    "title": "Cortado - LOAM 2023-08-22.jpg",
+    "author": "Andy Li",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Cortado_-_LOAM_2023-08-22.jpg"
+  },
+  "5003": {
+    "src": "/shops/sens/products/americano.webp",
+    "title": "A small cup of coffee.JPG",
+    "author": "Julius Schorzman",
+    "license": "CC BY-SA 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:A_small_cup_of_coffee.JPG"
+  },
+  "5006": {
+    "src": "/shops/cardamomo/products/flat-white.webp",
+    "title": "Flat white coffee with pretty feather pattern.jpg",
+    "author": "GeorgeMichaelFarewell",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Flat_white_coffee_with_pretty_feather_pattern.jpg"
+  },
+  "5007": {
+    "src": "/shops/sens/products/latte.webp",
+    "title": "Cup of coffee with latte art 2016.jpg",
+    "author": "Abdulrohmatt",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Cup_of_coffee_with_latte_art_2016.jpg"
+  },
+  "5010": {
+    "src": "/shops/sens/products/cappuccino.webp",
+    "title": "Cappuccino and cookie.jpg",
+    "author": "TricksterWildcat",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Cappuccino_and_cookie.jpg"
+  },
+  "5011": {
+    "src": "/shops/sens/products/mocaccino.webp",
+    "title": "Mocha - Garden Café Brighton 2023-12-30.jpg",
+    "author": "Andy Li",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Mocha_-_Garden_Caf%C3%A9_Brighton_2023-12-30.jpg"
+  },
+  "5013": {
+    "src": "/menu-stock/chocolate-caliente-chico.jpg",
+    "title": "Hot chocolate with marshmellow.jpg",
+    "author": "gran",
+    "license": "CC BY 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Hot_chocolate_with_marshmellow.jpg"
+  },
+  "5014": {
+    "src": "/shops/sens/products/iced-latte.webp",
+    "title": "Iced latte - BROR 2025-04-26.jpg",
+    "author": "Andy Li",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Iced_latte_-_BROR_2025-04-26.jpg"
+  },
+  "6001": {
+    "src": "/shops/sens/products/te.webp",
+    "title": "Cup of tea at the Gorreana tea factory.jpg",
+    "author": "Kritzolina",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Cup_of_tea_at_the_Gorreana_tea_factory.jpg"
+  },
+  "6007": {
+    "src": "/shops/sens/products/jugo-naranja.webp",
+    "title": "Orange juice 1 edit1.jpg",
+    "author": "Agency of the United States Department of Agriculture Edited Version by: Arad",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Orange_juice_1_edit1.jpg"
+  },
+  "6008": {
+    "src": "/shops/sens/products/licuado.webp",
+    "title": "Banana Smoothie.jpg",
+    "author": "Ourlibrary",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Banana_Smoothie.jpg"
+  },
+  "7001": {
+    "src": "/shops/sens/products/vino.webp",
+    "title": "Red and white wine in glass.jpg",
+    "author": "André Karwath",
+    "license": "CC BY-SA 2.5",
+    "source": "https://commons.wikimedia.org/wiki/File:Red_and_white_wine_in_glass.jpg"
+  },
+  "7007": {
+    "src": "/shops/sens/products/aperol.webp",
+    "title": "Aperol Spritz - Santa Ynez Kitchen - Sarah Stierch.jpg",
+    "author": "Missvain",
+    "license": "CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Aperol_Spritz_-_Santa_Ynez_Kitchen_-_Sarah_Stierch.jpg"
+  },
+  "7008": {
+    "src": "/shops/sens/products/gin-tonic.webp",
+    "title": "Gin and Tonic with ingredients.jpg",
+    "author": "NotFromUtrecht",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Gin_and_Tonic_with_ingredients.jpg"
+  },
+  "8001": {
+    "src": "/shops/cardamomo/products/medialuna.webp",
+    "title": "Croissants au beurre (18953292873).jpg",
+    "author": "Herry Wibisono (herryway)",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Croissants_au_beurre_(18953292873).jpg"
+  },
+  "8002": {
+    "src": "/shops/cardamomo/products/croissant.webp",
+    "title": "Croissant with jam and butter - Little Miss Piggies.jpg",
+    "author": "Andy Li",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Croissant_with_jam_and_butter_-_Little_Miss_Piggies.jpg"
+  },
+  "8003": {
+    "src": "/shops/cardamomo/products/roll-canela.webp",
+    "title": "Rollo de canela (Cinnamon roll).jpg",
+    "author": "Horacio Cambeiro",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Rollo_de_canela_(Cinnamon_roll).jpg"
+  },
+  "8004": {
+    "src": "/shops/cardamomo/products/chipa.webp",
+    "title": "Chipa (cheese buns).jpg",
+    "author": "Fabio Téllez",
+    "license": "CC BY-SA 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Chipa_(cheese_buns).jpg"
+  },
+  "8005": {
+    "src": "/shops/sens/products/scon.webp",
+    "title": "Lemon Scones (6849625315).jpg",
+    "author": "Benson Kua from Toronto, Canada",
+    "license": "CC BY-SA 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Lemon_Scones_(6849625315).jpg"
+  },
+  "8101": {
+    "src": "/shops/cardamomo/products/alfajores.webp",
+    "title": "Alfajores de maicena.jpg",
+    "author": "Aylin Oporto",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Alfajores_de_maicena.jpg"
+  },
+  "8102": {
+    "src": "/shops/cardamomo/products/cookie.webp",
+    "title": "Choc-Chip-Cookie.jpg",
+    "author": "Evan-Amos",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Choc-Chip-Cookie.jpg"
+  },
+  "8103": {
+    "src": "/shops/cardamomo/products/budin.webp",
+    "title": "Glazed lemon pound cake in basket.jpg",
+    "author": "www.WorthTheWhisk.com",
+    "license": "CC BY 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Glazed_lemon_pound_cake_in_basket.jpg"
+  },
+  "8104": {
+    "src": "/shops/sens/products/crumble.webp",
+    "title": "British apple crumble 05.jpg",
+    "author": "Jonathan Harker",
+    "license": "CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:British_apple_crumble_05.jpg"
+  },
+  "8105": {
+    "src": "/menu-stock/porcion-torta.jpg",
+    "title": "Piece of chocolate cake on a white plate decorated with chocolate sauce.jpg",
+    "author": "Daria Yakovleva",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Piece_of_chocolate_cake_on_a_white_plate_decorated_with_chocolate_sauce.jpg"
+  },
+  "8201": {
+    "src": "/shops/cardamomo/products/quiche.webp",
+    "title": "Slice of Quiche (Unsplash).jpg",
+    "author": "timothy muza timothymuza",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Slice_of_Quiche_(Unsplash).jpg"
+  }
+}
