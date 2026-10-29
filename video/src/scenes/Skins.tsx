@@ -13,7 +13,7 @@ import {useGeo} from '../lib/geo';
 import {SNAP, mix, ramp, rgba, spr} from '../lib/anim';
 import {useAbs} from '../lib/time';
 
-const SWAPS = [T.skin0, T.swapTeal, T.swapPlum, T.swapNavy, T.swapBase];
+const SWAPS = [T.skin0, T.swapTeal, T.swapPlum, T.swapNavy];
 
 export const Skins: React.FC = () => {
   const f = useAbs();
@@ -33,7 +33,7 @@ export const Skins: React.FC = () => {
   const base = mix(mix(tp.accent, COLORS.cream, 0.5), mix(tc.accent, COLORS.cream, 0.5), k);
   const lightC = mix(mix(tp.bg, '#FFFFFF', 0.5), mix(tc.bg, '#FFFFFF', 0.5), k);
   const since = f - SWAPS[idx];
-  const scroll = cur.screen === 'home' ? Math.min(60, since * 1.4) : 150;
+  const scroll = cur.screen === 'home' ? 0 : 150;
   const ring = ramp(f, SWAPS[idx], SWAPS[idx] + 14);
   return (
     <AbsoluteFill>

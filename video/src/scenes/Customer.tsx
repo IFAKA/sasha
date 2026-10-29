@@ -98,6 +98,9 @@ const CustomerInner: React.FC = () => {
                 <Screen shop={SHOP} screen="payment" scroll={payScroll}>
                   <Highlight f={f} at={T.tapPay} box={payBox} color={t.accent} radius={28} />
                 </Screen>
+                {f >= T.tapPay - 6 && f < T.tapPay + 24 && (
+                  <Lift shop={SHOP} screen="payment" element="payButton" scroll={payScroll} scale={f < T.tapPay ? 1 - 0.06 * ramp(f, T.tapPay - 6, T.tapPay) : 0.94 + 0.06 * spr(f, T.tapPay, {damping: 8, stiffness: 220, mass: 0.7})} radius={28} />
+                )}
                 {checkOn && <div style={{position: 'absolute', inset: 0, background: `rgba(255,255,255,${0.7 * clamp01(spr(f, T.paid, SNAP))})`, backdropFilter: 'blur(6px)'}} />}
                 <Check f={f} at={T.paid} color={t.accent} fadeAt={T.toConfirm + 2} />
               </Layer>

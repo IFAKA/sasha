@@ -63,12 +63,12 @@ export const Cta: React.FC = () => {
       <div style={{position: 'absolute', inset: 0, perspective: 2600}}>
         <Phone pose={phonePose(f)} sheen={ramp(f, 780, 900)} screen={<Screen shop={SHOP} screen="home" scroll={60} />} />
       </div>
-      <Title lines={['Tu tienda online', 'en *1_día.*']} inAt={T.t6In} y={668} size={108} accent={t.accent} />
+      <Title lines={['Tu tienda online', 'en *1_día.*']} inAt={T.t6In} y={585} size={100} accent={t.accent} />
       {/* lockup: designed mark + big product name, lands on the sonic logo */}
       {f >= T.lockup - 1 && (
-        <div style={{position: 'absolute', left: 0, width: 1080, top: 262, display: 'flex', flexDirection: 'column', alignItems: 'center', transform: `scale(${pulse * (0.9 + 0.1 * Math.min(1.2, lock))})`, transformOrigin: '50% 40%'}}>
-          <Mark color={t.accent} p={draw} size={190} />
-          <div style={{marginTop: 14, fontFamily: SANS, fontWeight: 800, fontSize: 160, lineHeight: 1, letterSpacing: '-0.055em', color: COLORS.ink, display: 'flex', gap: 30}}>
+        <div style={{position: 'absolute', left: 0, width: 1080, top: 252, display: 'flex', flexDirection: 'column', alignItems: 'center', transform: `scale(${pulse * (0.9 + 0.1 * Math.min(1.2, lock))})`, transformOrigin: '50% 40%'}}>
+          <Mark color={t.accent} p={draw} size={150} />
+          <div style={{marginTop: 14, fontFamily: SANS, fontWeight: 800, fontSize: 146, lineHeight: 1, letterSpacing: '-0.055em', color: COLORS.ink, display: 'flex', gap: 30}}>
             {nameWords.map((w, i) => {
               const p = clamp01(spr(f, T.lockup + 2 + i * 3, BOUNCY));
               return <span key={i} style={{display: 'inline-block', opacity: clamp01(p * 2), transform: `translateY(${(1 - p) * 60}px) scale(${0.9 + 0.1 * p})`, filter: p < 1 ? `blur(${(1 - p) * 8}px)` : undefined}}>{w}</span>;
@@ -81,7 +81,7 @@ export const Cta: React.FC = () => {
           position: 'absolute',
           left: 60,
           width: 960,
-          top: 1390,
+          top: 895,
           textAlign: 'center',
           fontFamily: SANS,
           fontWeight: 700,

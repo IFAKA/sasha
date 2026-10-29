@@ -9,15 +9,20 @@ const BASE_Y = 270; // phone top lands at y = 579
 
 export const phonePose = (f: number): Pose => {
   const rise = {damping: 15, stiffness: 85, mass: 1.15};
-  let y = track(f, [[0, 1250], [T.phoneRise, BASE_Y, rise], [780, 470, HEAVY]]);
+  let y = track(f, [[0, 1250], [T.phoneRise, BASE_Y, rise], [780, 535, HEAVY]]);
   let rx = track(f, [[0, 38], [T.phoneRise, 5, rise], [240, 0, SOFT], [780, 9, HEAVY]]);
   let ry = track(f, [[0, -26], [T.phoneRise, -9, rise], [240, 0, SOFT], [780, -20, HEAVY]]);
-  let s = track(f, [[0, BASE_S], [780, 1.2, HEAVY]]);
+  let s = track(f, [[0, BASE_S], [780, 1.1, HEAVY]]);
   let rz = 0;
   let z = 0;
   let x = 0;
 
   // drift: a living phone, never frozen
+  if (f >= 130 && f < 250) {
+    const k = Math.min(1, (f - 130) / 30) * (1 - Math.min(1, Math.max(0, (f - 225) / 25)));
+    ry += 6 * Math.sin((f - 130) / 40) * k;
+    rx += 2.5 * Math.sin((f - 130) / 55 + 1) * k;
+  }
   if (f >= 150 && f < 780) {
     const k = Math.min(1, (f - 150) / 40);
     ry += noise2D('ry', f / 90, 0) * 1.6 * k;
@@ -39,7 +44,7 @@ export const phonePose = (f: number): Pose => {
   }
 
   // scene 6: every swap kicks the phone
-  const swaps = [T.skin0, T.swapTeal, T.swapPlum, T.swapNavy, T.swapBase];
+  const swaps = [T.skin0, T.swapTeal, T.swapPlum, T.swapNavy];
   if (f >= 660 && f < 780) {
     swaps.forEach((sf, i) => {
       const p = spr(f, sf, BOUNCY);
@@ -56,7 +61,7 @@ export const phonePose = (f: number): Pose => {
     ry += Math.sin((f - 780) / 40) * 5;
     y += Math.sin((f - 780) / 33) * 10;
   }
-  if (f >= 780) x = 150 + Math.sin((f - 780) / 50) * 8;
+  if (f >= 780) x = 110 + Math.sin((f - 780) / 50) * 8;
   return {x, y, z, rx, ry, rz, s};
 };
 
@@ -82,11 +87,11 @@ const CAM_TAP = {damping: 22, stiffness: 160, mass: 0.8};
 type Shot = [number, number, number, number, number, Partial<import('remotion').SpringConfig>?];
 
 export const camera = (f: number, g: Geo): Cam => {
-  const wide: [number, number, number, number] = [1.0, 195, 422, 1230];
+  const wide: [number, number, number, number] = [1.0, 195, 422, 1270];
   const med: [number, number, number, number] = [1.33, 195, 300, 1180];
   const macroCard = 0.75 * 1080 / (g.cardW * BASE_S);
   const shots: Shot[] = [
-    [0, ...wide],
+    [0, 1.12, 195, 422, 1270],
     [205, ...med, CAM],
     // customer
     [T.macroCard, macroCard, g.cardC.x, g.cardC.y, 1210, CAM_FAST],
@@ -96,7 +101,7 @@ export const camera = (f: number, g: Geo): Cam => {
     [T.tapDay - 6, 1.9, 195, g.dayC, 1180, CAM_TAP],
     [T.tapTime - 6, 1.9, 195, g.timeC, 1180, CAM_TAP],
     [T.tapPickPay - 6, 1.9, 195, g.payBtnC - 50, 1190, CAM_TAP],
-    [T.macroPay, 1.9, 195, g.payC, 1360, CAM_FAST],
+    [T.macroPay, 1.05, 195, 422, 1060, CAM_FAST],
     [T.paid + 2, 1.5, 195, 422, 1180, CAM],
     [T.toConfirm + 4, 1.33, 195, 300, 1150, CAM],
     // owner
@@ -110,7 +115,8 @@ export const camera = (f: number, g: Geo): Cam => {
     [780, ...wide, {damping: 40, stiffness: 400, mass: 0.5}],
   ];
   const val = (i: 1 | 2 | 3 | 4 | 5) => track(f, shots.map((k) => [k[0], k[i] as number, k[5] as Partial<import('remotion').SpringConfig> | undefined] as Key), CAM);
-  const zoom = val(1) * (1 + 0.012 * Math.sin(f / 40));
+  // reveal: a slow continuous push-in, ending exactly where the medium shot begins
+  const zoom = (f < 205 ? 1 + 0.12 * ramp(f, 120, 205) : val(1)) * (1 + 0.012 * Math.sin(f / 40));
   const rot = noise2D('cr', f / 80, 2) * 0.1 + track(f, [[0, 0], [T.macroChips, 0.5, CAM], [T.macroPay, -0.4, CAM], [T.toConfirm, 0, CAM]], CAM);
   return {zoom, rot, fx: val(2), fy: val(3), qy: val(4)};
 };
