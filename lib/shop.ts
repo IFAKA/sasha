@@ -122,6 +122,12 @@ export const hasBranches = locations.length > 1;
 export const locationLabel = (location: Location) =>
   location.name ? `${location.address}, ${location.name}` : location.address;
 
+/** Every pickup place in one line: "Rosario y Roldán · Retiro a coordinar" when they share an address. */
+export const locationsSummary =
+  hasBranches && locations.every((l) => l.address === locations[0].address)
+    ? `${joinList(locations.map((l) => l.name))} · ${locations[0].address}`
+    : locations.map(locationLabel).join(" · ");
+
 /** "Armstrong o Cañada de Gómez", or the address for a single place. */
 export const pickupPlaces = hasBranches
   ? joinList(locations.map((l) => l.name), "o")

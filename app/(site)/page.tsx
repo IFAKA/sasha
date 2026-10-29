@@ -11,6 +11,7 @@ import {
   leadTimeLabel,
   locationLabel,
   locations,
+  locationsSummary,
   noun,
   paysOnline,
   salonLabels,
@@ -235,11 +236,12 @@ export default function HomePage() {
               Visitanos
             </h2>
             <p className="mt-3 text-muted">
-              {locations.map(locationLabel).join(" · ")}.
+              {locationsSummary}.
               {shop.salon?.stayLimit ? ` Tiempo de permanencia en el salón: ${shop.salon.stayLimit}.` : null}
             </p>
-            {/* Two columns, so "Cómo llegar" and WhatsApp sit side by side even on phones; PedidosYa gets its own row. */}
-            <div className="mt-6 grid max-w-md grid-cols-2 gap-3">
+            {/* One place: "Cómo llegar" and WhatsApp side by side even on phones, PedidosYa on its own row.
+                Several: one button per row, since branch names like "Cañada de Gómez" don't fit half a phone. */}
+            <div className={`mt-6 grid max-w-md gap-3 ${hasBranches ? "" : "grid-cols-2"}`}>
               {locations.map((location) => (
                 <a
                   key={location.mapsUrl}
@@ -264,7 +266,7 @@ export default function HomePage() {
                   href={shop.pedidosYa}
                   target="_blank"
                   rel="noreferrer"
-                  className="col-span-2 inline-flex items-center justify-center gap-2 rounded-full bg-brand px-4 py-3 font-semibold text-white hover:bg-brand-ink"
+                  className={`${hasBranches ? "" : "col-span-2"} inline-flex items-center justify-center gap-2 rounded-full bg-brand px-4 py-3 font-semibold text-white hover:bg-brand-ink`}
                 >
                   <DeliveryIcon className="shrink-0" /> Pedí delivery por PedidosYa
                 </a>
