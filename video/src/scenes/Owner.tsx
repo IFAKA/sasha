@@ -4,12 +4,13 @@ import {CameraMotionBlur} from '@remotion/motion-blur';
 import {COLORS, MAIN_SHOP as SHOP} from '../constants';
 import {T} from '../timeline';
 import {Backdrop} from '../lib/Backdrop';
-import {Camera} from '../lib/Camera';
+import {Camera, parallax} from '../lib/Camera';
 import {Phone} from '../lib/Phone';
 import {INSET, Lift, Screen} from '../lib/Screen';
 import {Title} from '../lib/Title';
 import {boxOf, unionBox, themeOf, useManifest} from '../lib/captures';
 import {phonePose, camera} from '../choreo';
+import {SALES_SCROLL_1, SALES_SCROLL_2, useGeo} from '../lib/geo';
 import {BOUNCY, SNAP, SOFT, clamp01, lerp, mix, ramp, spr, track} from '../lib/anim';
 import {SANS} from '../lib/fonts';
 import {useAbs} from '../lib/time';
@@ -61,18 +62,28 @@ const Banner: React.FC<{f: number; color: string}> = ({f, color}) => {
 
 export const Owner: React.FC = () => {
   const f = useAbs();
+  return f < T.spin + 22 ? (
+    <CameraMotionBlur shutterAngle={240} samples={7}>
+      <OwnerInner />
+    </CameraMotionBlur>
+  ) : (
+    <OwnerInner />
+  );
+};
+
+const OwnerInner: React.FC = () => {
+  const f = useAbs();
   const m = useManifest();
   const t = themeOf(m, SHOP);
-  const cam = camera(f);
+  const cam = camera(f, useGeo().geo);
   const newest = unionBox(boxOf(m, SHOP, 'adminOrders', 'freshBadge'), boxOf(m, SHOP, 'adminOrders', 'newOrderCard'));
   const chart = boxOf(m, SHOP, 'adminSales', 'chartArea');
   const revCard = boxOf(m, SHOP, 'adminSales', 'revenueCard');
   const revNum = boxOf(m, SHOP, 'adminSales', 'revenueNumber');
-  const salesScroll = track(f, [[0, 387], [T.revenueDone, 700, {damping: 22, stiffness: 90, mass: 1}]], SOFT);
+  const salesScroll = track(f, [[0, SALES_SCROLL_1], [T.revenueDone, SALES_SCROLL_2, {damping: 22, stiffness: 90, mass: 1}]], SOFT);
 
   const slideIn = spr(f, T.notif + 1, {damping: 15, stiffness: 150, mass: 0.8});
   const orderLand = spr(f, T.orderLands, BOUNCY);
-  const spinning = f >= T.spin && f < T.spin + 36;
 
   // bars: each vertical strip is wiped upward from the baseline, with a small stagger (the white hole hides the real bars until then)
   const bars = {x: chart.x + 30, y: chart.y + chart.h * 0.2, w: chart.w - 38, h: chart.h * 0.58};
@@ -103,10 +114,7 @@ export const Owner: React.FC = () => {
       sheen={ramp(f, 480, 660)}
       screen={
         <>
-          <Layer at={0} nextAt={T.toAdmin} z={1}>
-            <Screen shop={SHOP} screen="confirmation" />
-          </Layer>
-          <div style={{position: 'absolute', inset: 0, zIndex: 2, display: f >= T.toAdmin ? 'block' : 'none'}}>
+          <div style={{position: 'absolute', inset: 0, zIndex: 2}}>
             <Layer at={0} nextAt={T.toSales} z={1}>
               <Screen shop={SHOP} screen="adminOrders" holes={[{box: newest, opacity: 1}]} />
             </Layer>
@@ -162,37 +170,11 @@ export const Owner: React.FC = () => {
 
   return (
     <AbsoluteFill>
-      <Backdrop base={mix(COLORS.cream, COLORS.creamDeep, 0.5)} light={COLORS.warm} blob={t.accent} />
-      <Camera zoom={cam.zoom} rot={cam.rot} tx={cam.tx} ty={cam.ty} oy={cam.oy}>
-        {spinning ? (
-          <CameraMotionBlur shutterAngle={200} samples={6}>
-            <PhoneAgain />
-          </CameraMotionBlur>
-        ) : (
-          phone
-        )}
+      <Backdrop base={mix(COLORS.cream, COLORS.creamDeep, 0.5)} light={COLORS.warm} blob={t.accent} par={parallax(cam)} />
+      <Camera cam={cam}>
+        {phone}
       </Camera>
-      <Title lines={['Vos solo', '*horneás.*']} inAt={T.t4In} outAt={T.t4Out} size={124} accent={t.accent} />
+      <Title lines={['Vos solo', '*horneás.*']} inAt={T.t4In} outAt={T.t4Out} size={124} accent={t.accent} scrim={COLORS.cream} />
     </AbsoluteFill>
-  );
-};
-
-// Used only for the 36 spin frames; re-renders itself from its own (sub-)frame for motion blur.
-const PhoneAgain: React.FC = () => {
-  const f = useAbs();
-  const m = useManifest();
-  const newest = unionBox(boxOf(m, SHOP, 'adminOrders', 'freshBadge'), boxOf(m, SHOP, 'adminOrders', 'newOrderCard'));
-  return (
-    <Phone
-      pose={phonePose(f)}
-      screen={
-        <>
-          <Layer at={0} nextAt={T.toAdmin} z={1}>
-            <Screen shop={SHOP} screen="confirmation" />
-          </Layer>
-          {f >= T.toAdmin && <Screen shop={SHOP} screen="adminOrders" holes={[{box: newest, opacity: 1}]} />}
-        </>
-      }
-    />
   );
 };

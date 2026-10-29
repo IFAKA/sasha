@@ -6,15 +6,23 @@ import {H, W} from './constants';
 
 // Key moment of every scene, rendered as `npx remotion still src/index.ts still-<name> out/stills/NN-<name>.png`
 export const STILLS: {id: string; frame: number}[] = [
+  {id: 'hook0', frame: 0},
   {id: 'hook', frame: 98},
   {id: 'turn', frame: 114},
   {id: 'reveal', frame: 205},
-  {id: 'customer', frame: 330},
+  {id: 'medium', frame: 270},
+  {id: 'card', frame: 303},
   {id: 'pickup', frame: 405},
-  {id: 'pay', frame: 456},
-  {id: 'owner', frame: 540},
+  {id: 'pay', frame: 440},
+  {id: 'confirm', frame: 468},
+  {id: 'whip', frame: 484},
+  {id: 'owner', frame: 545},
+  {id: 'revenue', frame: 607},
   {id: 'sales', frame: 645},
-  {id: 'skins', frame: 700},
+  {id: 'skinbase', frame: 676},
+  {id: 'skinteal', frame: 700},
+  {id: 'skinplum', frame: 722},
+  {id: 'skinnavy', frame: 745},
   {id: 'cta', frame: 885},
 ];
 

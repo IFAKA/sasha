@@ -4,17 +4,18 @@ import {CameraMotionBlur} from '@remotion/motion-blur';
 import {COLORS, MAIN_SHOP as SHOP} from '../constants';
 import {T} from '../timeline';
 import {Backdrop} from '../lib/Backdrop';
-import {Camera} from '../lib/Camera';
+import {Camera, parallax} from '../lib/Camera';
 import {Phone} from '../lib/Phone';
 import {INSET, Lift, Screen} from '../lib/Screen';
 import {Title} from '../lib/Title';
-import {boxOf, scrollFor, themeOf, useManifest} from '../lib/captures';
+import {boxOf, themeOf, useManifest} from '../lib/captures';
+import {HOME_SCROLL, useGeo} from '../lib/geo';
 import {phonePose, camera} from '../choreo';
 import {SNAP, SOFT, clamp01, lerp, ramp, spr, track} from '../lib/anim';
 import {Check, CartBadge, Highlight, Tap} from '../lib/Ui';
 import {useAbs} from '../lib/time';
 
-export const HOME_SCROLL = 70;
+export {HOME_SCROLL};
 const SLIDE = {damping: 24, stiffness: 190, mass: 0.9};
 
 /** Layer that slides in from the right over the previous one (like an app push). */
@@ -31,28 +32,38 @@ export const Layer: React.FC<{at: number; nextAt?: number; z: number; children: 
   );
 };
 
+/** The last frames before the whip-pan are motion blurred. */
 export const Customer: React.FC = () => {
+  const f = useAbs();
+  return f >= T.whipOut - 6 ? (
+    <CameraMotionBlur shutterAngle={240} samples={7}>
+      <CustomerInner />
+    </CameraMotionBlur>
+  ) : (
+    <CustomerInner />
+  );
+};
+
+const CustomerInner: React.FC = () => {
   const f = useAbs();
   const m = useManifest();
   const t = themeOf(m, SHOP);
-  const cam = camera(f);
+  const {geo, menuScroll: menuTarget, pickScroll, payScroll} = useGeo();
+  const cam = camera(f, geo);
 
   // geometry from the real captures (or fallbacks)
   const card = boxOf(m, SHOP, 'catalog', 'productCard');
   const add = boxOf(m, SHOP, 'catalog', 'addButton');
   const cart = boxOf(m, SHOP, 'catalog', 'cartIcon');
   const stickyH = 117;
-  const menuTarget = scrollFor(m, SHOP, 'catalog', 'productCard', 380);
   const menuScroll = menuScrollAt(f, menuTarget);
   const cartC = {x: cart.x + cart.w - 6, y: cart.y + 8 + INSET};
 
-  const pickScroll = scrollFor(m, SHOP, 'pickup', 'dayChip', 400);
   const branch = boxOf(m, SHOP, 'pickup', 'branchChip');
   const day = boxOf(m, SHOP, 'pickup', 'dayChip');
   const time = boxOf(m, SHOP, 'pickup', 'timeChip');
   const payBox = boxOf(m, SHOP, 'payment', 'payButton');
   const pickPay = boxOf(m, SHOP, 'pickup', 'payButton');
-  const payScroll = scrollFor(m, SHOP, 'payment', 'payButton', 560);
 
   const showLift = f >= T.cardLift && f < T.badge + 6;
 
@@ -62,8 +73,8 @@ export const Customer: React.FC = () => {
 
   return (
     <AbsoluteFill>
-      <Backdrop base={COLORS.cream} light={COLORS.warm} blob={t.accent} />
-      <Camera zoom={cam.zoom} rot={cam.rot} tx={cam.tx} ty={cam.ty} oy={cam.oy}>
+      <Backdrop base={COLORS.cream} light={COLORS.warm} blob={t.accent} par={parallax(cam)} />
+      <Camera cam={cam}>
         <Phone
           pose={phonePose(f)}
           sheen={ramp(f, 240, 480)}
@@ -124,9 +135,9 @@ export const Customer: React.FC = () => {
           }
         />
       </Camera>
-      <Title lines={['Tus clientes', '*eligen…*']} inAt={T.t3aIn} outAt={T.t3aOut} size={118} accent={t.accent} />
-      <Title lines={['…reservan', '*día_y_hora…*']} inAt={T.t3bIn} outAt={T.t3bOut} size={118} accent={t.accent} />
-      <Title lines={['…y pagan', '*online.*']} inAt={T.t3cIn} outAt={T.t3cOut} size={118} accent={t.accent} />
+      <Title lines={['Tus clientes', '*eligen…*']} inAt={T.t3aIn} outAt={T.t3aOut} size={118} accent={t.accent} scrim={COLORS.cream} />
+      <Title lines={['…reservan', '*día_y_hora…*']} inAt={T.t3bIn} outAt={T.t3bOut} size={118} accent={t.accent} scrim={COLORS.cream} />
+      <Title lines={['…y pagan', '*online.*']} inAt={T.t3cIn} outAt={T.t3cOut} size={118} accent={t.accent} scrim={COLORS.cream} />
     </AbsoluteFill>
   );
 };

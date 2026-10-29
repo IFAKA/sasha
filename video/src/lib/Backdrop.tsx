@@ -1,12 +1,12 @@
 import React from 'react';
-import {AbsoluteFill} from 'remotion';
+import {AbsoluteFill, Img, staticFile} from 'remotion';
 import {noise2D} from '@remotion/noise';
 import {W, H} from '../constants';
 import {rgba} from './anim';
 import {useAbs} from './time';
 
 /** Warm studio background: base colour, soft key light, slow bokeh blobs. */
-export const Backdrop: React.FC<{base: string; light: string; blob: string; blobOpacity?: number; lightOpacity?: number}> = ({base, light, blob, blobOpacity = 0.35, lightOpacity = 0.8}) => {
+export const Backdrop: React.FC<{base: string; light: string; blob: string; blobOpacity?: number; lightOpacity?: number; par?: {x: number; y: number; scale: number}; photo?: number}> = ({base, light, blob, blobOpacity = 0.35, lightOpacity = 0.8, par = {x: 0, y: 0, scale: 1}, photo = 0.5}) => {
   const f = useAbs();
   const blobs = [
     {x: 0.15, y: 0.25, r: 420},
@@ -15,6 +15,14 @@ export const Backdrop: React.FC<{base: string; light: string; blob: string; blob
   ];
   return (
     <AbsoluteFill style={{background: base}}>
+      {photo > 0 && (
+        <AbsoluteFill style={{overflow: 'hidden'}}>
+          <Img
+            src={staticFile('bg-bakery.jpg')}
+            style={{position: 'absolute', left: -270 + par.x, top: -480 + par.y, width: 1620, height: 2880, objectFit: 'cover', transform: `scale(${par.scale}) translate(${noise2D('px', f / 200, 0) * 20}px, 0)`, opacity: photo, mixBlendMode: 'multiply'}}
+          />
+        </AbsoluteFill>
+      )}
       <AbsoluteFill style={{background: `radial-gradient(ellipse 90% 60% at 30% 22%, ${rgba(light, lightOpacity)}, ${rgba(light, 0)} 70%)`}} />
       {blobs.map((b, i) => (
         <div
@@ -30,6 +38,7 @@ export const Backdrop: React.FC<{base: string; light: string; blob: string; blob
           }}
         />
       ))}
+      <AbsoluteFill style={{background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(60,30,5,0) 45%, rgba(60,30,5,0.32) 100%)'}} />
       <AbsoluteFill style={{background: 'linear-gradient(180deg, rgba(255,255,255,0.0) 55%, rgba(90,50,10,0.10) 100%)'}} />
     </AbsoluteFill>
   );

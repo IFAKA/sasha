@@ -1,6 +1,6 @@
 import {noise2D} from '@remotion/noise';
 import {Pose} from './lib/Phone';
-import {HEAVY, SOFT, BOUNCY, track, spr, easeInOut, ramp} from './lib/anim';
+import {BOUNCY, HEAVY, SOFT, track, spr, ramp, Key} from './lib/anim';
 import {T} from './timeline';
 
 // One continuous phone for scenes 3-7: this file is its whole choreography.
@@ -9,28 +9,33 @@ const BASE_Y = 270; // phone top lands at y = 579
 
 export const phonePose = (f: number): Pose => {
   const rise = {damping: 15, stiffness: 85, mass: 1.15};
-  let y = track(f, [[0, 1250], [T.phoneRise, BASE_Y, rise], [780, -240, HEAVY]]);
-  let rx = track(f, [[0, 38], [T.phoneRise, 5, rise], [240, 0, SOFT], [780, 8, HEAVY]]);
-  let ry = track(f, [[0, -26], [T.phoneRise, -9, rise], [240, 0, SOFT], [780, -16, HEAVY]]);
-  let s = track(f, [[0, BASE_S], [780, 0.74, HEAVY]]);
+  let y = track(f, [[0, 1250], [T.phoneRise, BASE_Y, rise], [780, 470, HEAVY]]);
+  let rx = track(f, [[0, 38], [T.phoneRise, 5, rise], [240, 0, SOFT], [780, 9, HEAVY]]);
+  let ry = track(f, [[0, -26], [T.phoneRise, -9, rise], [240, 0, SOFT], [780, -20, HEAVY]]);
+  let s = track(f, [[0, BASE_S], [780, 1.2, HEAVY]]);
   let rz = 0;
   let z = 0;
+  let x = 0;
 
   // drift: a living phone, never frozen
   if (f >= 150 && f < 780) {
     const k = Math.min(1, (f - 150) / 40);
-    ry += noise2D('ry', f / 90, 0) * 3 * k;
-    rx += noise2D('rx', f / 90, 1) * 1.5 * k;
+    ry += noise2D('ry', f / 90, 0) * 1.6 * k;
+    rx += noise2D('rx', f / 90, 1) * 0.8 * k;
     y += noise2D('y', f / 70, 2) * 8 * k;
   }
 
-  // scene 5: spin to the owner side
-  if (f >= T.spin && f < T.spin + 40) {
-    const e = easeInOut(ramp(f, T.spin, T.spin + 30));
-    ry += -360 * e;
-    s *= 1 - 0.14 * Math.sin(Math.PI * e);
-    y -= 40 * Math.sin(Math.PI * e);
-    rz += 6 * Math.sin(Math.PI * e);
+  // whip-pan: the customer phone shoots out left, the owner phone shoots in from the right
+  if (f >= T.whipOut && f < T.spin) {
+    const u = ramp(f, T.whipOut, T.spin);
+    x = -1700 * u * u;
+    rz -= 5 * u;
+    ry += 14 * u;
+  } else if (f >= T.spin && f < T.spin + 24) {
+    const p = Math.min(1, spr(f, T.spin, {damping: 24, stiffness: 260, mass: 0.8}));
+    x = 1300 * (1 - p);
+    rz += 5 * (1 - p);
+    ry -= 14 * (1 - p);
   }
 
   // scene 6: every swap kicks the phone
@@ -51,26 +56,61 @@ export const phonePose = (f: number): Pose => {
     ry += Math.sin((f - 780) / 40) * 5;
     y += Math.sin((f - 780) / 33) * 10;
   }
-  return {x: 0, y, z, rx, ry, rz, s};
+  if (f >= 780) x = 150 + Math.sin((f - 780) / 50) * 8;
+  return {x, y, z, rx, ry, rz, s};
 };
 
-export type Cam = {zoom: number; rot: number; tx: number; ty: number; oy: number};
-export const camera = (f: number): Cam => {
-  const zoom = track(f, [
-    [0, 1.1],
-    [T.drop, 1.1],
-    [T.phoneRise + 4, 1.0, HEAVY],
-    [240, 1.2, {damping: 20, stiffness: 50, mass: 1.4}],
-    [T.toPickup, 1.2],
-    [T.toPay, 1.26, SOFT],
-    [T.toConfirm, 1.18, SOFT],
-    [T.spin, 1.0, SOFT],
-    [T.toSales, 1.14, HEAVY],
-    [T.skin0, 1.0, SOFT],
-    [780, 1.0, HEAVY],
-  ]);
-  const rot = track(f, [[0, 0], [240, -0.6, HEAVY], [T.toPickup, 0.5, HEAVY], [T.toPay, -0.4, HEAVY], [T.spin, 0, SOFT]]);
-  const tx = track(f, [[0, 0], [T.cardLift, -14, HEAVY], [T.toPickup, 10, HEAVY], [T.toPay, 0, HEAVY]]) + noise2D('cx', f / 60, 0) * 3;
-  const ty = noise2D('cy', f / 60, 1) * 3;
-  return {zoom, rot: rot + noise2D('cr', f / 80, 2) * 0.12, tx, ty, oy: 600};
+export type Cam = {zoom: number; rot: number; fx: number; fy: number; qy: number};
+
+/** Where the interesting things are, in phone screen coordinates (CSS px, display origin top-left). */
+export type Geo = {
+  cardC: {x: number; y: number};
+  branchC: number; dayC: number; timeC: number; payBtnC: number;
+  payC: number; revC: number; newC: number; chartC: number;
+  cardW: number;
+};
+
+const REST_Y = 270; // where the phone's centre rests (see BASE_Y)
+/** Stage point of a phone screen coordinate while the phone is at rest. */
+export const stagePt = (sx: number, sy: number, s = BASE_S) => ({x: 540 + s * (sx - 195), y: 960 + REST_Y + s * (sy - 422)});
+
+const CAM = {damping: 22, stiffness: 55, mass: 1.3};
+const CAM_FAST = {damping: 20, stiffness: 130, mass: 0.9};
+const CAM_TAP = {damping: 22, stiffness: 160, mass: 0.8};
+
+// shot: [frame, zoom, sx, sy, qy, spring]
+type Shot = [number, number, number, number, number, Partial<import('remotion').SpringConfig>?];
+
+export const camera = (f: number, g: Geo): Cam => {
+  const wide: [number, number, number, number] = [1.0, 195, 422, 1230];
+  const med: [number, number, number, number] = [1.33, 195, 300, 1180];
+  const macroCard = 0.75 * 1080 / (g.cardW * BASE_S);
+  const shots: Shot[] = [
+    [0, ...wide],
+    [205, ...med, CAM],
+    // customer
+    [T.macroCard, macroCard, g.cardC.x, g.cardC.y, 1210, CAM_FAST],
+    [T.cardFly - 2, 1.5, 195, 230, 1150, CAM],
+    [T.macroChips, 1.9, 195, g.branchC, 1180, CAM_FAST],
+    [T.tapBranch - 6, 1.9, 195, g.branchC, 1180, CAM_TAP],
+    [T.tapDay - 6, 1.9, 195, g.dayC, 1180, CAM_TAP],
+    [T.tapTime - 6, 1.9, 195, g.timeC, 1180, CAM_TAP],
+    [T.tapPickPay - 6, 1.9, 195, g.payBtnC - 50, 1190, CAM_TAP],
+    [T.macroPay, 1.9, 195, g.payC, 1360, CAM_FAST],
+    [T.paid + 2, 1.5, 195, 422, 1180, CAM],
+    [T.toConfirm + 4, 1.33, 195, 300, 1150, CAM],
+    // owner
+    [T.orderLands + 6, 1.8, 195, g.newC, 1190, CAM],
+    [T.macroRevenue, 2.0, 195, g.revC, 1180, CAM_FAST],
+    [T.revenueDone + 6, 1.33, 195, g.chartC, 1180, CAM],
+    // skins
+    [T.t5Out - 105, 1.15, 195, 380, 1270, CAM],
+    [T.t5Out + 12, 1.22, 195, 380, 1270, {damping: 30, stiffness: 20, mass: 1.5}],
+    // cta: identity (the phone itself is posed for the end card)
+    [780, ...wide, {damping: 40, stiffness: 400, mass: 0.5}],
+  ];
+  const val = (i: 1 | 2 | 3 | 4 | 5) => track(f, shots.map((k) => [k[0], k[i] as number, k[5] as Partial<import('remotion').SpringConfig> | undefined] as Key), CAM);
+  const zoom = val(1) * (1 + 0.012 * Math.sin(f / 40));
+  const rot = noise2D('cr', f / 80, 2) * 0.1 + track(f, [[0, 0], [T.macroChips, 0.5, CAM], [T.macroPay, -0.4, CAM], [T.toConfirm, 0, CAM]], CAM);
+  return {zoom, rot, fx: val(2), fy: val(3), qy: val(4)};
 };

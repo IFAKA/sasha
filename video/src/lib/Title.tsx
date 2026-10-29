@@ -2,7 +2,7 @@ import React from 'react';
 import {interpolate} from 'remotion';
 import {SANS, SERIF} from './fonts';
 import {SAFE_TOP, W} from '../constants';
-import {spr, ramp, clamp01, SNAP} from './anim';
+import {spr, ramp, clamp01, rgba, SNAP} from './anim';
 import {useAbs} from './time';
 
 /**
@@ -19,12 +19,16 @@ export const Title: React.FC<{
   accent?: string;
   stagger?: number;
   align?: 'center' | 'left';
-}> = ({lines, inAt, outAt = 99999, y = SAFE_TOP + 20, size = 120, color = '#1F1912', accent = '#B8832B', stagger = 3, align = 'center'}) => {
+  scrim?: string;
+}> = ({lines, inAt, outAt = 99999, y = SAFE_TOP + 20, size = 120, color = '#1F1912', accent = '#B8832B', stagger = 3, align = 'center', scrim}) => {
   const f = useAbs();
   if (f < inAt - 1 || f > outAt + 12) return null;
   const out = ramp(f, outAt, outAt + 8);
   let wi = 0;
+  const inK = clamp01(spr(f, inAt, SNAP));
   return (
+    <>
+    {scrim && <div style={{position: 'absolute', left: 0, top: 0, width: W, height: 680, opacity: inK * (1 - out), background: `linear-gradient(180deg, ${rgba(scrim, 1)} 0%, ${rgba(scrim, 0.97)} 70%, ${rgba(scrim, 0)} 100%)`, pointerEvents: 'none'}} />}
     <div
       style={{
         position: 'absolute',
@@ -72,5 +76,6 @@ export const Title: React.FC<{
         </div>
       ))}
     </div>
+    </>
   );
 };

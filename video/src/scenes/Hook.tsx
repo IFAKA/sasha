@@ -10,44 +10,58 @@ import {Title} from '../lib/Title';
 import {useAbs} from '../lib/time';
 
 type B = {at: number; side: 'in' | 'out'; text: string};
-// Plausible orders and the owner trying to keep up.
+const P = PING_FRAMES;
+// Plausible orders and the owner trying to keep up. The first three are already on screen at frame 0.
 const BUBBLES: B[] = [
-  {at: PING_FRAMES[0], side: 'in', text: 'Hola! ¿Tenés lemon pie para el sábado?'},
-  {at: PING_FRAMES[1], side: 'in', text: '¿A qué hora paso?'},
-  {at: PING_FRAMES[2], side: 'out', text: 'Hola! Un segundito y te confirmo'},
-  {at: PING_FRAMES[3], side: 'in', text: '¿Aceptan transferencia?'},
-  {at: PING_FRAMES[4], side: 'in', text: '¿Me pasás precios?'},
-  {at: PING_FRAMES[5], side: 'in', text: '¿Queda algo de la torta de limón?'},
-  {at: PING_FRAMES[6], side: 'in', text: 'Hola?? ¿Seguís ahí?'},
-  {at: PING_FRAMES[7], side: 'in', text: '¿Cuánto sale la docena de medialunas?'},
-  {at: PING_FRAMES[8], side: 'in', text: 'Te transferí, ¿te llegó?'},
-  {at: PING_FRAMES[8], side: 'out', text: 'Ahora te miro, estoy amasando'},
-  {at: PING_FRAMES[9], side: 'in', text: '¿Abren los domingos?'},
-  {at: PING_FRAMES[9], side: 'in', text: '¿Me mandás el menú?'},
-  {at: PING_FRAMES[10], side: 'in', text: '¿Hay opción sin TACC?'},
-  {at: PING_FRAMES[10], side: 'in', text: '¿Me guardás una para las 18?'},
+  {at: -42, side: 'in', text: 'Buen día! Pregunta por las tortas'},
+  {at: -35, side: 'in', text: '¿Hacen envíos?'},
+  {at: -28, side: 'in', text: '¿Cuánto sale el pan de campo?'},
+  {at: -21, side: 'in', text: 'Hola?? Mandé mensaje ayer'},
+  {at: -14, side: 'in', text: '¿Tenés lemon pie para el sábado?'},
+  {at: -7, side: 'in', text: 'Hola! ¿Hacen tortas para 12?'},
+  {at: P[0], side: 'in', text: '¿A qué hora paso?'},
+  {at: 8, side: 'in', text: '¿Me pasás precios?'},
+  {at: P[1], side: 'out', text: 'Hola! Un segundito y te confirmo'},
+  {at: 22, side: 'in', text: '¿Aceptan transferencia?'},
+  {at: P[2], side: 'in', text: '¿Queda algo de la torta de limón?'},
+  {at: 38, side: 'in', text: 'Hola?? ¿Seguís ahí?'},
+  {at: P[3], side: 'in', text: '¿Cuánto sale la docena de medialunas?'},
+  {at: P[4], side: 'in', text: 'Te transferí, ¿te llegó?'},
+  {at: P[4], side: 'out', text: 'Ahora te miro, estoy amasando'},
+  {at: P[5], side: 'in', text: '¿Abren los domingos?'},
+  {at: 64, side: 'in', text: '¿Me mandás el menú?'},
+  {at: P[6], side: 'in', text: '¿Hay opción sin TACC?'},
+  {at: P[7], side: 'in', text: '¿Me guardás una para las 18?'},
+  {at: 78, side: 'in', text: '¿Entregan a domicilio?'},
+  {at: P[8], side: 'out', text: 'Sí! Te escribo en un rato'},
+  {at: 86, side: 'in', text: 'Mandé el comprobante'},
+  {at: P[9], side: 'in', text: '¿Cuánto sale la de dulce de leche?'},
+  {at: 94, side: 'in', text: 'Hola?? Necesito para mañana'},
+  {at: P[10], side: 'in', text: '¿Sigue en pie lo del sábado?'},
+  {at: 100, side: 'in', text: '¿Tenés lemon pie?'},
 ];
 
-const FONT = 42;
+const FONT = 38;
 const measure = (text: string) => {
   const textW = text.length * FONT * 0.53;
-  const w = Math.min(720, textW + 110);
-  const lines = Math.ceil(textW / (w - 70));
-  return {w, h: lines * 54 + 60};
+  const w = Math.min(700, textW + 100);
+  const lines = Math.ceil(textW / (w - 64));
+  return {w, h: lines * 48 + 52};
 };
 
-const BOTTOM = 1490;
+const BOTTOM = 1500;
 const BubbleField: React.FC<{f: number; suck: number}> = ({f, suck}) => {
   const items = BUBBLES.map((b, i) => ({...b, ...measure(b.text), i}));
   const e = suck * suck; // accelerating pull
   return (
-    <AbsoluteFill style={{maskImage: suck > 0 ? undefined : 'linear-gradient(to bottom, transparent 600px, #000 840px)'}}>
+    <AbsoluteFill style={{maskImage: suck > 0 ? undefined : 'linear-gradient(to bottom, transparent 720px, #000 980px)'}}>
       {items.map((b) => {
         if (f < b.at) return null;
         const p = clamp01(spr(f, b.at, SNAP));
+        const buzz = Math.sin((f - b.at) * 2.4) * 7 * Math.max(0, 1 - (f - b.at) / 10);
         const pushed = items
           .filter((j) => j.i > b.i && f >= j.at)
-          .reduce((acc, j) => acc + (j.h + (22 - 3.2 * j.i)) * clamp01(spr(f, j.at, SNAP)), 0);
+          .reduce((acc, j) => acc + (j.h * 0.8 + 6) * clamp01(spr(f, j.at, SNAP)), 0);
         const bottom = BOTTOM - pushed + (1 - p) * 70;
         const left = b.side === 'in' ? 56 + (random(`jx${b.i}`) - 0.3) * 40 : W - 56 - b.w - (random(`jx${b.i}`) - 0.3) * 40;
         const cx = left + b.w / 2;
@@ -65,7 +79,7 @@ const BubbleField: React.FC<{f: number; suck: number}> = ({f, suck}) => {
               height: b.h,
               opacity: Math.min(1, p * 2.5) * (1 - clamp01((e - 0.85) / 0.15)),
               transformOrigin: 'center',
-              transform: `translate(${(W / 2 - cx) * e}px, ${(H / 2 - cy) * e}px) rotate(${rot + 540 * e * (b.i % 2 ? 1 : -1)}deg) scale(${lerp(0.7 + 0.3 * p, 0.04, e)})`,
+              transform: `translate(${(W / 2 - cx) * e + buzz}px, ${(H / 2 - cy) * e}px) rotate(${rot + 540 * e * (b.i % 2 ? 1 : -1)}deg) scale(${lerp(0.7 + 0.3 * p, 0.04, e)})`,
               filter: e > 0.02 ? `blur(${e * 22}px)` : undefined,
               background: out ? COLORS.waGreen : '#FFFFFF',
               color: '#111B21',
@@ -76,9 +90,9 @@ const BubbleField: React.FC<{f: number; suck: number}> = ({f, suck}) => {
               fontFamily: SANS,
               fontWeight: 500,
               fontSize: FONT,
-              lineHeight: '54px',
+              lineHeight: '48px',
               letterSpacing: '-0.01em',
-              padding: '14px 32px 0',
+              padding: '12px 30px 0',
               boxSizing: 'border-box',
             }}
           >
@@ -90,6 +104,22 @@ const BubbleField: React.FC<{f: number; suck: number}> = ({f, suck}) => {
         );
       })}
     </AbsoluteFill>
+  );
+};
+
+const Counter: React.FC<{f: number}> = ({f}) => {
+  const k = clamp01(f / 100);
+  const n = Math.round(3 + 44 * Math.pow(k, 1.5));
+  const last = Math.round(3 + 44 * Math.pow(clamp01((f - 1) / 100), 1.5));
+  const bump = n !== last ? 1 : 0;
+  const buzz = Math.sin(f * 2.1) * (2 + 3 * k);
+  return (
+    <div style={{position: 'absolute', left: 0, width: W, top: 262, display: 'flex', justifyContent: 'center', transform: `translateX(${buzz}px) scale(${1.3 + 0.1 * bump})`, transformOrigin: '50% 0'}}>
+      <div style={{position: 'relative', width: 84, height: 84, borderRadius: 24, background: 'linear-gradient(160deg,#3CD26F,#1FA855)', boxShadow: '0 10px 30px rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        <svg width="46" height="46" viewBox="0 0 24 24" fill="#fff"><path d="M12 3C7 3 3 6.800 3 11.500c0 2.100.8 4 2.100 5.500L4 21l4.300-1.300c1.100.5 2.300.8 3.700.8 5 0 9-3.800 9-8.500S17 3 12 3z" /></svg>
+        <div style={{position: 'absolute', top: -16, right: -26 - (n >= 10 ? 8 : 0), minWidth: 52, height: 52, padding: '0 12px', boxSizing: 'border-box', borderRadius: 26, background: '#FF3B30', color: '#fff', fontFamily: SANS, fontWeight: 800, fontSize: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 14px rgba(255,59,48,0.55)', border: '3px solid #0C1627'}}>{n}</div>
+      </div>
+    </div>
   );
 };
 
@@ -122,7 +152,8 @@ export const Hook: React.FC = () => {
       <NightBg f={f} />
       <Shake f={f}>
         <BubbleField f={f} suck={0} />
-        <Title lines={['¿Todavía tomás', 'pedidos por', '*WhatsApp?*']} inAt={T.t1In} outAt={T.t1Out} y={275} size={118} color="#FFFFFF" accent="#5BE08A" />
+        <Counter f={f} />
+        <Title lines={['¿Todavía tomás', 'pedidos por', '*WhatsApp?*']} inAt={T.t1In} outAt={T.t1Out} y={410} size={104} color="#FFFFFF" accent="#5BE08A" />
       </Shake>
     </AbsoluteFill>
   );
@@ -138,7 +169,8 @@ export const Turn: React.FC = () => {
         <SuckInner />
       </CameraMotionBlur>
       <Shake f={f}>
-        <Title lines={['¿Todavía tomás', 'pedidos por', '*WhatsApp?*']} inAt={T.t1In} outAt={T.t1Out} y={275} size={118} color="#FFFFFF" accent="#5BE08A" />
+        <Counter f={f} />
+        <Title lines={['¿Todavía tomás', 'pedidos por', '*WhatsApp?*']} inAt={T.t1In} outAt={T.t1Out} y={410} size={104} color="#FFFFFF" accent="#5BE08A" />
       </Shake>
       <AbsoluteFill style={{background: `radial-gradient(circle at 50% 50%, #FFFFFF, ${COLORS.cream} 60%)`, opacity: flash * flash}} />
     </AbsoluteFill>
