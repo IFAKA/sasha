@@ -4,6 +4,29 @@ An ordering site for cafés and bakeries: home page, dine-in menu, made-to-order
 pickup times, and an orders and sales panel. One codebase serves every shop; each shop is just
 configuration in `shops/<slug>/`.
 
+## See it live
+
+**Demo: [delfis-pasteleria.vercel.app](https://delfis-pasteleria.vercel.app)** (orders panel at
+[/admin](https://delfis-pasteleria.vercel.app/admin))
+
+To see the whole flow, place an order in the demo, then open `/admin` in the same browser.
+Payment is simulated, so nothing is charged.
+
+**What customers get**
+
+- A home page with hours, address, WhatsApp and the shop's favorite products
+- The dine-in menu, by category
+- A take-away catalog: they add cakes to the cart, choose the branch, the pickup day and time,
+  and pay online with Mercado Pago
+- A confirmation page with the order summary
+
+**What the shop gets** (`/admin`)
+
+- Incoming orders, grouped by pickup day and branch, which they mark as delivered
+- A sales dashboard: revenue per day, best-selling products and the busiest weekdays
+
+**Built with** Next.js 16, React 19, Tailwind CSS 4 and Base UI, deployed on Vercel.
+
 ```
 shops/
   types.ts            what a shop can configure (every field is documented)
