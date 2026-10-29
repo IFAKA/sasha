@@ -22,7 +22,9 @@
 | 7 CTA | 780–900 | 14–15 | Phone drifts back, title and contact settle; logo lockup. | "Tu tienda online en 1 día." + contact line | Final impact, music rings out |
 
 ## Shop shown (legal rule)
-Only the fictional template shop "Café Ejemplo" (`shops/_template`, captured as `ejemplo`). **No real shop** (SENS, Mais, Delfis, Cardamomo, Delulu, Sasha) may appear: no name, logo, photo, address or colour named after it. Stock photos under CC BY-SA must be credited on the end card or in the post text.
+A fictional bakery that looks fully real: **"Horno Lento"**, Rosario (source in `video/demo-shop/`, captured as `demo`).
+Own wordmark, real-looking menu and 2026 prices, Unsplash/Pexels photos (no attribution needed). Nothing may say
+"ejemplo", template or placeholder. **No real shop** (SENS, Mais, Delfis, Cardamomo, Delulu, Sasha) may appear.
 
 ## Look
 - Warm cream background (#F6F0E6-ish) with soft radial light, subtle film grain, soft long shadows.
