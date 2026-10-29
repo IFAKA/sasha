@@ -12,7 +12,8 @@ import { RadioGroup } from "@base-ui/react/radio-group";
 import { useCart, type ResolvedLine } from "@/components/cart/cart-provider";
 import { Drawer, SidePanel } from "@/components/ui/drawer";
 import { QuantityField } from "@/components/ui/quantity-field";
-import { BagIcon, CalendarIcon, CloseIcon, PinIcon, WhatsappIcon } from "@/components/icons";
+import { Calendar } from "@/components/ui/calendar";
+import { BagIcon, CalendarIcon, ChevronIcon, CloseIcon, PinIcon, WhatsappIcon } from "@/components/icons";
 import { startCheckout } from "@/lib/checkout-actions";
 import { saveLastOrder } from "@/lib/last-order";
 import { formatPrice } from "@/lib/menu";
@@ -273,6 +274,7 @@ function PickupPicker({ error }: { error?: string }) {
   const days = useMemo(() => (now ? pickupDays(now) : []), [now]);
   const [dayKey, setDayKey] = useState<string | null>(null);
   const [slot, setSlot] = useState<string | null>(null);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   // Default to the earliest available slot so the form is valid without changes.
   const day = days.find((d) => d.key === dayKey) ?? days[0];
@@ -287,28 +289,40 @@ function PickupPicker({ error }: { error?: string }) {
 
       {day ? (
         <>
-          {/* Scrolls sideways: horizontal drags here scroll the days instead of swiping the drawer closed.
-              `relative` makes it the offset parent, so Base UI scrolls the checked day into view correctly. */}
-          <RadioGroup
-            aria-label="Día de retiro"
-            value={day.key}
-            onValueChange={(key: string) => {
-              setDayKey(key);
-              setSlot(null);
-            }}
-            data-base-ui-swipe-ignore="x"
-            className="no-scrollbar relative -mx-5 flex gap-2 overflow-x-auto px-5 pb-1"
+          {/* The earliest day is already chosen: the form is valid untouched. Tapping the date opens
+              the calendar only for people who want another day, and it closes after they pick. */}
+          <button
+            type="button"
+            onClick={() => setCalendarOpen((v) => !v)}
+            aria-expanded={calendarOpen}
+            className="flex w-full items-center justify-between gap-3 rounded-2xl bg-paper px-4 py-3 text-left ring-1 ring-line transition-colors outline-none hover:ring-ink/40 focus-visible:ring-2 focus-visible:ring-brand"
           >
-            {days.map((d) => (
-              <Radio.Root
-                key={d.key}
-                value={d.key}
-                className="shrink-0 cursor-pointer rounded-2xl bg-paper px-3 py-2 text-left text-sm ring-1 ring-line transition-colors outline-none first-letter:uppercase hover:ring-ink/40 focus-visible:ring-2 focus-visible:ring-brand data-checked:bg-ink data-checked:text-cream data-checked:ring-ink"
+            <span className="first-letter:uppercase">{day.label}</span>
+            <ChevronIcon className={`shrink-0 text-muted transition-transform ${calendarOpen ? "rotate-180" : ""}`} />
+          </button>
+          <AnimatePresence initial={false}>
+            {calendarOpen ? (
+              <m.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ type: "spring", duration: 0.35, bounce: 0 }}
+                className="-mx-1 overflow-hidden px-1"
               >
-                {d.label}
-              </Radio.Root>
-            ))}
-          </RadioGroup>
+                <div className="pt-2 pb-1">
+                  <Calendar
+                    available={days.map((d) => d.key)}
+                    value={day.key}
+                    onChange={(key) => {
+                      setDayKey(key);
+                      setSlot(null);
+                      setCalendarOpen(false);
+                    }}
+                  />
+                </div>
+              </m.div>
+            ) : null}
+          </AnimatePresence>
           {/* Submitted as "pickup" through the group's hidden input. */}
           <RadioGroup
             name="pickup"
