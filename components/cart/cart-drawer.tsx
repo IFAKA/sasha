@@ -10,7 +10,7 @@ import { Input } from "@base-ui/react/input";
 import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
 import { useCart, type ResolvedLine } from "@/components/cart/cart-provider";
-import { Drawer, SidePanel } from "@/components/ui/drawer";
+import { BottomSheet, Drawer, SidePanel } from "@/components/ui/drawer";
 import { QuantityField } from "@/components/ui/quantity-field";
 import { Calendar } from "@/components/ui/calendar";
 import { BagIcon, CalendarIcon, ChevronIcon, CloseIcon, PinIcon, WhatsappIcon } from "@/components/icons";
@@ -275,6 +275,7 @@ function PickupPicker({ error }: { error?: string }) {
   const [dayKey, setDayKey] = useState<string | null>(null);
   const [slot, setSlot] = useState<string | null>(null);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [draft, setDraft] = useState<string | null>(null);
 
   // Default to the earliest available slot so the form is valid without changes.
   const day = days.find((d) => d.key === dayKey) ?? days[0];
@@ -290,39 +291,45 @@ function PickupPicker({ error }: { error?: string }) {
       {day ? (
         <>
           {/* The earliest day is already chosen: the form is valid untouched. Tapping the date opens
-              the calendar only for people who want another day, and it closes after they pick. */}
+              a sheet with the calendar, for people who want another day; they confirm there. */}
           <button
             type="button"
-            onClick={() => setCalendarOpen((v) => !v)}
-            aria-expanded={calendarOpen}
+            onClick={() => {
+              setDraft(day.key);
+              setCalendarOpen(true);
+            }}
+            aria-haspopup="dialog"
             className="flex w-full items-center justify-between gap-3 rounded-2xl bg-paper px-4 py-3 text-left ring-1 ring-line transition-colors outline-none hover:ring-ink/40 focus-visible:ring-2 focus-visible:ring-brand"
           >
             <span className="first-letter:uppercase">{day.label}</span>
-            <ChevronIcon className={`shrink-0 text-muted transition-transform ${calendarOpen ? "rotate-180" : ""}`} />
+            <ChevronIcon className="shrink-0 -rotate-90 text-muted" />
           </button>
-          <AnimatePresence initial={false}>
-            {calendarOpen ? (
-              <m.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ type: "spring", duration: 0.35, bounce: 0 }}
-                className="-mx-1 overflow-hidden px-1"
-              >
-                <div className="pt-2 pb-1">
-                  <Calendar
-                    available={days.map((d) => d.key)}
-                    value={day.key}
-                    onChange={(key) => {
-                      setDayKey(key);
-                      setSlot(null);
-                      setCalendarOpen(false);
-                    }}
-                  />
+          <Drawer.Root open={calendarOpen} onOpenChange={setCalendarOpen}>
+            <BottomSheet>
+              <div className="px-5 pt-8 pb-5">
+                <div className="mb-3 flex items-center justify-between">
+                  <Drawer.Title className="font-display text-2xl font-semibold">Elegí el día</Drawer.Title>
+                  <Drawer.Close className="grid size-10 place-items-center rounded-full hover:bg-blush" aria-label="Cerrar">
+                    <CloseIcon />
+                  </Drawer.Close>
                 </div>
-              </m.div>
-            ) : null}
-          </AnimatePresence>
+                <Calendar available={days.map((d) => d.key)} value={draft ?? day.key} onChange={setDraft} />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (draft && draft !== day.key) {
+                      setDayKey(draft);
+                      setSlot(null);
+                    }
+                    setCalendarOpen(false);
+                  }}
+                  className="mt-4 w-full rounded-full bg-brand px-5 py-3.5 font-semibold text-white transition-[background-color,transform] hover:bg-brand-ink active:scale-[0.98]"
+                >
+                  Confirmar
+                </button>
+              </div>
+            </BottomSheet>
+          </Drawer.Root>
           {/* Submitted as "pickup" through the group's hidden input. */}
           <RadioGroup
             name="pickup"
