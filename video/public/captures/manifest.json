@@ -1,0 +1,431 @@
+{
+  "scale": 3,
+  "viewport": {
+    "w": 390,
+    "h": 844
+  },
+  "shops": {
+    "demo": {
+      "theme": {
+        "bg": "#fbf6ee",
+        "fg": "#2b1d14",
+        "accent": "#8a4b1e"
+      },
+      "screens": {
+        "home": {
+          "file": "captures/demo/home.png",
+          "fullFile": "captures/demo/home-full.png",
+          "fullHeight": 4478,
+          "scrollY": 0,
+          "elements": {
+            "hero": {
+              "x": 0,
+              "y": 65,
+              "w": 390,
+              "h": 571.9
+            },
+            "logo": {
+              "x": 16,
+              "y": 12,
+              "w": 73.2,
+              "h": 40
+            }
+          }
+        },
+        "menu": {
+          "file": "captures/demo/menu.png",
+          "fullFile": "captures/demo/menu-full.png",
+          "fullHeight": 5217,
+          "scrollY": 0,
+          "elements": {
+            "title": {
+              "x": 16,
+              "y": 129,
+              "w": 358,
+              "h": 40
+            },
+            "firstCategory": {
+              "x": 16,
+              "y": 308,
+              "w": 358,
+              "h": 884
+            }
+          }
+        },
+        "catalog": {
+          "file": "captures/demo/catalog.png",
+          "fullFile": "captures/demo/catalog-full.png",
+          "fullHeight": 2694,
+          "scrollY": 192,
+          "elements": {
+            "productCard": {
+              "x": 16,
+              "y": 382,
+              "w": 171,
+              "h": 251
+            },
+            "addButton": {
+              "x": 135,
+              "y": 501,
+              "w": 40,
+              "h": 40
+            },
+            "cartIcon": {
+              "x": 334,
+              "y": 204,
+              "w": 40,
+              "h": 40
+            }
+          }
+        },
+        "product": {
+          "file": "captures/demo/product.png",
+          "fullFile": "captures/demo/product-full.png",
+          "fullHeight": 844,
+          "scrollY": 0,
+          "elements": {
+            "sheet": {
+              "x": 0,
+              "y": 270,
+              "w": 390,
+              "h": 574
+            },
+            "sheetPhoto": {
+              "x": 0,
+              "y": 270,
+              "w": 390,
+              "h": 192
+            },
+            "addButton": {
+              "x": 20,
+              "y": 772,
+              "w": 350,
+              "h": 52
+            }
+          }
+        },
+        "cart": {
+          "file": "captures/demo/cart.png",
+          "fullFile": "captures/demo/cart-full.png",
+          "fullHeight": 844,
+          "scrollY": 0,
+          "elements": {
+            "cartRow": {
+              "x": 20,
+              "y": 89,
+              "w": 350,
+              "h": 108
+            },
+            "cartTotal": {
+              "x": 266.9,
+              "y": 692,
+              "w": 103.1,
+              "h": 32
+            },
+            "closeButton": {
+              "x": 330,
+              "y": 16,
+              "w": 40,
+              "h": 40
+            }
+          }
+        },
+        "pickup": {
+          "file": "captures/demo/pickup.png",
+          "fullFile": "captures/demo/pickup-full.png",
+          "fullHeight": 844,
+          "scrollY": 0,
+          "elements": {
+            "branchChip": {
+              "x": 20,
+              "y": 195,
+              "w": 350,
+              "h": 64
+            },
+            "dayChip": {
+              "x": 196.7,
+              "y": 343,
+              "w": 165.9,
+              "h": 36
+            },
+            "timeChip": {
+              "x": 199,
+              "y": 395,
+              "w": 81.5,
+              "h": 36
+            },
+            "payButton": {
+              "x": 20,
+              "y": 736,
+              "w": 350,
+              "h": 52
+            }
+          }
+        },
+        "payment": {
+          "file": "captures/demo/payment.png",
+          "fullFile": "captures/demo/payment-full.png",
+          "fullHeight": 844,
+          "scrollY": 0,
+          "elements": {
+            "payButton": {
+              "x": 16,
+              "y": 732,
+              "w": 358,
+              "h": 52
+            },
+            "summary": {
+              "x": 16,
+              "y": 68,
+              "w": 358,
+              "h": 140
+            }
+          }
+        },
+        "confirmation": {
+          "file": "captures/demo/confirmation.png",
+          "fullFile": "captures/demo/confirmation-full.png",
+          "fullHeight": 844,
+          "scrollY": 0,
+          "elements": {
+            "checkBadge": {
+              "x": 155,
+              "y": 181,
+              "w": 80,
+              "h": 80
+            },
+            "title": {
+              "x": 20,
+              "y": 281,
+              "w": 350,
+              "h": 36
+            },
+            "summary": {
+              "x": 20,
+              "y": 397,
+              "w": 350,
+              "h": 193
+            }
+          }
+        },
+        "adminOrders": {
+          "file": "captures/demo/adminOrders.png",
+          "fullFile": "captures/demo/adminOrders-full.png",
+          "fullHeight": 6130,
+          "scrollY": 0,
+          "elements": {
+            "newOrderCard": {
+              "x": 16,
+              "y": 257,
+              "w": 358,
+              "h": 276.5
+            },
+            "freshBadge": {
+              "x": 16,
+              "y": 229,
+              "w": 358,
+              "h": 20
+            },
+            "stats": {
+              "x": 16,
+              "y": 145,
+              "w": 291,
+              "h": 60
+            }
+          }
+        },
+        "adminSales": {
+          "file": "captures/demo/adminSales.png",
+          "fullFile": "captures/demo/adminSales-full.png",
+          "fullHeight": 1950,
+          "scrollY": 349,
+          "elements": {
+            "revenueCard": {
+              "x": 16,
+              "y": 477,
+              "w": 358,
+              "h": 140
+            },
+            "revenueNumber": {
+              "x": 36,
+              "y": 521,
+              "w": 318,
+              "h": 48
+            },
+            "chartArea": {
+              "x": 16,
+              "y": 953,
+              "w": 358,
+              "h": 334.5
+            }
+          }
+        }
+      }
+    },
+    "demoTeal": {
+      "theme": {
+        "bg": "#f5fbfa",
+        "fg": "#10282a",
+        "accent": "#1f6f6b"
+      },
+      "screens": {
+        "home": {
+          "file": "captures/demoTeal/home.png",
+          "fullFile": "captures/demoTeal/home-full.png",
+          "fullHeight": 4478,
+          "scrollY": 0,
+          "elements": {
+            "hero": {
+              "x": 0,
+              "y": 65,
+              "w": 390,
+              "h": 571.9
+            },
+            "logo": {
+              "x": 16,
+              "y": 12,
+              "w": 73.2,
+              "h": 40
+            }
+          }
+        },
+        "catalog": {
+          "file": "captures/demoTeal/catalog.png",
+          "fullFile": "captures/demoTeal/catalog-full.png",
+          "fullHeight": 2694,
+          "scrollY": 192,
+          "elements": {
+            "productCard": {
+              "x": 16,
+              "y": 382,
+              "w": 171,
+              "h": 251
+            },
+            "addButton": {
+              "x": 135,
+              "y": 501,
+              "w": 40,
+              "h": 40
+            },
+            "cartIcon": {
+              "x": 334,
+              "y": 204,
+              "w": 40,
+              "h": 40
+            }
+          }
+        }
+      }
+    },
+    "demoPlum": {
+      "theme": {
+        "bg": "#fbf6fa",
+        "fg": "#2a1426",
+        "accent": "#6b2d5c"
+      },
+      "screens": {
+        "home": {
+          "file": "captures/demoPlum/home.png",
+          "fullFile": "captures/demoPlum/home-full.png",
+          "fullHeight": 4478,
+          "scrollY": 0,
+          "elements": {
+            "hero": {
+              "x": 0,
+              "y": 65,
+              "w": 390,
+              "h": 571.9
+            },
+            "logo": {
+              "x": 16,
+              "y": 12,
+              "w": 73.2,
+              "h": 40
+            }
+          }
+        },
+        "catalog": {
+          "file": "captures/demoPlum/catalog.png",
+          "fullFile": "captures/demoPlum/catalog-full.png",
+          "fullHeight": 2694,
+          "scrollY": 192,
+          "elements": {
+            "productCard": {
+              "x": 16,
+              "y": 382,
+              "w": 171,
+              "h": 251
+            },
+            "addButton": {
+              "x": 135,
+              "y": 501,
+              "w": 40,
+              "h": 40
+            },
+            "cartIcon": {
+              "x": 334,
+              "y": 204,
+              "w": 40,
+              "h": 40
+            }
+          }
+        }
+      }
+    },
+    "demoNavy": {
+      "theme": {
+        "bg": "#f5f8fc",
+        "fg": "#121d30",
+        "accent": "#23395b"
+      },
+      "screens": {
+        "home": {
+          "file": "captures/demoNavy/home.png",
+          "fullFile": "captures/demoNavy/home-full.png",
+          "fullHeight": 4478,
+          "scrollY": 0,
+          "elements": {
+            "hero": {
+              "x": 0,
+              "y": 65,
+              "w": 390,
+              "h": 571.9
+            },
+            "logo": {
+              "x": 16,
+              "y": 12,
+              "w": 73.2,
+              "h": 40
+            }
+          }
+        },
+        "catalog": {
+          "file": "captures/demoNavy/catalog.png",
+          "fullFile": "captures/demoNavy/catalog-full.png",
+          "fullHeight": 2694,
+          "scrollY": 192,
+          "elements": {
+            "productCard": {
+              "x": 16,
+              "y": 382,
+              "w": 171,
+              "h": 251
+            },
+            "addButton": {
+              "x": 135,
+              "y": 501,
+              "w": 40,
+              "h": 40
+            },
+            "cartIcon": {
+              "x": 334,
+              "y": 204,
+              "w": 40,
+              "h": 40
+            }
+          }
+        }
+      }
+    }
+  }
+}
