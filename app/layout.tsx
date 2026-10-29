@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { MotionProvider } from "@/components/motion-provider";
 import { CartProvider } from "@/components/cart/cart-provider";
 import { CartDrawer } from "@/components/cart/cart-drawer";
@@ -44,6 +45,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <CartDrawer />
           </CartProvider>
         </MotionProvider>
+        {/* Page views per shop: each Vercel project has its own Analytics tab (enable it there). */}
+        <Analytics />
       </body>
     </html>
   );
