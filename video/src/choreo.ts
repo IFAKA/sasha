@@ -1,21 +1,38 @@
 import {noise2D} from '@remotion/noise';
 import {Pose} from './lib/Phone';
-import {BOUNCY, HEAVY, SOFT, track, spr, ramp, Key} from './lib/anim';
+import {BOUNCY, HEAVY, SOFT, track, spr, ramp, lerp, Key} from './lib/anim';
 import {T} from './timeline';
 
 // One continuous phone for scenes 3-7: this file is its whole choreography.
 const BASE_S = 1.5;
 const BASE_Y = 270; // phone top lands at y = 579
 
+export const openSpring = (f: number) => spr(f, T.appOpen, {damping: 14, stiffness: 150, mass: 0.8});
+/** Camera at the first frame of the reveal (see camera()) and the phone pose that hides it behind the app icon. */
+export const OPEN_ZOOM = 1.0;
+export const OPEN_QY = 1270;
+export const ICON_FRAME_CY = 1000;
+export const ICON_FRAME_PX = 240;
+const OPEN_Y = BASE_Y + (ICON_FRAME_CY - OPEN_QY) / OPEN_ZOOM;
+const OPEN_S = 0.26; // the whole phone body is smaller than the icon (868 * 0.26 < 240)
+
 export const phonePose = (f: number): Pose => {
-  const rise = {damping: 15, stiffness: 85, mass: 1.15};
-  let y = track(f, [[0, 1250], [T.phoneRise, BASE_Y, rise], [780, 535, HEAVY]]);
-  let rx = track(f, [[0, 38], [T.phoneRise, 5, rise], [240, 0, SOFT], [780, 9, HEAVY]]);
-  let ry = track(f, [[0, -26], [T.phoneRise, -9, rise], [240, 0, SOFT], [780, -20, HEAVY]]);
+  let y = track(f, [[0, BASE_Y], [780, 535, HEAVY]]);
+  let rx = track(f, [[0, 5], [240, 0, SOFT], [780, 9, HEAVY]]);
+  let ry = track(f, [[0, -9], [240, 0, SOFT], [780, -20, HEAVY]]);
   let s = track(f, [[0, BASE_S], [780, 1.1, HEAVY]]);
   let rz = 0;
   let z = 0;
   let x = 0;
+
+  // app open: the phone grows out of the app icon (see Reveal), with a little overshoot
+  if (f >= T.appOpen && f < T.appOpen + 40) {
+    const o = openSpring(f);
+    y = lerp(OPEN_Y, y, o);
+    rx = lerp(0, rx, o);
+    ry = lerp(0, ry, o);
+    s = lerp(OPEN_S, s, o);
+  }
 
   // drift: a living phone, never frozen
   if (f >= 130 && f < 250) {

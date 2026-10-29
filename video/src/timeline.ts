@@ -35,11 +35,14 @@ PING_FRAMES.forEach((f, i) => reg(`ping-${String(i + 1).padStart(2, '0')}`, f, '
 export const T = {
   riserHook: reg('riser-hook', 0, 'riser', 105),
   t1In: reg('title1-in', 45, 'title'),
-  t1Out: reg('title1-out', 105, 'title'),
-  suck: reg('suck-whoosh', 105, 'whoosh', 15),
+  t1Out: reg('title1-out', 82, 'title'),
+  into1: reg('bubble-into-icon-01', 90, 'pop'),
+  into2: reg('bubble-into-icon-02', 97, 'pop'),
+  into3: reg('bubble-into-icon-03', 105, 'pop'),
+  iconMorph: reg('icon-morph', 112, 'swap'),
 
   drop: reg('drop', 120, 'hit'),
-  phoneRise: reg('phone-rise', 120, 'whoosh', 30),
+  appOpen: reg('app-open', 120, 'whoosh', 15),
   t2aIn: reg('title2a-in', 150, 'title'),
   t2aOut: reg('title2a-out', 195, 'title'),
   t2bIn: reg('title2b-in', 195, 'title'),

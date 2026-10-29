@@ -31,9 +31,11 @@ def plan(c):
     if (k == 'cut') or (k == 'hit' and not n.startswith('hit-')): return None, 'in music bed'
     if n == 'hit-skin0': return (f'swap_{ch}', -10, 0, 0.0), None
     if n.startswith('hit-'): return None, 'covered by the swap hit at the same frame'
-    if n in ('riser-hook', 'suck-whoosh'): return None, 'in music bed (riser / reverse swell)'
+    if n in ('riser-hook',): return None, 'in music bed (riser / reverse swell)'
     if n in ('lockup', 'final-hit', 'drop'): return None, 'in music bed (motif + ding)'
     if k == 'tap': return (f'tap_{ch}', -8, 4, PAN.get(n, 0.0)), None
+    if n.startswith('bubble-into-icon'): return (f'pop_{ch}', -15, 0, 0.0), None
+    if n == 'icon-morph': return (f'swap_{ch}', -11, 0, 0.0), None
     if k == 'pop' and n == 'order-lands': return (f'pop_{ch}', -11, 4, 0.0), None
     if k == 'pop': return (f'pop_{ch}', -8, 4, 0.0), None
     if k == 'chime' and n == 'order-notification': return (f'order_bell_{ch}', -8, 6, 0.0), None
