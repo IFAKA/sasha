@@ -5,8 +5,9 @@ import {CameraMotionBlur} from '@remotion/motion-blur';
 import {COLORS, H, W} from '../constants';
 import {PING_FRAMES, T} from '../timeline';
 import {SANS} from '../lib/fonts';
-import {SNAP, clamp01, easeInOut, lerp, mix, ramp, spr} from '../lib/anim';
+import {SNAP, clamp01, easeInOut, lerp, mix, ramp, rgba, spr} from '../lib/anim';
 import {Title} from '../lib/Title';
+import {AppIconFace} from '../lib/AppIcon';
 import {useAbs} from '../lib/time';
 
 type B = {at: number; side: 'in' | 'out'; text: string};
@@ -61,12 +62,12 @@ const place = (b: (typeof ITEMS)[number], f: number) => {
 
 // --- "into the app icon": the bubbles fly one by one into the chat icon ---
 const FLY_AT = 90; // first bubble leaves
-const FLY_DUR = 10;
-const FLY_GAP = 1; // frames between two bubbles
+const FLY_DUR = 9;
+const FLY_GAP = 0.8; // frames between two bubbles
 export const ICON_CY = 1000; // where the icon sits when it becomes the app icon
 export const ICON_PX = 240;
 const ICON_TOP_CY = 317;
-const GLIDE = [108, 120] as const;
+const GLIDE = [110, 120] as const;
 /** Bubbles that are on screen when the flight starts, newest first. */
 const FLYERS = ITEMS.filter((b) => b.at <= 88 && place(b, 200).cy >= 800)
   .sort((a, b) => b.i - a.i)
@@ -99,14 +100,16 @@ const BubbleField: React.FC<{f: number; layer?: 'all' | 'static' | 'fly'}> = ({f
         if (flying && !isFlyer) alpha *= 1 - ramp(f, FLY_AT, FLY_AT + 5);
         if (isFlyer && f >= fs) {
           const u = clamp01((f - fs) / FLY_DUR);
-          const e = Math.pow(u, 1.5);
+          const e = Math.pow(u, 1.3);
           const T0 = {x: q.cx, y: q.cy};
           const T1 = {x: W / 2, y: iconCy(f)};
           const dx = T1.x - T0.x;
           const dy = T1.y - T0.y;
           const len = Math.hypot(dx, dy) || 1;
-          const bend = (b.i % 2 ? 1 : -1) * 150;
-          const C = {x: (T0.x + T1.x) / 2 + (-dy / len) * bend, y: (T0.y + T1.y) / 2 + (dx / len) * bend};
+          const kk = FLYERS.findIndex((x) => x.i === b.i);
+          const bend = (kk % 2 ? 1 : -1) * (110 + 90 * (kk % 3));
+          const fr = 0.4 + 0.1 * (kk % 3);
+          const C = {x: T0.x + dx * fr + (-dy / len) * bend, y: T0.y + dy * fr + (dx / len) * bend};
           const X = (1 - e) * (1 - e) * T0.x + 2 * (1 - e) * e * C.x + e * e * T1.x;
           const Y = (1 - e) * (1 - e) * T0.y + 2 * (1 - e) * e * C.y + e * e * T1.y;
           tx = X - q.cx;
@@ -168,11 +171,13 @@ const Counter: React.FC<{f: number}> = ({f}) => {
   const hit = Math.min(1, ARRIVALS.reduce((acc, a) => acc + (f >= a ? Math.max(0, 1 - (f - a) / 5) : 0), 0));
   const buzz = Math.sin(f * 2.1) * (2 + 3 * k) * (1 - ramp(f, 86, 92));
   const glide = easeInOut(ramp(f, GLIDE[0], GLIDE[1]));
-  const m = easeInOut(ramp(f, 110, 114)); // chat -> app icon
-  const dip = 1 - 0.16 * Math.sin(Math.PI * ramp(f, 109, 115));
+  const m = easeInOut(ramp(f, 112, 116)); // chat -> app icon
+  const dip = 1 - 0.16 * Math.sin(Math.PI * ramp(f, 111, 117));
   const base = lerp(1.3 + 0.1 * bump0, ICON_PX / 84, glide) * dip;
   const cy = iconCy(f);
-  const badgeS = 1 - easeInOut(ramp(f, 106, 109));
+  const lastA = Math.max(...ARRIVALS);
+  const badgeS = 1 - easeInOut(ramp(f, 111, 114));
+  const done = f >= lastA ? 1 + 0.35 * Math.exp(-(f - lastA) / 2.5) * Math.cos((f - lastA) * 1.1) : 1;
   const warm = easeInOut(ramp(f, 104, 119));
   const caramel = '#B8742B';
   return (
@@ -191,12 +196,10 @@ const Counter: React.FC<{f: number}> = ({f}) => {
         <div style={{position: 'absolute', inset: 0, background: 'linear-gradient(160deg,#3CD26F,#1FA855)', opacity: 1 - m, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <svg width="46" height="46" viewBox="0 0 24 24" fill="#fff"><path d="M12 3C7 3 3 6.800 3 11.500c0 2.100.8 4 2.100 5.500L4 21l4.300-1.300c1.100.5 2.300.8 3.700.8 5 0 9-3.800 9-8.500S17 3 12 3z" /></svg>
         </div>
-        <div style={{position: 'absolute', inset: 0, background: `linear-gradient(160deg, ${mix(caramel, '#FFFFFF', 0.18)}, ${mix(caramel, '#000000', 0.2)})`, opacity: m, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-          <div style={{fontFamily: SANS, fontWeight: 800, fontSize: 44, letterSpacing: '-0.06em', color: '#FFF6E6', paddingRight: 3}}>HL</div>
-        </div>
+        <AppIconFace opacity={m} />
       </div>
       {badgeS > 0.01 && (
-        <div style={{position: 'absolute', top: -16, right: -26 - (n >= 10 ? 8 : 0) - (n >= 99 ? 12 : 0), transform: `scale(${badgeS * (1 + 0.12 * hit)})`, minWidth: 52, height: 52, padding: '0 12px', boxSizing: 'border-box', borderRadius: 26, background: '#FF3B30', color: '#fff', fontFamily: SANS, fontWeight: 800, fontSize: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 14px rgba(255,59,48,0.55)', border: '3px solid #0C1627'}}>{n >= 99 && arrived === ARRIVALS.length ? '99+' : n}</div>
+        <div style={{position: 'absolute', top: -16, right: -26 - (n >= 10 ? 8 : 0) - (n >= 99 ? 12 : 0), transform: `scale(${badgeS * (1 + 0.12 * hit) * done})`, minWidth: 52, height: 52, padding: '0 12px', boxSizing: 'border-box', borderRadius: 26, background: '#FF3B30', color: '#fff', fontFamily: SANS, fontWeight: 800, fontSize: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 14px rgba(255,59,48,0.55)', border: '3px solid #0C1627'}}>{n >= 99 && arrived === ARRIVALS.length ? '99+' : n}</div>
       )}
     </div>
   );
@@ -224,14 +227,30 @@ const Shake: React.FC<{f: number; children: React.ReactNode}> = ({f, children}) 
   );
 };
 
+/** Warmth grows out of the icon: dark -> amber -> deep brown -> cream, never grey. */
+const Bloom: React.FC<{f: number}> = ({f}) => {
+  const g = ramp(f, 100, 103);
+  if (f < 100) return null;
+  const R = lerp(140, 2600, Math.pow(ramp(f, 100, 120), 1.6));
+  const cy = iconCy(f);
+  const t = ramp(f, 108, 119);
+  const c0 = mix('#F2A94E', '#FFE9C9', t);
+  const c1 = mix('#8A4A14', COLORS.cream, t);
+  return (
+    <>
+      <AbsoluteFill style={{background: `radial-gradient(circle ${R}px at 50% ${cy}px, ${c0} 0%, ${rgba(c1, 0.95)} 50%, ${rgba(c1, 0)} 100%)`, opacity: g}} />
+      <AbsoluteFill style={{background: COLORS.cream, opacity: ramp(f, 114, 120)}} />
+    </>
+  );
+};
+
 const HookAll: React.FC = () => {
   const f = useAbs();
-  const warm = easeInOut(ramp(f, 104, 119));
   const flying = f >= FLY_AT;
   return (
     <AbsoluteFill>
       <NightBg f={f} />
-      <AbsoluteFill style={{background: `radial-gradient(circle at 50% 60%, #FFE9C9 0%, ${COLORS.cream} 70%)`, opacity: warm}} />
+      <Bloom f={f} />
       <Shake f={f}>
         {flying ? (
           <>

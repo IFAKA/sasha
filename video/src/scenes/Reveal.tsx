@@ -12,7 +12,7 @@ import {phonePose, camera} from '../choreo';
 import {useGeo} from '../lib/geo';
 import {ramp, track, lerp, clamp01, mix, SOFT} from '../lib/anim';
 import {CameraMotionBlur} from '@remotion/motion-blur';
-import {SANS} from '../lib/fonts';
+import {AppIconFace} from '../lib/AppIcon';
 import {ICON_FRAME_CY, ICON_FRAME_PX, openSpring} from '../choreo';
 import {useAbs} from '../lib/time';
 
@@ -30,11 +30,12 @@ const OpenIcon: React.FC<{f: number; zoom: number; qy: number; pose: ReturnType<
   const r = lerp(0.224 * ICON_FRAME_PX, 62 * pose.s * zoom, e);
   const fade = 1 - ramp(e, 0.72, 0.96);
   if (fade <= 0.001) return null;
-  const caramel = '#B8742B';
   const k = w / ICON_FRAME_PX;
   return (
-    <div style={{position: 'absolute', left: cx - w / 2, top: cy - h / 2, width: w, height: h, borderRadius: r, overflow: 'hidden', opacity: fade, background: `linear-gradient(160deg, ${mix(caramel, '#FFFFFF', 0.18)}, ${mix(caramel, '#000000', 0.2)})`, boxShadow: '0 8px 24px rgba(90,50,10,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-      <div style={{fontFamily: SANS, fontWeight: 800, fontSize: 44 * (ICON_FRAME_PX / 84) * Math.min(k, 3.2), letterSpacing: '-0.06em', color: '#FFF6E6', paddingRight: 8 * k, opacity: 1 - ramp(e, 0.45, 0.8)}}>HL</div>
+    <div style={{position: 'absolute', left: cx - w / 2, top: cy - h / 2, width: w, height: h, borderRadius: r, overflow: 'hidden', opacity: fade, boxShadow: '0 8px 24px rgba(90,50,10,0.35)'}}>
+      <div style={{position: 'absolute', inset: 0, transform: 'none'}}>
+        <AppIconFace mono={(ICON_FRAME_PX / 84) * Math.min(k, 3.2)} textOpacity={1 - ramp(e, 0.45, 0.8)} />
+      </div>
     </div>
   );
 };
