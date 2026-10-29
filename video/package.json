@@ -1,0 +1,29 @@
+{
+  "name": "sasha-ad",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "cues": "tsx scripts/cues.ts",
+    "check-cues": "tsx scripts/cues.ts --check",
+    "still": "remotion still src/index.ts",
+    "render": "nice -n 15 remotion render src/index.ts Ad out/ad.mp4 --codec h264 --crf 18 --concurrency 6"
+  },
+  "dependencies": {
+    "@remotion/bundler": "^4.0.539",
+    "@remotion/cli": "^4.0.539",
+    "@remotion/google-fonts": "^4.0.539",
+    "@remotion/motion-blur": "^4.0.539",
+    "@remotion/noise": "^4.0.539",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remotion": "^4.0.539"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}
