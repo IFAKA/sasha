@@ -1,186 +1,139 @@
 #!/usr/bin/env python3
-"""Build the 30 s, 120 BPM music bed from Stickz loops. Run: ./build_music.sh
-Grid: 1 beat = 0.5 s, 1 bar = 2 s, 15 bars. Key: C major (guitar loop 019, C-tuned 808s, C risers/pads)."""
-import os, subprocess, sys
+"""Horno Lento sonic identity: original music written as notes, synthesised (no samples). 120 BPM, 30 s, 15 bars.
+Story: bars 1-2 clashing WhatsApp-like pings -> 3.5 s reverse swell -> breath -> 4.0 s the clash resolves into the motif in C."""
+import os, json
 import numpy as np, soundfile as sf
-from scipy.signal import resample_poly, butter, sosfilt
-from math import gcd
+from synthlib import *
+from synthlib import _t, _st
+import synthlib as S
+from build_sfx import shimmer, CHORD
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-S = os.path.expanduser('~/Music/Samples/')
-CH = S + 'Stickz - Chill Toolkit/Stickz - Chill Toolkit - Sample Pack/Stickz CHT - '
-RI = S + 'Stickz - Rise (FX Toolkit 2)/'
-GU = S + 'Stickz - Hearts (Guitar Loop Toolkit)/Stickz Hearts - Guitar Loops/'
-SR = 48000
-BEAT, BAR, TOTAL = SR // 2, SR * 2, SR * 30
-rng = np.random.default_rng(7)
-
-def load(path, trim=True):
-    x, sr = sf.read(path, always_2d=True)
-    if sr != SR:
-        g = gcd(SR, sr); x = resample_poly(x, SR // g, sr // g, axis=0)
-    if x.shape[1] == 1: x = np.repeat(x, 2, 1)
-    if trim:  # start exactly on the first transient (3% of peak)
-        m = np.abs(x).max(1); x = x[int(np.argmax(m > 0.03 * m.max())):]
-    return x
-
-def speed(x, ratio):  # resample: pitch and tempo change together (ratio>1 = faster/higher)
-    n = int(round(len(x) / ratio)); t = np.arange(n) * ratio
-    return np.stack([np.interp(t, np.arange(len(x)), x[:, c]) for c in range(2)], 1)
-
-def lp(x, fc, order=4):
-    return sosfilt(butter(order, fc, 'low', fs=SR, output='sos'), x, axis=0)
-def hp(x, fc, order=2):
-    return sosfilt(butter(order, fc, 'high', fs=SR, output='sos'), x, axis=0)
-
-def db(v): return 10 ** (v / 20)
-
-def new(): return np.zeros((TOTAL, 2))
-def put(buf, x, t, gain=1.0, fade_out=None, pan=0.0):
-    """Mix sample x at time t (seconds) on the sample grid."""
+HERE = os.path.dirname(os.path.abspath(__file__)); N = SR * 30
+bt = lambda bar, beat=0.0: (bar - 1) * 2.0 + beat * 0.5
+def new(): return np.zeros((N, 2))
+def put(buf, x, t, g=1.0, pan=0.0):
     i = int(round(t * SR))
-    if i >= TOTAL: return
-    x = x[:TOTAL - i] * gain
-    if fade_out is not None:
-        n = min(int(fade_out * SR), len(x)); x = x.copy(); x[-n:] *= np.linspace(1, 0, n)[:, None]
+    if i < 0 or i >= N: return
+    x = x[:N - i] * g
     if pan: x = x * np.array([1 - max(pan, 0), 1 + min(pan, 0)])
     buf[i:i + len(x)] += x
+def env(buf, pts):
+    t = np.arange(N) / SR; return buf * db(np.interp(t, [p[0] for p in pts], [p[1] for p in pts]))[:, None]
 
-def env(buf, points):  # piecewise-linear gain (seconds, dB)
-    t = np.arange(TOTAL) / SR
-    g = db(np.interp(t, [p[0] for p in points], [p[1] for p in points]))
-    return buf * g[:, None]
+# chord per bar (key C major): I-IV-vi-V loop, the last bar lands on I
+BAR_CHORD = {3: 'C', 4: 'F', 5: 'Am', 6: 'G', 7: 'C', 8: 'F', 9: 'Am', 10: 'G', 11: 'C', 12: 'F', 13: 'G', 14: 'C'}
+VOICE = {'C': [64, 67, 71, 74], 'F': [65, 69, 72, 76], 'Am': [64, 67, 69, 72], 'G': [62, 65, 67, 71]}   # Cmaj9 Fmaj7 Am7 G7
+BASS = {'C': 36, 'F': 41, 'Am': 45, 'G': 43}
+CLASH = [66, 72, 71, 73, 78, 65, 70, 77, 67, 75]   # F#, C, B, C#, F#, F, Bb ... tritones and semitone clusters
 
-def reverb(x, secs=2.2, wet=1.0, seed=1):
-    r = np.random.default_rng(seed); n = int(secs * SR)
-    ir = r.standard_normal((n, 2)) * np.exp(-np.arange(n) / (secs * SR / 5))[:, None]
-    ir = lp(ir, 5000, 2)
-    ir[:int(0.02 * SR)] *= np.linspace(0, 1, int(0.02 * SR))[:, None]
-    from scipy.signal import fftconvolve
-    y = np.stack([fftconvolve(x[:, c], ir[:, c]) for c in range(2)], 1)
-    return y / np.abs(ir).sum() * 18 * wet
+def build(kT=1.0, kL=1.0):
+    drums, bass, harm, mot, fx = new(), new(), new(), new(), new()
+    rng = np.random.default_rng(21)
+    # ---------- bars 1-2: the chaos ----------
+    t = 0.12; i = 0
+    while t < 3.38:
+        prog = t / 3.4; gap = max(0.05, 0.62 * 0.83 ** i)
+        n_stack = 1 + (gap < 0.2) + (gap < 0.1)
+        for s in range(n_stack):
+            m = CLASH[(i * 3 + s * 4) % len(CLASH)]
+            put(fx, ping(mtof(m), 0.35 + 0.65 * prog, rng.uniform(-28, 28), rng.uniform(-.7, .7)), t + s * 0.011, 1.0)
+        t += gap; i += 1
+    drone = new(); tt = _t(N)[:int(3.5 * SR)]
+    d = (np.sin(TAU * 65.41 * tt) + .8 * np.sin(TAU * 92.5 * tt) + .5 * np.sin(TAU * 98.0 * tt)) * np.minimum(tt / 1.5, 1) * 0.12
+    drone[:len(tt)] += _st(d)
+    nz = lp(np.random.default_rng(2).standard_normal(len(tt)), 2500)
+    drone[:len(tt)] += _st(nz * (tt / 3.5) ** 2.5 * 0.35)
+    fx += drone
+    for k in range(6):  # pulse under bar 2: the pin thumping faster
+        put(fx, thump(0.4 + .1 * k), 2.0 + k * 0.25 if k < 4 else 3.0 + (k - 4) * 0.25, 1.0)
+    # reverse swell that sucks everything in, ending at 3.5 s
+    src = new()[:int(2.0 * SR)]
+    for m in (60, 66, 71, 73, 78, 84):
+        e = ep(mtof(m), 0.2, 0.9) * 1.2; src[:len(e)] += e
+    src += reverb(src, 1.9, 4) * 1.8
+    sw = src[::-1]; put(fx, sw * 0.22, 3.5 - len(sw) / SR, 1.0)
+    fx = env(fx, [(0, 0), (3.40, 0), (3.5, -90), (3.999, -90), (4.0, 0), (30, 0)])
+    # remember: swell was part of the gated block above; keep it audible by gating at 3.5 only
+    fx_t = fx.copy(); fx_t[int(3.5 * SR):] = 0; fx_t *= kT; fx = fx_t
+    # ---------- the drop (4.0 s) ----------
+    put(fx, thump(1.2), 4.0, 1.0)
+    t4 = _t(int(1.2 * SR)); boom = np.sin(TAU * np.cumsum(38 + 40 * np.exp(-t4 * 6)) / SR) * np.exp(-t4 * 3.2) * 0.55
+    put(fx, _st(boom), 4.0, 1.0)
+    put(fx, shimmer(72), 4.0, 0.7)
+    # ---------- harmony: electric piano comping + soft pad ----------
+    for bar, ch in BAR_CHORD.items():
+        v = VOICE[ch]
+        for beat, dur, vel in ((0, 1.4, 1.0), (1.5, 0.9, 0.7), (2.5, 1.2, 0.8)):
+            if bar == 14 and beat >= 1.5 and False: continue
+            if bar == 14 and beat > 2: continue
+            for k, m in enumerate(v):
+                put(harm, ep(mtof(m), dur * 0.5, vel * (1 - 0.05 * k)), bt(bar, beat) + k * 0.006, 1.0)
+        put(harm, pad([mtof(m - 12) for m in v], 2.0), bt(bar), 1.0)
+    # final chord rings from 28 s (bar 15)
+    for k, m in enumerate(VOICE['C']): put(harm, ep(mtof(m), 1.5, 0.9), 28.0 + k * 0.006, 1.0)
+    put(harm, pad([mtof(m - 12) for m in VOICE['C']], 2.0), 28.0, 1.2)
+    # lift (bars 9-11): marimba arpeggio in 8ths + high bells
+    for bar in (9, 10, 11):
+        v = VOICE[BAR_CHORD[bar]]; arp = [v[0] + 12, v[1] + 12, v[2] + 12, v[3] + 12, v[2] + 12, v[1] + 12, v[0] + 12, v[1] + 12]
+        for j, m in enumerate(arp): put(harm, marimba(mtof(m), 0.7, 0.6), bt(bar, j * 0.5), kL * 0.9, (-.4 if j % 2 else .4))
+    harm = reverb_mix(harm, 0.22)
+    # ---------- bass ----------
+    for bar, ch in BAR_CHORD.items():
+        r = BASS[ch]
+        put(bass, S.bass(mtof(r), 0.62, 1.0), bt(bar, 0), 1.0)
+        put(bass, S.bass(mtof(r), 0.25, 0.7), bt(bar, 1.5), 1.0)
+        put(bass, S.bass(mtof(r + 7), 0.5, 0.75), bt(bar, 2.5), 1.0)
+        if bar in (5, 6, 7, 8, 9, 10, 11, 12, 13): put(bass, S.bass(mtof(r + 12), 0.2, 0.5), bt(bar, 3.5), 1.0)
+    put(bass, S.bass(mtof(36), 1.4, 0.9), 28.0, 1.0)
+    # ---------- kitchen percussion ----------
+    for bar in range(3, 15):
+        for b in (0, 1.5, 2.5): put(drums, thump(0.9 if b == 0 else 0.6), bt(bar, b), 1.0)
+        for b in (1, 3): put(drums, clink(2350 if b == 1 else 2750, 0.8), bt(bar, b), 1.0, 0.2); put(drums, board(0.55), bt(bar, b), 1.0)
+        for s in range(8):  # whisk on 8ths, accent on the off-beat
+            put(drums, whisk(0.9 if s % 2 else 0.5, (-.3 if s % 2 else .3), s + bar), bt(bar, s * 0.5 + 0.0 if False else s * 0.5), 1.0)
+        for s in range(8):  # ghost 16ths in between
+            put(drums, whisk(0.25, 0.0, s + 3 * bar), bt(bar, s * 0.5 + 0.25), 1.0)
+    for bar in range(5, 15): put(drums, clink(3300, 0.4), bt(bar, 3.75), 1.0, -.3)
+    for j, b in enumerate((3.0, 3.25, 3.5, 3.75)): put(drums, board(0.35 + .12 * j), bt(4, b), 1.0)   # fill into bar 5
+    for bar in (9, 10, 11):  # lift: dense whisk
+        for s in range(16): put(drums, whisk(0.5, (-.4 if s % 2 else .4), s + bar), bt(bar, s * 0.25 + 0.125), kL * 1.0)
+    for bar in (12, 13):    # swaps: an accent on every beat
+        for b in range(4):
+            put(drums, clink(3000 + 400 * b, 0.9), bt(bar, b), 1.0, 0.0)
+            put(mot, marimba(mtof(VOICE[BAR_CHORD[bar]][3] + 12 - (b % 2) * 5), 0.8, 0.5), bt(bar, b), 1.0)
+    for j, b in enumerate((3.0, 3.25, 3.5, 3.75)): put(drums, board(0.35 + .12 * j), bt(14, b), 1.0)
+    drums[int(28 * SR):] = 0
+    # ---------- the motif ----------
+    motif(4.0, mot, 1.25, ding=False)                        # the drop: clearly
+    motif(bt(7), mot, 0.45, ding=False, ep_layer=False)      # hints in the groove
+    motif(bt(11), mot, 0.55, ding=False, ep_layer=False)
+    motif(28.0, mot, 1.1, ding=True)                         # end card: motif + oven-timer ding on C6 (29.0 s)
+    mot = reverb_mix(mot, 0.3)
+    bass = bass * 1.7
+    stems = {'drums': drums, 'bass': bass, 'harmonic': harm, 'motif': mot, 'fx': fx}
+    # nothing between 3.5 and 4.0 s, natural fade at the very end
+    for k in stems:
+        stems[k] = stems[k].copy(); stems[k][int(3.5 * SR):int(4.0 * SR) - 1] = 0
+        stems[k] = env(stems[k], [(0, 0), (29.2, 0), (30, -45)])
+    return stems
 
-# ---- samples -------------------------------------------------------------
-used = []
-def L(path, trim=True):
-    used.append(path.replace(S, '')); return load(path, trim)
-guitar = L(GU + 'Stickz - Hearts Guitar Loop 019 - 120BPM Cmaj.wav')
-guitar = np.pad(guitar, ((0, max(0, 8 * BAR - len(guitar))), (0, 0)))[:8 * BAR]
-gbar = lambda k: guitar[(k - 1) * BAR:k * BAR]            # loop bar 1..8
-kick = L(CH + 'Kicks/Stickz CHT - Kick 03 - D.wav')
-snare = L(CH + 'Snares/Stickz CHT - Snare 03 - D.wav')
-clap = L(CH + 'Claps/Stickz CHT - Clap 03.wav')
-hat = L(CH + 'Cymbals/Stickz CHT - Closed Hi-Hats/Stickz CHT - Closed Hi-Hat 03.wav')
-ohat = L(CH + 'Cymbals/Stickz CHT - Open Hi-Hats/Stickz CHT - Open Hi-Hat 01.wav')
-perc = L(CH + 'Percussion/Stickz CHT - Percussion 12 - G.wav')
-percloop = speed(L(CH + 'Percussion Loops/Stickz CHT - Percussion Loop 12 - 110BPM.wav'), 110 / 120)
-percloop = np.pad(percloop, ((0, max(0, 2 * BAR - len(percloop))), (0, 0)))[:2 * BAR]
-b808 = L(CH + '808s/Stickz CHT - 808 01 - C.wav')          # C1 = 32.7 Hz
-riser = L(RI + 'Rise Risers/Stickz - Rise Riser 002 - 120BPM C.wav', trim=False)[int(10.0 * SR):int(13.5 * SR)]
-impact = L(RI + 'Rise Low Impacts/Stickz - Rise Low Impact 001.wav')
-pad = L(RI + 'Rise Atmosphere/Stickz - Rise Atmosphere 001 - C.wav', trim=False)[:TOTAL]
+def reverb_mix(x, wet):
+    return x + wet * reverb(x, 1.8, 3)
 
-# chord root (semitones above C) of each guitar loop bar, from chroma analysis
-ROOT = {1: 0, 2: 5, 3: 0, 4: 7, 5: 0, 6: 5, 7: 0, 8: 7}
-# which loop bar plays in each song bar (3..14); bar 14 resolves to C
-SEQ = {3: 1, 4: 2, 5: 3, 6: 4, 7: 5, 8: 6, 9: 7, 10: 8, 11: 1, 12: 2, 13: 4, 14: 1}
-bar_t = lambda n: (n - 1) * 2.0
+def bar_rms(x):
+    m = x.mean(1); return [20 * np.log10(np.sqrt((m[i * 2 * SR:(i + 1) * 2 * SR] ** 2).mean()) + 1e-9) for i in range(15)]
 
-# ---- stems ---------------------------------------------------------------
-drums, bass, harm, fx = new(), new(), new(), new()
-
-# harmonic: guitar
-for n, k in SEQ.items():
-    put(harm, gbar(k), bar_t(n), 0.9, fade_out=0.01 if n == 14 else None)
-    if n == 14: harm[int(27.5*SR):int(28*SR)] *= np.linspace(1, 0, int(0.5*SR))[:, None]  # bar 14 fades into the final chord
-# final chord: first strum of C (loop bar 1) with a long reverb tail, 28 -> 30 s
-strum = gbar(1)[:int(0.35 * SR)].copy(); strum[-int(0.05*SR):] *= np.linspace(1, 0, int(0.05*SR))[:, None]
-tail = np.zeros((TOTAL, 2)); put(tail, strum, 28.0, 1.0)
-rv = reverb(tail[int(27.9*SR):int(30*SR)+SR], 2.6)
-put(harm, strum, 28.0, 0.9); put(harm, rv[:int(2.1*SR)+0], 27.9, 0.8)
-# tension (bars 1-2): the same guitar, low-passed, rising; breath at 3.5-4.0
-ten = lp(np.concatenate([gbar(1), gbar(2)]), 650)
-put(harm, ten, 0.0, 0.8)
-# pad: soft under the whole piece, filtered in the tension part, full from the drop
-padg = pad.copy()
-padg[:int(4 * SR)] = lp(padg[:int(4 * SR)], 900)
-padb = new(); put(padb, padg, 0.0, 2.0)
-padb = env(padb, [(0, 0), (15.5, 0), (16.5, 12), (22, 12), (23, 0), (30, 0)])
-harm = env(harm, [(0, -200), (0.001, -14), (3.4, -4), (3.5, -80), (3.99, -80), (4.0, 0),
-                  (16, 0), (16.5, 3), (22, 3), (22.5, 0), (27.5, 0), (30, 0)])
-harm = harm + env(padb, [(0, 0), (3.4, 0), (3.5, -80), (3.99, -80), (4.0, 0), (30, 0)])
-# pad level: keep lower than guitar after drop (pad is quiet already; add a lift in the owner section)
-# fade the whole thing for the natural end
-harm = env(harm, [(0, 0), (28.2, 0), (30, -35)])
-
-# bass: 808 on beat 1 (long) and the "and of 3"; root follows the chord
-def note(root, semi_oct=12):
-    return speed(b808, 2 ** ((root + semi_oct) / 12))
-for n in range(3, 15):
-    r = ROOT[SEQ[n]]; nt = note(r); t0 = bar_t(n)
-    seg = nt[:int(1.45 * SR)]; put(bass, seg, t0, 0.9, fade_out=0.08)
-    if n >= 4:
-        seg2 = nt[:int(0.9 * SR)]; put(bass, seg2, t0 + 1.75 * 1.0 + 0.0, 0.55, fade_out=0.08)  # beat 3.5 -> t0+1.75
-    if n >= 9 and n <= 11:
-        put(bass, nt[:int(0.4 * SR)], t0 + 1.25, 0.45, fade_out=0.05)
-# final low C that rings out with the chord
-put(bass, note(0)[:int(2.2 * SR)], 28.0, 0.8, fade_out=1.2)
-bass = env(bass, [(0, 0), (28.0, 0), (30, -30)])
-
-# drums
-def pat(n):
-    t0 = bar_t(n)
-    for b in range(4):
-        put(drums, kick, t0 + b * 0.5, 0.85)
-    for b in (1, 3):
-        put(drums, clap, t0 + b * 0.5, 0.5); put(drums, snare, t0 + b * 0.5, 0.22)
-    for h in range(4):
-        put(drums, hat, t0 + h * 0.5 + 0.25, 0.28, pan=0.15)
-        put(drums, hat, t0 + h * 0.5, 0.12, pan=-0.15)
-    put(drums, ohat, t0 + 1.75, 0.3, fade_out=0.1)
-for n in range(3, 15): pat(n)
-# fill at the end of bar 4 -> variation from bar 5 (extra kick, ghost perc)
-for i, t in enumerate((1.5, 1.625, 1.75, 1.875)): put(drums, snare, bar_t(4) + t, 0.2 + 0.07 * i)
-for n in range(5, 15):
-    put(drums, kick, bar_t(n) + 1.25, 0.5)
-    put(drums, perc, bar_t(n) + 0.875, 0.3)
-# lift (bars 9-11): percussion loop
-for n in (9, 10, 11): put(drums, percloop[:BAR], bar_t(n), 1.8)
-# swaps (bars 12-13): clear accent on every beat
-for n in (12, 13):
-    for b in range(4):
-        put(drums, perc, bar_t(n) + b * 0.5, 0.75)
-        put(drums, hat, bar_t(n) + b * 0.5, 0.35)
-# fill into the resolve (last beat of bar 14), then drums stop at 28 s
-for i, t in enumerate((1.5, 1.625, 1.75, 1.875)): put(drums, snare, bar_t(14) + t, 0.2 + 0.06 * i)
-drums[int(28 * SR):] = 0
-drums = env(drums, [(0, -200), (3.99, -200), (4.0, 0), (30, 0)])
-bass = env(bass, [(0, -200), (3.99, -200), (4.0, 0), (30, 0)])
-
-# fx: riser to 3.5 s, near silence 3.5-4.0, impact on the drop, soft hit on the final chord
-fx_r = hp(riser, 200)
-put(fx, fx_r, 0.0, 1.0, fade_out=0.06)
-fx = env(fx, [(0, -16), (2.0, -9), (3.4, 0), (3.5, -80), (30, -80)])
-imp = new(); put(imp, impact, 4.0, 0.9, fade_out=2.0)
-fx += env(imp, [(0, -200), (3.99, -200), (4.0, 0), (30, 0)])
-imp2 = new(); put(imp2, impact, 28.0, 0.6, fade_out=1.5); fx += imp2
-fx = env(fx, [(0, 0), (28.2, 0), (30, -30)])
-
-stems = {'drums': drums, 'bass': bass, 'harmonic': harm, 'fx': fx}
-mix = sum(stems.values())
-# 'near silence' at 3.5-4.0: nothing but a very quiet pad tail
-peak = np.abs(mix).max()
-g = db(-3.5) / peak
-os.makedirs(HERE + '/music_stems', exist_ok=True)
-for k, v in stems.items():
-    v = v * g
-    v[0:1] *= 1.0
-    sf.write(f'{HERE}/music_stems/{k}.wav', v, SR, subtype='PCM_24')
-mix = mix * g
-fo = int(0.01 * SR); mix[:fo] *= np.linspace(0, 1, fo)[:, None]; mix[-fo:] *= np.linspace(1, 0, fo)[:, None]
-sf.write(f'{HERE}/music_bed.wav', mix, SR, subtype='PCM_24')
-with open(HERE + '/SOURCES.md', 'w') as f:
-    f.write('# Music bed sources (Stickz packs, ~/Music/Samples, royalty-free; used layered as one composition)\n\n')
-    for u in used: f.write(f'- `{u}`\n')
-    f.write('\nKey: C major. Tempo: 120 BPM. Build: `./build_music.sh`.\n')
-print(f'{HERE}/music_bed.wav {len(mix)/SR:.3f}s')
+if __name__ == '__main__':
+    kT, kL = 1.0, 1.0
+    for it in range(6):
+        st = build(kT, kL); mix = sum(st.values()); g = db(-3.5) / np.abs(mix).max()
+        r = bar_rms(mix * g); t_err = -26 - (r[0] + r[1]) / 2; base = np.mean(r[4:8]); l_err = 3.2 - (np.mean(r[8:11]) - base)
+        print(f'iter {it}: bars1-2 {r[0]:.1f},{r[1]:.1f}  lift {np.mean(r[8:11]) - base:+.1f} dB', flush=True)
+        if abs(t_err) < 1.0 and abs(l_err) < 0.5 and it > 0: break
+        kT *= db(t_err); kL *= db(l_err * 1.6)
+    os.makedirs(HERE + '/music_stems', exist_ok=True)
+    for f in os.listdir(HERE + '/music_stems'): os.remove(HERE + '/music_stems/' + f)
+    for k, v in st.items(): sf.write(f'{HERE}/music_stems/{k}.wav', v * g, SR, subtype='PCM_24')
+    mix = mix * g; sf.write(f'{HERE}/music_bed.wav', mix, SR, subtype='PCM_24')
+    print('rms/bar', [round(float(x), 1) for x in bar_rms(mix)])
+    print(f'{HERE}/music_bed.wav {len(mix)/SR:.3f}s')
