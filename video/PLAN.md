@@ -51,3 +51,10 @@ Own wordmark, real-looking menu and 2026 prices, Unsplash/Pexels photos (no attr
 - [ ] Animatic with temp audio
 - [ ] Sound design from cue sheet + mix
 - [ ] Final render + checks
+
+## Sound identity (tailor-made, not template)
+- **Sonic logo:** "HOR-no LEN-to" = 4 notes, long-short-long-short. Clear at the drop (4.0 s), hinted in the groove, last sound of the end card with an oven-timer ding on the tonic.
+- **Story in sound:** bars 1–2 = out-of-key pings piling up (chaos); 3.5 s reverse swell into silence; 4.0 s the clash resolves into the motif, in key (order).
+- **Music:** original, written note by note (keys + soft bass + motif); groove from kitchen percussion (whisk, rolling pin thump, cup clink).
+- **SFX from the bakery:** tap = spoon on cup; card→cart = paper bag; badge = cork pop; paid = oven ding; new order = door bell; sales = receipt printer; titles = sugar sprinkle; colour swap = lid hit. Pitched SFX tuned to the bar's chord.
+- **Sources:** CC0 (Freesound) or synthesised; no stock risers or loops.
