@@ -1,19 +1,41 @@
 "use client";
 
-import { createElement, useEffect, useRef, useState } from "react";
+import { createElement, useCallback, useEffect, useRef, useState } from "react";
 import { m } from "motion/react";
 
 type ArViewer = HTMLElement & { canActivateAR?: boolean; activateAR?: () => Promise<void> };
+
+export type ModelSize = { id: string; label: string };
 
 /**
  * A live 3D view of a product (Google <model-viewer>) that fades in over the photo once the model has
  * loaded: the cake drops in, spins, and the photo stays behind it, blurred. The "Ver en mi mesa" button
  * opens the AR camera and only shows on phones that can do AR.
  */
-export function ProductModel({ src, name, poster, scale = 1 }: { src: string; name: string; poster?: string | null; scale?: number }) {
+export function ProductModel({
+  src,
+  name,
+  poster,
+  scale = 1,
+  sizes,
+  sizeId,
+  onSizeChange,
+  onArChange,
+}: {
+  src: string;
+  name: string;
+  poster?: string | null;
+  scale?: number;
+  sizes: ModelSize[];
+  sizeId: string;
+  onSizeChange: (id: string) => void;
+  /** Called with true when the AR camera opens and false when it closes. */
+  onArChange?: (active: boolean) => void;
+}) {
   const [ready, setReady] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [canAr, setCanAr] = useState(false);
+  const [inAr, setInAr] = useState(false);
   const viewer = useRef<ArViewer | null>(null);
 
   useEffect(() => {
@@ -33,9 +55,25 @@ export function ProductModel({ src, name, poster, scale = 1 }: { src: string; na
       setCanAr(Boolean(el.canActivateAR));
     };
     if ((el as { loaded?: boolean }).loaded) onLoad();
+    const onStatus = (e: Event) => {
+      const status = (e as CustomEvent<{ status: string }>).detail.status;
+      const active = status !== "not-presenting" && status !== "failed";
+      setInAr(active);
+      onArChange?.(active);
+    };
     el.addEventListener("load", onLoad);
-    return () => el.removeEventListener("load", onLoad);
-  }, [ready]);
+    el.addEventListener("ar-status", onStatus);
+    return () => {
+      el.removeEventListener("load", onLoad);
+      el.removeEventListener("ar-status", onStatus);
+    };
+  }, [ready, onArChange]);
+
+  // Closes the AR camera through the viewer's own exit button.
+  const confirm = useCallback(
+    () => viewer.current?.shadowRoot?.querySelector<HTMLElement>(".slot.exit-webxr-ar-button")?.click(),
+    [],
+  );
 
   if (!ready) return null;
 
@@ -84,6 +122,35 @@ export function ProductModel({ src, name, poster, scale = 1 }: { src: string; na
         },
         // An empty ar-button slot replaces the library's own round AR icon; ours is the button below.
         createElement("span", { slot: "ar-button", hidden: true }),
+        // Shown only inside the AR camera: pick a size (the model resizes at once), then confirm.
+        inAr
+          ? createElement(
+              "div",
+              { className: "absolute inset-x-0 bottom-6 flex flex-col items-center gap-3 px-4" },
+              createElement(
+                "div",
+                { className: "flex gap-2 rounded-full bg-paper/95 p-1.5 shadow" },
+                ...sizes.map((s) =>
+                  createElement(
+                    "button",
+                    {
+                      key: s.id,
+                      type: "button",
+                      onClick: () => onSizeChange(s.id),
+                      className: `rounded-full px-4 py-2 text-sm font-semibold ${s.id === sizeId ? "bg-brand text-white" : "text-ink"}`,
+                    },
+                    s.label,
+                  ),
+                ),
+              ),
+              createElement(
+                "button",
+                // eslint-disable-next-line react-hooks/refs -- the handler reads the ref only when tapped
+                { type: "button", onClick: confirm, className: "rounded-full bg-brand px-8 py-3 font-semibold text-white shadow" },
+                "Confirmar tamaño",
+              ),
+            )
+          : null,
         )}
       </m.div>
       {canAr ? (

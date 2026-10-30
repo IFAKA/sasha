@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, m } from "motion/react";
 import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
@@ -13,6 +13,7 @@ import { BagIcon, CheckIcon, CloseIcon, PlusIcon } from "@/components/icons";
 import { flyToCart } from "@/lib/fly-to-cart";
 import { formatPrice, type Product } from "@/lib/menu";
 import { modelFor, sizeCm } from "@/lib/models3d";
+import { clearArReturn, peekArReturn, saveArReturn, type ArReturn } from "@/lib/ar-return";
 import { noun, shop, shortName } from "@/lib/shop";
 
 const sizeNotes = shop.orders.sizeNotes ?? {};
@@ -28,10 +29,33 @@ export function CakeCatalog({ sections }: { sections: Section[] }) {
   const [detail, setDetail] = useState<Product | null>(null);
   const [open, setOpen] = useState(false);
   const [added, setAdded] = useState<string | null>(null);
+  // Where to put the sheet back after the AR camera closes (see lib/ar-return.ts).
+  const [resume, setResume] = useState<ArReturn | null>(null);
   const addedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const { actions, meta } = useCart();
 
+  const productCount = sections.length;
+  useEffect(() => {
+    // Coming back from AR: reopen the same product, size and quantity at the same scroll position.
+    const restore = () => {
+      const saved = peekArReturn();
+      if (!saved || document.visibilityState !== "visible") return;
+      clearArReturn();
+      const cake = sections.flatMap((s) => s.products).find((p) => p.id === saved.productId);
+      if (!cake) return;
+      setResume(saved);
+      setDetail(cake);
+      setOpen(true);
+      requestAnimationFrame(() => window.scrollTo(0, saved.scrollY));
+    };
+    restore();
+    document.addEventListener("visibilitychange", restore);
+    return () => document.removeEventListener("visibilitychange", restore);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productCount]);
+
   const select = (cake: Product) => {
+    setResume(null);
     setDetail(cake);
     setOpen(true);
   };
@@ -122,8 +146,9 @@ export function CakeCatalog({ sections }: { sections: Section[] }) {
         <BottomSheet>
           {detail ? (
             <CakeDetail
-              key={detail.id}
+              key={`${detail.id}-${resume ? "back" : ""}`}
               cake={detail}
+              resume={resume}
               onAdd={(sizeId, quantity) => {
                 actions.add(detail.id, sizeId, quantity);
                 setOpen(false);
@@ -182,12 +207,29 @@ export function CakeCatalog({ sections }: { sections: Section[] }) {
   );
 }
 
-function CakeDetail({ cake, onAdd }: { cake: Product; onAdd: (sizeId: string, quantity: number) => void }) {
+function CakeDetail({
+  cake,
+  resume,
+  onAdd,
+}: {
+  cake: Product;
+  resume: ArReturn | null;
+  onAdd: (sizeId: string, quantity: number) => void;
+}) {
   // Default to the most popular size (the largest) so one tap is enough.
-  const [sizeId, setSizeId] = useState(cake.sizes.at(-1)!.id);
-  const [quantity, setQuantity] = useState(1);
+  const [sizeId, setSizeId] = useState(resume?.sizeId ?? cake.sizes.at(-1)!.id);
+  const [quantity, setQuantity] = useState(resume?.quantity ?? 1);
+  const [inAr, setInAr] = useState(false);
   const [sharp, setSharp] = useState(false);
   const model = modelFor(cake.id);
+  // While the AR camera is open, keep the choice on disk so it survives a page reload.
+  useEffect(() => {
+    if (inAr) saveArReturn({ productId: cake.id, sizeId, quantity, scrollY: window.scrollY });
+  }, [inAr, cake.id, sizeId, quantity]);
+  const onArChange = useCallback((active: boolean) => {
+    setInAr(active);
+    if (!active) clearArReturn();
+  }, []);
   const size = cake.sizes.find((s) => s.id === sizeId)!;
 
   return (
@@ -216,6 +258,10 @@ function CakeDetail({ cake, onAdd }: { cake: Product; onAdd: (sizeId: string, qu
             name={cake.name}
             poster={cake.image}
             scale={(sizeCm(size.label) ?? model.widthCm) / model.widthCm}
+            sizes={cake.sizes}
+            sizeId={sizeId}
+            onSizeChange={setSizeId}
+            onArChange={onArChange}
           /> : null}
         <Drawer.Close
           className="absolute top-3 right-3 grid size-10 place-items-center rounded-full bg-paper/95 shadow"
