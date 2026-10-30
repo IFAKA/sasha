@@ -6,6 +6,7 @@ import { shop } from "@/lib/shop";
  * stockPhotos. Key: "<shop short name>:<product id>".
  */
 const models: Record<string, { src: string; widthCm: number }> = {
+  "Cardamomo:4002": { src: "/models/cardamomo-4002.glb", widthCm: 18 },
   "Cardamomo:4003": { src: "/models/cardamomo-4003.glb", widthCm: 24 },
 };
 
