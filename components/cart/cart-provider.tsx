@@ -2,15 +2,25 @@
 
 import { createContext, use, useCallback, useMemo, useState, useSyncExternalStore } from "react";
 import { findTakeawayProduct, type Product, type Size } from "@/lib/menu";
+import { describeSelection, optionsPrice, pruneSelection, selectionKey, type Selection } from "@/lib/options";
 import { slug } from "@/shops/current";
 
-export type CartLine = { productId: number; sizeId: string; quantity: number };
-export type ResolvedLine = CartLine & { key: string; product: Product; size: Size; subtotal: number };
+export type CartLine = { productId: number; sizeId: string; quantity: number; options?: Selection };
+export type ResolvedLine = CartLine & {
+  key: string;
+  product: Product;
+  size: Size;
+  /** Price of one, with the options. */
+  unitPrice: number;
+  /** The options as text: "Relleno: Chocolate". Empty without options. */
+  details: string;
+  subtotal: number;
+};
 
 type CartContextValue = {
   state: { lines: ResolvedLine[]; isOpen: boolean };
   actions: {
-    add: (productId: number, sizeId: string, quantity: number) => void;
+    add: (productId: number, sizeId: string, quantity: number, options?: Selection) => void;
     setQuantity: (key: string, quantity: number) => void;
     clear: () => void;
     open: () => void;
@@ -25,7 +35,13 @@ export const MAX_QUANTITY = 10;
 const STORAGE_KEY = `${slug}-cart:v1`;
 const EMPTY: CartLine[] = [];
 
-const lineKey = (l: Pick<CartLine, "productId" | "sizeId">) => `${l.productId}:${l.sizeId}`;
+// The owner may change the options after a line was saved: keep only what still applies.
+const currentOptions = (l: Pick<CartLine, "productId" | "sizeId" | "options">) =>
+  pruneSelection(l.productId, l.sizeId, l.options ?? {});
+
+// Two of the same cake with different options (say, another message) are separate lines.
+const lineKey = (l: Pick<CartLine, "productId" | "sizeId" | "options">) =>
+  `${l.productId}:${l.sizeId}:${selectionKey(currentOptions(l))}`;
 
 function isCartLine(v: unknown): v is CartLine {
   if (typeof v !== "object" || v === null) return false;
@@ -77,7 +93,20 @@ function resolve(lines: CartLine[]): ResolvedLine[] {
     const product = findTakeawayProduct(line.productId);
     const size = product?.sizes.find((s) => s.id === line.sizeId);
     if (!product || !size) return [];
-    return [{ ...line, key: lineKey(line), product, size, subtotal: size.price * line.quantity }];
+    const options = currentOptions(line);
+    const unitPrice = size.price + optionsPrice(product.id, size.id, options);
+    return [
+      {
+        ...line,
+        options,
+        key: lineKey(line),
+        product,
+        size,
+        unitPrice,
+        details: describeSelection(product.id, size.id, options),
+        subtotal: unitPrice * line.quantity,
+      },
+    ];
   });
 }
 
@@ -85,11 +114,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const lines = useSyncExternalStore(cartStore.subscribe, cartStore.getSnapshot, cartStore.getServerSnapshot);
   const [isOpen, setIsOpen] = useState(false);
 
-  const add = useCallback((productId: number, sizeId: string, quantity: number) => {
+  const add = useCallback((productId: number, sizeId: string, quantity: number, options?: Selection) => {
     cartStore.update((prev) => {
-      const key = lineKey({ productId, sizeId });
+      const key = lineKey({ productId, sizeId, options });
       if (!prev.some((l) => lineKey(l) === key)) {
-        return [...prev, { productId, sizeId, quantity: Math.min(quantity, MAX_QUANTITY) }];
+        return [...prev, { productId, sizeId, quantity: Math.min(quantity, MAX_QUANTITY), options }];
       }
       return prev.map((l) =>
         lineKey(l) === key ? { ...l, quantity: Math.min(l.quantity + quantity, MAX_QUANTITY) } : l,

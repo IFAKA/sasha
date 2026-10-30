@@ -192,8 +192,9 @@ function OrderCard({ order, now }: { order: Order; now: number }) {
           <p className="text-xs text-muted tabular-nums">{order.ref}</p>
           <ul className="mt-2 text-sm">
             {order.items.map((item) => (
-              <li key={`${item.productId}-${item.sizeId}`}>
+              <li key={`${item.productId}-${item.sizeId}-${item.details ?? ""}`}>
                 <span className="font-semibold tabular-nums">{item.quantity} ×</span> {item.label}
+                {item.details ? <span className="block text-muted">{item.details}</span> : null}
               </li>
             ))}
           </ul>

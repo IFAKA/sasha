@@ -92,7 +92,9 @@ export function OrderResult({
     viaWhatsapp
       ? [
           `${greeting} Quiero hacer este pedido${reference ? ` (${reference})` : ""}:`,
-          ...items.map((i) => `• ${i.quantity} × ${i.label}: ${formatPrice(i.unitPrice * i.quantity)}`),
+          ...items.map(
+            (i) => `• ${i.quantity} × ${i.label}: ${formatPrice(i.unitPrice * i.quantity)}${i.details ? `\n   ${i.details}` : ""}`,
+          ),
           order ? `Total: ${formatPrice(order.total)}` : "",
           pickup ? `Retiro: ${formatPickup(pickup)}` : "",
           place.name ? `Retiro en: ${locationLabel(place)}` : "",
@@ -101,7 +103,7 @@ export function OrderResult({
         ]
       : [
           `${greeting} Hice un pedido online${reference ? ` (${reference})` : ""}.`,
-          ...items.map((i) => `• ${i.quantity} × ${i.label}`),
+          ...items.map((i) => `• ${i.quantity} × ${i.label}${i.details ? `\n   ${i.details}` : ""}`),
           pickup ? `Retiro: ${formatPickup(pickup)}` : "",
           place.name ? `Retiro en: ${locationLabel(place)}` : "",
           order?.name ? `Retira: ${order.name}` : "",
@@ -159,7 +161,7 @@ export function OrderResult({
                 <dt className="text-muted">Productos</dt>
                 <dd className="min-w-0 text-right">
                   {items.slice(0, MAX_LISTED_ITEMS).map((item) => (
-                    <span key={item.label} className="block truncate">
+                    <span key={`${item.label}-${item.details ?? ""}`} className="block truncate">
                       {item.quantity} × {item.label}
                     </span>
                   ))}

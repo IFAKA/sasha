@@ -6,7 +6,15 @@ import { fromAr, pickupHours, toAr } from "@/lib/pickup";
 import { hasBranches, lineLabel, locations, shop } from "@/lib/shop";
 import { slug } from "@/shops/current";
 
-export type OrderItem = { productId: number; sizeId: string; label: string; quantity: number; unitPrice: number };
+export type OrderItem = {
+  productId: number;
+  sizeId: string;
+  label: string;
+  quantity: number;
+  unitPrice: number;
+  /** The chosen options as text, when the cake was personalized. */
+  details?: string;
+};
 
 export type Order = {
   ref: string;

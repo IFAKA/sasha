@@ -11,6 +11,8 @@ export type LastOrderItem = {
   label: string;
   quantity: number;
   unitPrice: number;
+  /** The chosen options as text, when the cake was personalized. */
+  details?: string;
 };
 
 export type LastOrder = {

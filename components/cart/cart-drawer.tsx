@@ -17,9 +17,10 @@ import { BagIcon, CalendarIcon, ChevronIcon, CloseIcon, PinIcon, WhatsappIcon } 
 import { startCheckout } from "@/lib/checkout-actions";
 import { saveLastOrder } from "@/lib/last-order";
 import { formatPrice } from "@/lib/menu";
+import { extraLeadHours } from "@/lib/options";
 import { pickupDays } from "@/lib/pickup";
 import { useNow } from "@/lib/use-now";
-import { closedLabel, hasBranches, leadTimeLabel, lineLabel, locations, noun, paysOnline, shop } from "@/lib/shop";
+import { closedLabel, hasBranches, leadTimeFor, lineLabel, locations, noun, paysOnline, shop } from "@/lib/shop";
 
 const one = noun.g("una", "uno");
 
@@ -73,8 +74,10 @@ function CartContents() {
   const { state, meta } = useCart();
   const [formState, formAction, pending] = useActionState(startCheckout, null);
   const items = JSON.stringify(
-    state.lines.map(({ productId, sizeId, quantity }) => ({ productId, sizeId, quantity })),
+    state.lines.map(({ productId, sizeId, quantity, options }) => ({ productId, sizeId, quantity, options })),
   );
+  // The options that need more notice (a printed photo, say) push the earliest pickup back.
+  const extraHours = Math.max(0, ...state.lines.map((l) => extraLeadHours(l.productId, l.sizeId, l.options ?? {})));
   const errors = formState?.fieldErrors ?? {};
 
   return (
@@ -97,7 +100,8 @@ function CartContents() {
             sizeId: l.sizeId,
             label: lineLabel(l.product.name, l.size),
             quantity: l.quantity,
-            unitPrice: l.size.price,
+            unitPrice: l.unitPrice,
+            details: l.details || undefined,
           })),
         });
       }}
@@ -113,7 +117,7 @@ function CartContents() {
         </ul>
 
         {hasBranches ? <LocationPicker error={errors.location} /> : null}
-        <PickupPicker error={errors.pickup} />
+        <PickupPicker error={errors.pickup} extraLeadHours={extraHours} />
 
         <Fieldset.Root className="mt-6 min-w-0 space-y-3">
           <Fieldset.Legend className="mb-2 font-semibold">¿Quién retira?</Fieldset.Legend>
@@ -219,6 +223,7 @@ function CartRow({ line }: { line: ResolvedLine }) {
           {sizeLabel ? (
             <p className="text-sm text-muted">{shop.orders.sizePrefix ? `${shop.orders.sizePrefix} ${sizeLabel}` : sizeLabel}</p>
           ) : null}
+          {line.details ? <p className="text-sm text-muted text-pretty">{line.details}</p> : null}
           <div className="mt-2 flex items-center justify-between">
             {/* Going down to 0 removes the line. */}
             <QuantityField
@@ -267,11 +272,11 @@ function LocationPicker({ error }: { error?: string }) {
   );
 }
 
-const pickupHint = [leadTimeLabel && `Mínimo ${leadTimeLabel} de anticipación`, closedLabel].filter(Boolean).join(" · ");
-
-function PickupPicker({ error }: { error?: string }) {
+function PickupPicker({ error, extraLeadHours }: { error?: string; extraLeadHours: number }) {
   const now = useNow();
-  const days = useMemo(() => (now ? pickupDays(now) : []), [now]);
+  const days = useMemo(() => (now ? pickupDays(now, extraLeadHours) : []), [now, extraLeadHours]);
+  const lead = leadTimeFor(extraLeadHours);
+  const pickupHint = [lead && `Mínimo ${lead} de anticipación`, closedLabel].filter(Boolean).join(" · ");
   const [dayKey, setDayKey] = useState<string | null>(null);
   const [slot, setSlot] = useState<string | null>(null);
   const [calendarOpen, setCalendarOpen] = useState(false);
