@@ -5,6 +5,31 @@ import { m } from "motion/react";
 
 type ArViewer = HTMLElement & { canActivateAR?: boolean; activateAR?: () => Promise<void> };
 
+type ArRenderer = { presentedScene: unknown; onUpdateScene: () => void; guarded?: boolean };
+
+// model-viewer 4.4.0 runs `arRenderer.onUpdateScene` on every `scale` change, also outside AR, and it crashes there
+// (`presentedScene` is null). Skipping it while no AR session is open loses nothing: it only edits the AR scene.
+function guardArRenderer(el: HTMLElement) {
+  for (let proto = el as object | null; proto; proto = Object.getPrototypeOf(proto)) {
+    for (const sym of Object.getOwnPropertySymbols(proto)) {
+      let value: { arRenderer?: ArRenderer } | undefined;
+      try {
+        value = (el as unknown as Record<symbol, { arRenderer?: ArRenderer }>)[sym];
+      } catch {
+        continue;
+      }
+      const ar = value?.arRenderer;
+      if (!ar || typeof ar.onUpdateScene !== "function" || ar.guarded) continue;
+      const original = ar.onUpdateScene;
+      ar.onUpdateScene = () => {
+        if (ar.presentedScene) original();
+      };
+      ar.guarded = true;
+      return;
+    }
+  }
+}
+
 export type ModelSize = { id: string; label: string };
 
 /**
@@ -50,6 +75,7 @@ export function ProductModel({
   useEffect(() => {
     const el = viewer.current;
     if (!ready || !el) return;
+    guardArRenderer(el);
     const onLoad = () => {
       setLoaded(true);
       setCanAr(Boolean(el.canActivateAR));
