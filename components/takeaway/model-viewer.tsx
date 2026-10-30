@@ -17,12 +17,11 @@ export function ProductModel({ src, name, poster }: { src: string; name: string;
 
   if (!ready) return <div className="absolute inset-0 animate-pulse bg-blush" aria-hidden="true" />;
 
-  return createElement(
+  const viewer = createElement(
     "model-viewer",
     {
       src,
       alt: `Modelo 3D: ${name}`,
-      poster: poster ?? undefined,
       "camera-controls": true,
       "auto-rotate": true,
       "shadow-intensity": "1",
@@ -32,7 +31,7 @@ export function ProductModel({ src, name, poster }: { src: string; name: string;
       ar: true,
       // Dragging the model turns it; it must not swipe the sheet away.
       "data-base-ui-swipe-ignore": "",
-      style: { width: "100%", height: "100%", "--poster-color": "transparent" },
+      style: { width: "100%", height: "100%", background: "transparent" },
     },
     createElement(
       "button",
@@ -42,7 +41,21 @@ export function ProductModel({ src, name, poster }: { src: string; name: string;
         className:
           "absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-paper/95 px-4 py-2 text-sm font-semibold shadow",
       },
-      "Ver en mi mesa",
+      "Abrir cámara AR",
     ),
+  );
+
+  // The shop photo stays behind the model, so the 3D cake sits in the same scene.
+  return (
+    <div className="absolute inset-0 overflow-hidden bg-blush">
+      {/* Blurred so the photo's own cake doesn't compete with the 3D one. */}
+      {poster ? (
+        <div
+          className="absolute -inset-4 scale-110 bg-cover bg-center blur-md brightness-90"
+          style={{ backgroundImage: `url(${poster})` }}
+        />
+      ) : null}
+      <div className="absolute inset-0">{viewer}</div>
+    </div>
   );
 }
