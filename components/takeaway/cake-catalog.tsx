@@ -31,6 +31,10 @@ export function CakeCatalog({ sections }: { sections: Section[] }) {
   const [added, setAdded] = useState<string | null>(null);
   // Where to put the sheet back after the AR camera closes (see lib/ar-return.ts).
   const [resume, setResume] = useState<ArReturn | null>(null);
+  const arActive = useRef(false);
+  const onArActive = useCallback((active: boolean) => {
+    arActive.current = active;
+  }, []);
   const addedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const { actions, meta } = useCart();
 
@@ -142,13 +146,21 @@ export function CakeCatalog({ sections }: { sections: Section[] }) {
         </section>
       ))}
 
-      <Drawer.Root open={open} onOpenChange={setOpen}>
+      <Drawer.Root
+        open={open}
+        // Taps inside the AR camera count as "outside" presses; only the AR back, cross and confirm may end it.
+        onOpenChange={(next) => {
+          if (!next && arActive.current) return;
+          setOpen(next);
+        }}
+      >
         <BottomSheet>
           {detail ? (
             <CakeDetail
               key={`${detail.id}-${resume ? "back" : ""}`}
               cake={detail}
               resume={resume}
+              onArActive={onArActive}
               onAdd={(sizeId, quantity) => {
                 actions.add(detail.id, sizeId, quantity);
                 setOpen(false);
@@ -210,10 +222,12 @@ export function CakeCatalog({ sections }: { sections: Section[] }) {
 function CakeDetail({
   cake,
   resume,
+  onArActive,
   onAdd,
 }: {
   cake: Product;
   resume: ArReturn | null;
+  onArActive: (active: boolean) => void;
   onAdd: (sizeId: string, quantity: number) => void;
 }) {
   // Default to the most popular size (the largest) so one tap is enough.
@@ -228,8 +242,9 @@ function CakeDetail({
   }, [inAr, cake.id, sizeId, quantity]);
   const onArChange = useCallback((active: boolean) => {
     setInAr(active);
+    onArActive(active);
     if (!active) clearArReturn();
-  }, []);
+  }, [onArActive]);
   const size = cake.sizes.find((s) => s.id === sizeId)!;
 
   return (
