@@ -10,7 +10,7 @@ type ArViewer = HTMLElement & { canActivateAR?: boolean; activateAR?: () => Prom
  * loaded: the cake drops in, spins, and the photo stays behind it, blurred. The "Ver en mi mesa" button
  * opens the AR camera and only shows on phones that can do AR.
  */
-export function ProductModel({ src, name, poster }: { src: string; name: string; poster?: string | null }) {
+export function ProductModel({ src, name, poster, scale = 1 }: { src: string; name: string; poster?: string | null; scale?: number }) {
   const [ready, setReady] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [canAr, setCanAr] = useState(false);
@@ -68,7 +68,11 @@ export function ProductModel({ src, name, poster }: { src: string; name: string;
           "auto-rotate": true,
           "auto-rotate-delay": "0",
           "rotation-per-second": "40deg",
-          "camera-orbit": "30deg 68deg auto",
+          // A fixed distance (not auto-fit), so a smaller size looks smaller. `scale` also sizes the AR model.
+          "camera-orbit": "30deg 68deg 0.5m",
+          "min-camera-orbit": "auto auto 0.3m",
+          "max-camera-orbit": "auto auto 1.2m",
+          scale: `${scale} ${scale} ${scale}`,
           "shadow-intensity": "1.2",
           // WebXR first: Scene Viewer (the Google app) crashes on some Android phones.
           "ar-modes": "webxr scene-viewer quick-look",

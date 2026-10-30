@@ -12,7 +12,7 @@ import { QuantityField } from "@/components/ui/quantity-field";
 import { BagIcon, CheckIcon, CloseIcon, PlusIcon } from "@/components/icons";
 import { flyToCart } from "@/lib/fly-to-cart";
 import { formatPrice, type Product } from "@/lib/menu";
-import { modelFor } from "@/lib/models3d";
+import { modelFor, sizeCm } from "@/lib/models3d";
 import { noun, shop, shortName } from "@/lib/shop";
 
 const sizeNotes = shop.orders.sizeNotes ?? {};
@@ -211,7 +211,12 @@ function CakeDetail({ cake, onAdd }: { cake: Product; onAdd: (sizeId: string, qu
             />
           </>
         ) : null}
-        {model ? <ProductModel src={model} name={cake.name} poster={cake.image} /> : null}
+        {model ? <ProductModel
+            src={model.src}
+            name={cake.name}
+            poster={cake.image}
+            scale={(sizeCm(size.label) ?? model.widthCm) / model.widthCm}
+          /> : null}
         <Drawer.Close
           className="absolute top-3 right-3 grid size-10 place-items-center rounded-full bg-paper/95 shadow"
           aria-label="Cerrar"
