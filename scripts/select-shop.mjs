@@ -3,7 +3,7 @@
 //   SHOP=cafe-roma npm run dev
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 
-const DEFAULT_SHOP = "horno-lento";
+const DEFAULT_SHOP = "sasha";
 const slug = (process.env.SHOP || DEFAULT_SHOP).trim();
 const dir = new URL(`../shops/${slug}/`, import.meta.url);
 
