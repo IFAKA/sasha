@@ -99,7 +99,13 @@ export const shortName = (name: string) =>
 export const lineLabel = (name: string, size: { id: string; label: string }) =>
   size.id === "unica" ? name : `${name} (${size.label})`;
 
-export const leadTimeLabel = shop.orders.leadTimeHours > 0 ? `${shop.orders.leadTimeHours} hs hábiles` : null;
+/** Notice needed with `extraHours` more than the shop's own, e.g. "72 hs hábiles". Null when none. */
+export const leadTimeFor = (extraHours = 0) => {
+  const hours = shop.orders.leadTimeHours + extraHours;
+  return hours > 0 ? `${hours} hs hábiles` : null;
+};
+
+export const leadTimeLabel = leadTimeFor();
 
 export const paysOnline = shop.orders.payment === "mercadopago";
 

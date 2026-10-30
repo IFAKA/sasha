@@ -39,10 +39,11 @@ export function pickupHours(weekday: number): number[] {
 /**
  * Earliest pickup time for an order placed at `now`: the lead time in business hours later,
  * where hours on closed days don't count, rounded up to the next open slot.
+ * `extraLeadHours` is the notice the order's options ask for on top of the shop's.
  */
-export function earliestPickup(now: number): number {
+export function earliestPickup(now: number, extraLeadHours = 0): number {
   let cursor = now;
-  let remaining = LEAD_TIME_HOURS;
+  let remaining = LEAD_TIME_HOURS + extraLeadHours;
   while (remaining > 0) {
     cursor += HOUR_MS;
     if (!isClosedDay(toAr(cursor).weekday)) remaining -= 1;
@@ -88,8 +89,8 @@ export function formatPickup(time: number) {
 }
 
 /** Bookable pickup slots, grouped by day, starting at the earliest allowed one. */
-export function pickupDays(now: number): PickupDay[] {
-  const first = earliestPickup(now);
+export function pickupDays(now: number, extraLeadHours = 0): PickupDay[] {
+  const first = earliestPickup(now, extraLeadHours);
   const start = toAr(first);
   const days: PickupDay[] = [];
 
@@ -109,10 +110,10 @@ export function pickupDays(now: number): PickupDay[] {
 }
 
 /** Server-side check: is this ISO string one of the slots we would offer right now? */
-export function isValidPickup(iso: string, now: number): boolean {
+export function isValidPickup(iso: string, now: number, extraLeadHours = 0): boolean {
   const t = Date.parse(iso);
   if (Number.isNaN(t)) return false;
   // Allow a few minutes of grace for the time the customer spent filling the form.
-  const offered = pickupDays(now - 15 * 60 * 1000).flatMap((d) => d.slots.map((s) => s.value));
+  const offered = pickupDays(now - 15 * 60 * 1000, extraLeadHours).flatMap((d) => d.slots.map((s) => s.value));
   return offered.includes(new Date(t).toISOString());
 }
