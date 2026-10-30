@@ -81,7 +81,10 @@ export function ProductModel({ src, name, poster, scale = 1 }: { src: string; na
           // Dragging the model turns it; it must not swipe the sheet away.
           "data-base-ui-swipe-ignore": "",
           style: { width: "100%", height: "100%", background: "transparent" },
-        })}
+        },
+        // An empty ar-button slot replaces the library's own round AR icon; ours is the button below.
+        createElement("span", { slot: "ar-button", hidden: true }),
+        )}
       </m.div>
       {canAr ? (
         <m.button
