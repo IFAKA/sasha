@@ -8,13 +8,15 @@ import { RadioGroup } from "@base-ui/react/radio-group";
 import { useCart } from "@/components/cart/cart-provider";
 import { BottomSheet, Drawer } from "@/components/ui/drawer";
 import { ProductModel } from "@/components/takeaway/model-viewer";
+import { OptionFields } from "@/components/takeaway/option-fields";
 import { QuantityField } from "@/components/ui/quantity-field";
 import { BagIcon, CheckIcon, CloseIcon, PlusIcon } from "@/components/icons";
 import { flyToCart } from "@/lib/fly-to-cart";
 import { formatPrice, type Product } from "@/lib/menu";
 import { modelFor, sizeCm } from "@/lib/models3d";
 import { clearArReturn, peekArReturn, saveArReturn, type ArReturn } from "@/lib/ar-return";
-import { noun, shop, shortName } from "@/lib/shop";
+import { extraLeadHours, groupsFor, missingRequired, optionsPrice, pruneSelection, type Selection } from "@/lib/options";
+import { leadTimeFor, noun, shop, shortName } from "@/lib/shop";
 
 const sizeNotes = shop.orders.sizeNotes ?? {};
 const CARD_SIZES = "(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, 50vw";
@@ -66,9 +68,12 @@ export function CakeCatalog({ sections }: { sections: Section[] }) {
 
   // The card's + skips the detail: the most popular size (the largest), one unit.
   // The photo flies to the cart first, so the badge counts it as it lands.
+  // A cake with a required option (a filling to choose) opens the sheet instead.
   const quickAdd = async (cake: Product, photo: Element | null | undefined) => {
+    const sizeId = cake.sizes.at(-1)!.id;
+    if (missingRequired(cake.id, sizeId, {}).length) return select(cake);
     await flyToCart(photo);
-    actions.add(cake.id, cake.sizes.at(-1)!.id, 1);
+    actions.add(cake.id, sizeId, 1);
     confirmAdded(cake.name);
   };
 
@@ -161,8 +166,8 @@ export function CakeCatalog({ sections }: { sections: Section[] }) {
               cake={detail}
               resume={resume}
               onArActive={onArActive}
-              onAdd={(sizeId, quantity) => {
-                actions.add(detail.id, sizeId, quantity);
+              onAdd={(sizeId, quantity, options) => {
+                actions.add(detail.id, sizeId, quantity, options);
                 setOpen(false);
                 confirmAdded(detail.name);
               }}
@@ -228,24 +233,34 @@ function CakeDetail({
   cake: Product;
   resume: ArReturn | null;
   onArActive: (active: boolean) => void;
-  onAdd: (sizeId: string, quantity: number) => void;
+  onAdd: (sizeId: string, quantity: number, options: Selection) => void;
 }) {
   // Default to the most popular size (the largest) so one tap is enough.
   const [sizeId, setSizeId] = useState(resume?.sizeId ?? cake.sizes.at(-1)!.id);
   const [quantity, setQuantity] = useState(resume?.quantity ?? 1);
+  const [selection, setSelection] = useState<Selection>(resume?.options ?? {});
   const [inAr, setInAr] = useState(false);
   const [sharp, setSharp] = useState(false);
   const model = modelFor(cake.id);
   // While the AR camera is open, keep the choice on disk so it survives a page reload.
   useEffect(() => {
-    if (inAr) saveArReturn({ productId: cake.id, sizeId, quantity, scrollY: window.scrollY });
-  }, [inAr, cake.id, sizeId, quantity]);
+    if (inAr) saveArReturn({ productId: cake.id, sizeId, quantity, options: selection, scrollY: window.scrollY });
+  }, [inAr, cake.id, sizeId, quantity, selection]);
   const onArChange = useCallback((active: boolean) => {
     setInAr(active);
     onArActive(active);
     if (!active) clearArReturn();
   }, [onArActive]);
   const size = cake.sizes.find((s) => s.id === sizeId)!;
+  // A size can switch some options off (a big decoration only fits the largest): drop those picks.
+  const changeSize = (id: string) => {
+    setSizeId(id);
+    setSelection((prev) => pruneSelection(cake.id, id, prev));
+  };
+  const groups = groupsFor(cake.id, sizeId);
+  const missing = missingRequired(cake.id, sizeId, selection);
+  const extraHours = extraLeadHours(cake.id, sizeId, selection);
+  const unitPrice = size.price + optionsPrice(cake.id, sizeId, selection);
 
   return (
     <>
@@ -275,7 +290,7 @@ function CakeDetail({
             scale={(sizeCm(size.label) ?? model.widthCm) / model.widthCm}
             sizes={cake.sizes}
             sizeId={sizeId}
-            onSizeChange={setSizeId}
+            onSizeChange={changeSize}
             onArChange={onArChange}
           /> : null}
         <Drawer.Close
@@ -299,7 +314,7 @@ function CakeDetail({
             <RadioGroup
               aria-labelledby="size-legend"
               value={sizeId}
-              onValueChange={(value: string) => setSizeId(value)}
+              onValueChange={changeSize}
               className="grid gap-2"
             >
               {cake.sizes.map((s) => (
@@ -319,6 +334,13 @@ function CakeDetail({
           </div>
         ) : null}
 
+        <OptionFields groups={groups} selection={selection} onChange={setSelection} />
+        {extraHours > 0 ? (
+          <p className="mt-3 rounded-xl bg-warn-bg px-3 py-2 text-sm text-warn-ink">
+            Necesita {leadTimeFor(extraHours)} de anticipación.
+          </p>
+        ) : null}
+
         <div className="mt-4 flex items-center justify-between gap-3">
           <QuantityField
             value={quantity}
@@ -329,15 +351,16 @@ function CakeDetail({
           />
           <p className="text-right">
             <span className="block text-xs text-muted">Total</span>
-            <span className="font-display text-2xl font-semibold tabular-nums">{formatPrice(size.price * quantity)}</span>
+            <span className="font-display text-2xl font-semibold tabular-nums">{formatPrice(unitPrice * quantity)}</span>
           </p>
         </div>
         <button
           type="button"
-          onClick={() => onAdd(sizeId, quantity)}
-          className="mt-4 w-full rounded-full bg-brand px-5 py-3.5 font-semibold text-white transition-[background-color,transform] hover:bg-brand-ink active:scale-[0.98]"
+          onClick={() => onAdd(sizeId, quantity, selection)}
+          disabled={missing.length > 0}
+          className="mt-4 w-full rounded-full bg-brand px-5 py-3.5 font-semibold text-white transition-[background-color,transform] hover:bg-brand-ink active:scale-[0.98] disabled:opacity-60 disabled:active:scale-100"
         >
-          Agregar
+          {missing.length ? `Falta elegir: ${missing.join(", ")}` : "Agregar"}
         </button>
       </Drawer.Content>
     </>
