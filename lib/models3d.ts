@@ -16,6 +16,7 @@ const models: Record<string, { src: string; widthCm: number }> = {
   "Cardamomo:5003": { src: "/models/cardamomo-facturas.glb", widthCm: 25 },
   "Cardamomo:5006": { src: "/models/cardamomo-masa-madre.glb", widthCm: 24 },
   "Cardamomo:2002": { src: "/models/cardamomo-medialuna.glb", widthCm: 11 },
+  "Café Ejemplo:2001": { src: "/models/template-torta-porcion.glb", widthCm: 12 },
   "Cardamomo:4003": { src: "/models/cardamomo-4003.glb", widthCm: 24 },
 };
 
