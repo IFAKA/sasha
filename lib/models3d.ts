@@ -7,6 +7,15 @@ import { shop } from "@/lib/shop";
  */
 const models: Record<string, { src: string; widthCm: number }> = {
   "Cardamomo:4002": { src: "/models/cardamomo-4002.glb", widthCm: 18 },
+  "Cardamomo:2009": { src: "/models/cardamomo-brownie.glb", widthCm: 7 },
+  "Cardamomo:2011": { src: "/models/cardamomo-cheesecake-porcion.glb", widthCm: 11 },
+  "Cardamomo:1005": { src: "/models/cardamomo-chai.glb", widthCm: 9 },
+  "Cardamomo:1003": { src: "/models/cardamomo-flat-white.glb", widthCm: 14 },
+  "Cardamomo:2004": { src: "/models/cardamomo-pain-au-chocolat.glb", widthCm: 12 },
+  "Cardamomo:2005": { src: "/models/cardamomo-roll-canela.glb", widthCm: 9 },
+  "Cardamomo:5003": { src: "/models/cardamomo-facturas.glb", widthCm: 25 },
+  "Cardamomo:5006": { src: "/models/cardamomo-masa-madre.glb", widthCm: 24 },
+  "Cardamomo:2002": { src: "/models/cardamomo-medialuna.glb", widthCm: 11 },
   "Cardamomo:4003": { src: "/models/cardamomo-4003.glb", widthCm: 24 },
 };
 
