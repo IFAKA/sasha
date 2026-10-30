@@ -219,7 +219,7 @@ function CakeDetail({ cake, onAdd }: { cake: Product; onAdd: (sizeId: string, qu
             onClick={() => setView3d((v) => !v)}
             className="absolute bottom-3 left-3 z-10 rounded-full bg-paper/95 px-3.5 py-1.5 text-sm font-semibold shadow"
           >
-            {view3d ? "Ver foto" : "Ver en 3D"}
+            {view3d ? "Ver foto" : "Ver en mi mesa"}
           </button>
         ) : null}
         <Drawer.Close
