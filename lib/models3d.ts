@@ -16,6 +16,11 @@ const models: Record<string, { src: string; widthCm: number }> = {
   "Cardamomo:5003": { src: "/models/cardamomo-facturas.glb", widthCm: 25 },
   "Cardamomo:5006": { src: "/models/cardamomo-masa-madre.glb", widthCm: 24 },
   "Cardamomo:2002": { src: "/models/cardamomo-medialuna.glb", widthCm: 11 },
+  "Horno Lento:2001": { src: "/models/horno-lento-mousse.glb", widthCm: 18 },
+  "Horno Lento:2002": { src: "/models/horno-lento-cheesecake.glb", widthCm: 18 },
+  "Horno Lento:2006": { src: "/models/horno-lento-lemon-pie.glb", widthCm: 20 },
+  "Horno Lento:2007": { src: "/models/horno-lento-tarta-frutos-rojos.glb", widthCm: 24 },
+  "Horno Lento:2009": { src: "/models/horno-lento-budin-banana.glb", widthCm: 22 },
   "Café Ejemplo:2001": { src: "/models/template-torta-porcion.glb", widthCm: 12 },
   "Cardamomo:4003": { src: "/models/cardamomo-4003.glb", widthCm: 24 },
 };
