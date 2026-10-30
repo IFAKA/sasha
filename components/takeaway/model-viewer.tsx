@@ -33,14 +33,12 @@ function guardArRenderer(el: HTMLElement) {
 export type ModelSize = { id: string; label: string };
 
 /**
- * A live 3D view of a product (Google <model-viewer>) that fades in over the photo once the model has
- * loaded: the cake drops in, spins, and the photo stays behind it, blurred. The "Ver en mi mesa" button
- * opens the AR camera and only shows on phones that can do AR.
+ * The model behind "Ver en mi mesa" (Google <model-viewer>). It loads out of sight, so the drawer keeps the product's
+ * photo; the button opens the AR camera and only shows on phones that can do AR.
  */
 export function ProductModel({
   src,
   name,
-  poster,
   scale = 1,
   sizes,
   sizeId,
@@ -49,7 +47,6 @@ export function ProductModel({
 }: {
   src: string;
   name: string;
-  poster?: string | null;
   scale?: number;
   sizes: ModelSize[];
   sizeId: string;
@@ -58,7 +55,6 @@ export function ProductModel({
   onArChange?: (active: boolean) => void;
 }) {
   const [ready, setReady] = useState(false);
-  const [loaded, setLoaded] = useState(false);
   const [canAr, setCanAr] = useState(false);
   const [inAr, setInAr] = useState(false);
   const viewer = useRef<ArViewer | null>(null);
@@ -77,7 +73,6 @@ export function ProductModel({
     if (!ready || !el) return;
     guardArRenderer(el);
     const onLoad = () => {
-      setLoaded(true);
       setCanAr(Boolean(el.canActivateAR));
     };
     if ((el as { loaded?: boolean }).loaded) onLoad();
@@ -104,26 +99,9 @@ export function ProductModel({
   if (!ready) return null;
 
   return (
-    <m.div
-      className="absolute inset-0 overflow-hidden bg-blush"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: loaded ? 1 : 0 }}
-      transition={{ duration: 0.5 }}
-      style={{ pointerEvents: loaded ? "auto" : "none" }}
-    >
-      {/* Blurred so the photo's own cake doesn't compete with the 3D one. */}
-      {poster ? (
-        <div
-          className="absolute -inset-4 scale-110 bg-cover bg-center blur-md brightness-90"
-          style={{ backgroundImage: `url(${poster})` }}
-        />
-      ) : null}
-      <m.div
-        className="absolute inset-0"
-        initial={{ opacity: 0, y: -40, scale: 0.7, rotate: -8 }}
-        animate={loaded ? { opacity: 1, y: 0, scale: 1, rotate: 0 } : undefined}
-        transition={{ type: "spring", stiffness: 120, damping: 14, mass: 0.9 }}
-      >
+    // The drawer keeps showing the photo: the model is loaded out of sight and only appears in the AR camera.
+    <div className="pointer-events-none absolute inset-0">
+      <div className="absolute inset-0 opacity-0" aria-hidden="true">
         {createElement("model-viewer", {
           ref: viewer,
           src,
@@ -178,7 +156,7 @@ export function ProductModel({
             )
           : null,
         )}
-      </m.div>
+      </div>
       {canAr ? (
         <m.button
           type="button"
@@ -186,11 +164,11 @@ export function ProductModel({
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="absolute bottom-3 left-3 rounded-full bg-paper/95 px-3.5 py-1.5 text-sm font-semibold shadow"
+          className="pointer-events-auto absolute bottom-3 left-3 rounded-full bg-paper/95 px-3.5 py-1.5 text-sm font-semibold shadow"
         >
           Ver en mi mesa
         </m.button>
       ) : null}
-    </m.div>
+    </div>
   );
 }

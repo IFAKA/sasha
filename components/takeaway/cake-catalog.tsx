@@ -253,7 +253,6 @@ function CakeDetail({
           <ProductModel
             src={model.src}
             name={cake.name}
-            poster={cake.image}
             scale={(sizeCm(size.label) ?? model.widthCm) / model.widthCm}
             sizes={cake.sizes}
             sizeId={sizeId}
