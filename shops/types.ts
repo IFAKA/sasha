@@ -135,4 +135,44 @@ export type ShopConfig = {
   admin: boolean;
 };
 
+/** One thing the customer can pick for an option group. */
+export type OptionChoice = {
+  id: string;
+  label: string;
+  /** Extra price when picked. */
+  price?: number;
+  /** Extra hours of notice when picked (on top of `orders.leadTimeHours`). */
+  extraLeadHours?: number;
+};
+
+/**
+ * A personalization the owner allows on some products, e.g. the filling or a message on the cake.
+ * Lives in shops/<slug>/options.ts, apart from menu.json so re-importing the menu doesn't wipe it.
+ */
+export type OptionGroup = {
+  id: string;
+  /** Shown to the customer: "Relleno". */
+  label: string;
+  /** Pick one choice, pick several, or write a free text (a message on the cake). */
+  kind: "one" | "many" | "text";
+  /** Choices to pick from (kind "one" and "many"). */
+  choices?: OptionChoice[];
+  /** "one": must pick. "text": must write. */
+  required?: boolean;
+  /** "many": at most this many choices. */
+  max?: number;
+  /** "text": letter limit. Defaults to 40. */
+  maxLength?: number;
+  /** "text": extra price when filled. */
+  price?: number;
+  /** "text": extra hours of notice when filled. */
+  extraLeadHours?: number;
+  /** Only offered for these size ids (e.g. a big decoration only on the largest size). All sizes if left out. */
+  sizes?: string[];
+  /** Which products get it: by category name or by product id. */
+  appliesTo: { categories?: string[]; products?: number[] };
+};
+
 export const defineShop = (config: ShopConfig) => config;
+
+export const defineOptions = (groups: OptionGroup[]) => groups;
