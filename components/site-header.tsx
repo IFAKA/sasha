@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, m } from "motion/react";
-import { SlidingPill, useSlidingPill } from "@/components/ui/sliding-pill";
+import { PillTabs } from "@/components/ui/pill-tabs";
 import { useEffect, useState } from "react";
 import { useCart } from "@/components/cart/cart-provider";
 import { BagIcon } from "@/components/icons";
@@ -21,7 +21,6 @@ export function SiteHeader() {
   const pathname = usePathname();
   const { meta, actions } = useCart();
   const activeHref = links.find((l) => (l.href === "/" ? pathname === "/" : pathname.startsWith(l.href)))?.href;
-  const { listRef, box } = useSlidingPill<HTMLUListElement>(activeHref);
 
   // The bag has three states: idle, waiting while a product flies over, and received.
   const [bag, setBag] = useState<"idle" | "waiting" | "landed">("idle");
@@ -54,29 +53,14 @@ export function SiteHeader() {
           />
         </Link>
 
-        <nav aria-label="Principal" className="ml-auto">
-          <ul ref={listRef} className="relative flex items-center gap-1 rounded-full bg-paper/70 p-1 ring-1 ring-line">
-            <SlidingPill box={box} className="rounded-full bg-ink" />
-            {links.map((link) => {
-              const active = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
-              // A wide wordmark needs the room on phones; tapping it already goes home.
-              const hideOnPhones = link.href === "/" && shop.wordmark;
-              return (
-                <li key={link.href} data-pill-active={active ? "" : undefined} className={hideOnPhones ? "hidden sm:block" : undefined}>
-                  <Link
-                    href={link.href}
-                    aria-current={active ? "page" : undefined}
-                    className={`relative block rounded-full px-2.5 py-1.5 text-sm font-medium whitespace-nowrap transition-colors sm:px-4 ${
-                      active ? "text-cream" : "text-muted hover:text-ink"
-                    } ${active && !box ? "bg-ink" : ""}`}
-                  >
-                    <span className="relative">{link.label}</span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
+        <div className="ml-auto">
+          <PillTabs
+            label="Principal"
+            activeHref={activeHref}
+            // A wide wordmark needs the room on phones; tapping it already goes home.
+            tabs={links.map((l) => ({ ...l, className: l.href === "/" && shop.wordmark ? "hidden sm:block" : undefined }))}
+          />
+        </div>
 
         <button
           type="button"
