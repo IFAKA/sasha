@@ -3,8 +3,9 @@
 import { redirect } from "next/navigation";
 import { MercadoPagoConfig, Preference } from "mercadopago";
 import { findTakeawayProduct } from "@/lib/menu";
+import { describeSelection, extraLeadHours, optionsPrice, validateSelection } from "@/lib/options";
 import { isValidPickup } from "@/lib/pickup";
-import { hasBranches, leadTimeLabel, lineLabel, locations, paysOnline, shop } from "@/lib/shop";
+import { hasBranches, leadTimeFor, lineLabel, locations, paysOnline, shop } from "@/lib/shop";
 
 export type CheckoutState = {
   error?: string;
@@ -13,13 +14,15 @@ export type CheckoutState = {
 } | null;
 
 const MAX_LINES = 20;
+const MAX_ITEMS_JSON = 20_000;
 const MAX_QUANTITY = 10;
 const PHONE = /^\+?[\d\s()-]{8,20}$/;
 
-type Item = { productId: number; sizeId: string; quantity: number };
+// `options` is whatever the browser sent: it is only trusted after validateSelection.
+type Item = { productId: number; sizeId: string; quantity: number; options: unknown };
 
 function parseItems(raw: FormDataEntryValue | null): Item[] | null {
-  if (typeof raw !== "string" || raw.length > 4000) return null;
+  if (typeof raw !== "string" || raw.length > MAX_ITEMS_JSON) return null;
   let parsed: unknown;
   try {
     parsed = JSON.parse(raw);
@@ -30,7 +33,7 @@ function parseItems(raw: FormDataEntryValue | null): Item[] | null {
   const items: Item[] = [];
   for (const entry of parsed) {
     if (typeof entry !== "object" || entry === null) return null;
-    const { productId, sizeId, quantity } = entry as Record<string, unknown>;
+    const { productId, sizeId, quantity, options } = entry as Record<string, unknown>;
     if (
       !Number.isInteger(productId) ||
       typeof sizeId !== "string" ||
@@ -40,9 +43,32 @@ function parseItems(raw: FormDataEntryValue | null): Item[] | null {
     ) {
       return null;
     }
-    items.push({ productId: productId as number, sizeId, quantity: quantity as number });
+    items.push({ productId: productId as number, sizeId, quantity: quantity as number, options });
   }
   return items;
+}
+
+/** Catalog and options checked line by line. Prices come from here, never from the browser. */
+function resolveLines(items: Item[]) {
+  const lines = [];
+  for (const item of items) {
+    const product = findTakeawayProduct(item.productId);
+    const size = product?.sizes.find((s) => s.id === item.sizeId);
+    if (!product || !size) return { error: "Uno de los productos ya no está disponible. Revisá tu pedido." };
+    const checked = validateSelection(product.id, size.id, item.options);
+    const { selection } = checked;
+    if (!selection) return { error: `${product.name}: ${checked.error}` };
+    lines.push({
+      product,
+      size,
+      quantity: item.quantity,
+      selection,
+      details: describeSelection(product.id, size.id, selection),
+      unitPrice: size.price + optionsPrice(product.id, size.id, selection),
+      extraLeadHours: extraLeadHours(product.id, size.id, selection),
+    });
+  }
+  return { lines, extraLeadHours: Math.max(0, ...lines.map((l) => l.extraLeadHours)) };
 }
 
 const text = (v: FormDataEntryValue | null, max: number) =>
@@ -60,23 +86,19 @@ export async function startCheckout(_prev: CheckoutState, formData: FormData): P
   const fieldErrors: NonNullable<CheckoutState>["fieldErrors"] = {};
   if (name.length < 2) fieldErrors.name = "Contanos quién retira el pedido.";
   if (!PHONE.test(phone)) fieldErrors.phone = "Ingresá un teléfono válido, por ejemplo 11 2345-6789.";
-  if (!isValidPickup(pickup, Date.now())) {
-    fieldErrors.pickup = leadTimeLabel
-      ? `Elegí un horario de retiro con al menos ${leadTimeLabel} de anticipación.`
+  const resolved = items ? resolveLines(items) : null;
+  const extraHours = resolved?.extraLeadHours ?? 0;
+  if (!isValidPickup(pickup, Date.now(), extraHours)) {
+    const lead = leadTimeFor(extraHours);
+    fieldErrors.pickup = lead
+      ? `Elegí un horario de retiro con al menos ${lead} de anticipación.`
       : "Elegí un horario de retiro disponible.";
   }
   if (hasBranches && !locations.some((l) => l.name === location)) fieldErrors.location = "Elegí en qué local lo retirás.";
   if (!items) fieldErrors.items = "Tu pedido está vacío.";
   if (Object.keys(fieldErrors).length) return { fieldErrors, values };
-
-  // Prices always come from the catalog on the server, never from the browser.
-  const lines = [];
-  for (const item of items!) {
-    const product = findTakeawayProduct(item.productId);
-    const size = product?.sizes.find((s) => s.id === item.sizeId);
-    if (!product || !size) return { error: "Uno de los productos ya no está disponible. Revisá tu pedido.", values };
-    lines.push({ product, size, quantity: item.quantity });
-  }
+  if (!resolved?.lines) return { error: resolved?.error, values };
+  const { lines } = resolved;
 
   const reference = `${shop.orders.referencePrefix}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -91,7 +113,7 @@ export async function startCheckout(_prev: CheckoutState, formData: FormData): P
   const accessToken = process.env.MP_ACCESS_TOKEN;
   if (!accessToken) {
     // No Mercado Pago credentials: go to the simulated checkout so the demo still flows end to end.
-    const total = lines.reduce((sum, l) => sum + l.size.price * l.quantity, 0);
+    const total = lines.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0);
     redirect(`/checkout?ref=${reference}&retiro=${encodeURIComponent(pickup)}&total=${total}`);
   }
 
@@ -99,11 +121,12 @@ export async function startCheckout(_prev: CheckoutState, formData: FormData): P
   try {
     const preference = await new Preference(new MercadoPagoConfig({ accessToken })).create({
       body: {
-        items: lines.map(({ product, size, quantity }) => ({
+        items: lines.map(({ product, size, quantity, details, unitPrice }) => ({
           id: `${product.id}-${size.id}`,
           title: lineLabel(product.name, size),
+          description: details || undefined,
           quantity,
-          unit_price: size.price,
+          unit_price: unitPrice,
           currency_id: "ARS",
           picture_url: product.image ?? undefined,
         })),
@@ -119,7 +142,15 @@ export async function startCheckout(_prev: CheckoutState, formData: FormData): P
         auto_return: siteUrl.startsWith("https://") ? "approved" : undefined,
         expires: true,
         expiration_date_to: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-        metadata: { pickup, location, customer_name: name, customer_phone: phone, notes, store: shop.name },
+        metadata: {
+          pickup,
+          location,
+          customer_name: name,
+          customer_phone: phone,
+          notes,
+          store: shop.name,
+          options: lines.map((l) => ({ product: l.product.id, size: l.size.id, options: l.selection })),
+        },
       },
     });
     checkoutUrl = preference.init_point;
